@@ -1,0 +1,10 @@
+rectangle: #rectangle properties
+  x: 1 #x coordinate of lower left corner of rectangle
+  y: 1 #y coordinate of lower left corner of rectangle
+  width: 100 #width of rectangle
+  height: 200 #height of rectangle
+
+robot: #robot properties
+  trans_vel: 3 #translational velocity of robot
+  rot_vel: .1 #rotational velocity of robot
+  frequency: 3 #frequency of control loop
