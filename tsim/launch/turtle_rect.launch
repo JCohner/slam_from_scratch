@@ -1,0 +1,3 @@
+<launch>
+	<rosparam command="load" file="$(find tsim)/config/turtle_rect.yaml"/>
+</launch>
