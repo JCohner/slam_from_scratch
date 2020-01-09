@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <turtlesim/SetPen.h>
 #include <turtlesim/TeleportAbsolute.h>
+#include <geometry_msgs/Twist.h>
 
 //structures where parameters from parameter server will be stored
 struct rectangle
@@ -28,6 +29,8 @@ robot robo_;
 ros::ServiceClient setPen_ = nh.serviceClient<turtlesim::SetPen>("/turtle1/set_pen");
 ros::ServiceClient teleportAbsolute_ = nh.serviceClient<turtlesim::TeleportAbsolute>("/turtle1/teleport_absolute");
 
+//define publisher to cmd_vel
+ros::Publisher vel_pub = nh.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel",5);
 public:
 	TurtleRect()
 	{
@@ -59,9 +62,25 @@ public:
 		//start on trajectory
 		ros::Rate r(robo_.frequency_);
 		int state = 0;
+		geometry_msgs::Twist vel_req;
 		while (ros::ok()){
+			switch (state){
+				case 0:
+					vel_req.linear.x = 2;
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
 
+				default:
+					ROS_INFO("Oh bud you really done goofed\n");
 
+			}
+			state = (state + 1) % 4;
+			vel_pub.publish(vel_req);
 			r.sleep();
 		}
 	}
