@@ -1,12 +1,12 @@
 #include <ros/ros.h>
 #include <turtlesim/SetPen.h>
 #include <turtlesim/TeleportAbsolute.h>
+#include <turtlesim/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <std_srvs/Empty.h>
+#include <tsim/PoseError.h>
 
 #define PI 3.14159
-
-
 
 //structures where parameters from parameter server will be stored
 struct rectangle
@@ -92,8 +92,6 @@ void init_telop(){
 }
 
 public:
-	
-
 	TurtleRect()
 	{
 		get_params();
@@ -123,11 +121,19 @@ public:
 		
 	}
 
+
+	void pose_callback(turtlesim::Pose req){
+		// printf("%f", req.x);
+		printf("we here ya\n");
+	}
+
 	void start_service(void){
 		//Define reset service
 		ros::ServiceServer reset_service;
 		reset_service = nh.advertiseService("/traj_reset", &TurtleRect::reset_callback, this);
 		ROS_INFO("Service Started");
+		ros::Subscriber pose_sub = nh.subscribe("turtle1/Pose", 1, &TurtleRect::pose_callback, this);
+		ROS_INFO("Subscriber Listening");
 	}
 
 
