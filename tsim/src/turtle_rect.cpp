@@ -123,9 +123,7 @@ void compute_error(float t){
 			break;
 		case 3:
 		case 1:
-			if (!dir_switch){
-				theta_ref = theta_ref_prev + robo_.rot_vel_ * t;
-			}
+			theta_ref = theta_ref_prev + robo_.rot_vel_ * t;
 
 			switch (theta_refs_index % 4){
 				case 0:
@@ -148,13 +146,13 @@ void compute_error(float t){
 
 			break;
 		case 2:
-			if (dir_switch){
+			if (!dir_switch){
 				y_ref = robo_.trans_vel_ * t + rect_.y_; 
-				x_ref = rect_.x_;
+				x_ref = rect_.x_ + rect_.width_;
 				theta_ref = PI/2.0;
 			} else {
 				y_ref = rect_.y_ + rect_.height_ - (robo_.trans_vel_ * t); 
-				x_ref = rect_.x_ + rect_.width_;
+				x_ref = rect_.x_ ;
 				theta_ref = -PI/2.0;
 			}
 			break;
@@ -166,6 +164,8 @@ void compute_error(float t){
 	y_error = abs(y_ref - y_actual);
 	theta_error = abs(theta_ref - theta_actual);
 	printf("x_e: %f \t y_e: %f \t t_e: %f\n", x_error, y_error, theta_error);
+	// printf("x_r: %f \t y_r: %f \t t_r: %f\n", x_ref, y_ref, theta_ref);
+	// printf("state: %d \t dir: %d\n", state, dir_switch);
 }
 
 public:
@@ -252,7 +252,7 @@ public:
 					// printf("ell: %f \t trav: %f\n", ellapsed, trav_time_rot);
 					if (ellapsed > (trav_time_rot - 1/robo_.frequency_)){
 						state_flag = 1;
-						dir_switch = !dir_switch;
+						// dir_switch = !dir_switch;
 						theta_ref_prev = theta_refs[(++theta_refs_index % 4)];
 					}
 					break;
@@ -262,7 +262,7 @@ public:
 
 					if (ellapsed > trav_time_height){
 						state_flag = 1;
-						dir_switch = !dir_switch;
+						// dir_switch = !dir_switch;
 					}
 					break;
 
