@@ -240,7 +240,7 @@ public:
 
 	//Pose subscriber callback, cache's actual position and theta
 	void pose_callback(turtlesim::Pose req){
-		// printf("x: %f \t y: %f\n", req.x, req.y);
+		ROS_INFO("\nx: %f\ny: %f\nt: %f\n", req.x, req.y, req.theta);
 		x_actual = req.x;
 		y_actual = req.y;
 		theta_actual = req.theta;
