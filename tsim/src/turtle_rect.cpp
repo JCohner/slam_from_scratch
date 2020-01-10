@@ -108,7 +108,7 @@ float theta_ref_prev = 0;
 float time;
 int dir_switch = 1;
 
-void compute_error(float t){
+void compute_error(float t, ros::Publisher pub){
 	switch(state){
 		case 0:
 			if (dir_switch){
@@ -163,9 +163,15 @@ void compute_error(float t){
 	x_error = abs(x_ref - x_actual);
 	y_error = abs(y_ref - y_actual);
 	theta_error = abs(theta_ref - theta_actual);
-	printf("x_e: %f \t y_e: %f \t t_e: %f\n", x_error, y_error, theta_error);
+	// printf("x_e: %f \t y_e: %f \t t_e: %f\n", x_error, y_error, theta_error);
 	// printf("x_r: %f \t y_r: %f \t t_r: %f\n", x_ref, y_ref, theta_ref);
 	// printf("state: %d \t dir: %d\n", state, dir_switch);
+
+	tsim::PoseError msg;
+	msg.x_error = x_error;
+	msg.y_error = y_error;
+	msg.theta_error = theta_error;
+	pub.publish(msg);
 }
 
 public:
@@ -223,6 +229,9 @@ public:
 		ROS_INFO("Service Started");
 		ros::Subscriber pose_sub = nh.subscribe("/turtle1/pose", 1, &TurtleRect::pose_callback, this);
 		ROS_INFO("Subscriber Listening");
+		ros::Publisher pos_err_pub = nh.advertise<tsim::PoseError>("pose_error", 5);
+		ROS_INFO("Publisher Defined");
+
 		//start on trajectory
 		ros::Rate r(robo_.frequency_);
 		int state_flag = 0;
@@ -278,7 +287,7 @@ public:
 			}
 			vel_pub.publish(vel_req);
 
-			compute_error(ellapsed);
+			compute_error(ellapsed, pos_err_pub);
 			r.sleep();
 			ros::spinOnce();
 		}
