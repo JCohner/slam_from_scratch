@@ -1,3 +1,15 @@
+/// \file
+/// \brief This implements the turtle_rect node, a trajectory generator for a turtlesim_node to follow a rectangle
+///
+/// PUBLISHES:
+///     pose_error (tsim::PoseError): enumerates error from reference trajectory of x,y,theta values
+///		turtle1/cmd_vel (geometry_msgs::Twist): publishing commanded velocity such that turtle follows desired trajectory
+/// SUBSCRIBES:
+///     turtle1/pose (turtlesim::Pose): describes turtle's actual x,y,theta values
+/// SERVICES:
+///     traj_reset (std_srv::Empty): resets the turtle to the starting corner of trajectory - SERVER
+///		CLIENTS: set_pen (turtlesim::SetPen) & teleport_absolute(turtlesim::TeleportAbsolute)
+
 #include <ros/ros.h>
 #include <turtlesim/SetPen.h>
 #include <turtlesim/TeleportAbsolute.h>
@@ -8,7 +20,7 @@
 
 #define PI 3.14159
 
-//structures where parameters from parameter server will be stored
+/* Structure Declaration*/
 struct rectangle
 {
 	int x_;
@@ -30,14 +42,19 @@ struct corners
 	int corner_4[2];	
 };
 
+/*
+Defining our main functional class
+*/
 class TurtleRect
 {
 //declatre node handler
 ros::NodeHandle nh;
+
 //declare parameter structures
 rectangle rect_;
 robot robo_;
 corners corn_;
+
 //define service clients
 ros::ServiceClient setPen_ = nh.serviceClient<turtlesim::SetPen>("/turtle1/set_pen");
 ros::ServiceClient teleportAbsolute_ = nh.serviceClient<turtlesim::TeleportAbsolute>("/turtle1/teleport_absolute");
@@ -45,6 +62,7 @@ ros::ServiceClient teleportAbsolute_ = nh.serviceClient<turtlesim::TeleportAbsol
 //define publisher to; cmd_vel
 ros::Publisher vel_pub = nh.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel",5);
 
+//function to grab and package main parameters
 void get_params(void){
 	//get parameters from parameter server
 	nh.getParam("/rectangle/x", rect_.x_);
@@ -67,12 +85,14 @@ void get_params(void){
 	nh.getParam("/robot/frequency", robo_.frequency_);
 }
 
+//wait for turtlesim_node services to become available
 void wait_services(void){
 	//wait for services to become available
 	ros::service::waitForService("/turtle1/set_pen");
 	ros::service::waitForService("/turtle1/teleport_absolute");
 }
 
+//perform the initial teleportation to the starting corner of the rectangle
 void init_telop(){
 	//switch off pen and teleport to lower left corner
 	turtlesim::SetPen pen_req;
@@ -91,6 +111,14 @@ void init_telop(){
 	setPen_.call(pen_req);
 }
 
+/*
+Declare and define variables need to keep track of:
+_actual : actual values of x,y,theta from subscriber
+_ref : reference values of x,y,theta computed from the feedforward model (i.e. current time, velocity, distance to travel || turn for state) 
+_error: abs(_ref - _actual)
+
+theta_refs, theta_refs_index, theta_refs_prev, & dir_switch are used to extract extra information from a state machine with only 3 distinct states
+*/
 int state = 0;
 float i = 0;
 float x_actual;
@@ -102,12 +130,14 @@ float theta_error;
 float x_ref;
 float y_ref;
 float theta_ref;
+
 float theta_refs[4] = {0, PI/2.0, PI, -PI/2.0};
 int theta_refs_index = 0;
 float theta_ref_prev = 0;
 float time;
 int dir_switch = 1;
 
+//function to compute error from reference and actual, publishes error to pose_error topic
 void compute_error(float t, ros::Publisher pub){
 	switch(state){
 		case 0:
@@ -175,13 +205,15 @@ void compute_error(float t, ros::Publisher pub){
 }
 
 public:
+	//TurtleRect Constructor: gets parameters, waits for services, teleports to start position
 	TurtleRect()
 	{
 		get_params();
 		wait_services();
 		init_telop();
 	}
-	//declare serviceserver
+
+	//Reset Service Callback: /traj_reset "{}"
 	bool reset_callback(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response){
 		printf("request heard\n");
 		
@@ -206,7 +238,7 @@ public:
 		
 	}
 
-
+	//Pose subscriber callback, cache's actual position and theta
 	void pose_callback(turtlesim::Pose req){
 		// printf("x: %f \t y: %f\n", req.x, req.y);
 		x_actual = req.x;
@@ -214,7 +246,10 @@ public:
 		theta_actual = req.theta;
 	}
 
-	//why doesnt this work thats freaking crazy, it only works if i implement serviceserver and subscriber in my main loop
+	/*
+	FOR MATT: Subscribers and Service Servers defined here do not work with the structure of my code. I wasted more hours than I would like to admit on this
+	Why does it not work? How does spinOnce and threads factor into this? It would be a shame if I could not learn from this mistake.
+	 */
 	// void start_service(void){
 	// 	//Define reset service
 	// 	ros::ServiceServer reset_service;
@@ -224,8 +259,7 @@ public:
 	// 	// ROS_INFO("Subscriber Listening");
 	// }
 
-
-	
+	//Main Loop Function	
 	int loop(){
 		ros::ServiceServer reset_service = nh.advertiseService("/traj_reset", &TurtleRect::reset_callback, this);
 		ROS_INFO("Service Started");
