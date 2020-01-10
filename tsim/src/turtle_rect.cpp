@@ -91,6 +91,73 @@ void init_telop(){
 	setPen_.call(pen_req);
 }
 
+int state = 0;
+float i = 0;
+float x_actual;
+float y_actual;
+float theta_actual;
+float x_error;
+float y_error;
+float theta_error;
+float x_ref;
+float y_ref;
+float theta_ref;
+float theta_refs[4] = {0, PI/2.0, PI, -PI/2.0};
+int theta_refs_index = 0;
+float theta_ref_prev = 0;
+float time;
+int dir_switch = 1;
+void compute_error(float t){
+	switch(state){
+		case 0:
+			if (dir_switch){
+				x_ref = robo_.trans_vel_ * t + rect_.x_; 
+				y_ref = rect_.y_;
+				theta_ref = 0;
+			} else {
+				x_ref = rect_.x_ + rect_.width_ - (robo_.trans_vel_ * t); 
+				y_ref = rect_.y_ + rect_.height_;
+				theta_ref = PI;
+			}
+			break;
+		case 3:
+		case 1:
+			if (!dir_switch){
+				theta_ref = theta_ref_prev + robo_.rot_vel_ * t;
+			}
+
+			switch (theta_refs_index % 4){
+				case 0:
+					printf("corn 0\n");
+					break;
+				case 1:
+					printf("corn 1\n");
+					break;
+				case 2:
+					printf("corn 2\n");
+					break;
+				case 3:
+					printf("corn 3\n");
+					break;
+			}
+
+			break;
+		case 2:
+			if (dir_switch){
+				y_ref = robo_.trans_vel_ * t + rect_.y_; 
+				x_ref = rect_.x_;
+				theta_ref = PI/2.0;
+			} else {
+				y_ref = rect_.y_ + rect_.height_ - (robo_.trans_vel_ * t); 
+				x_ref = rect_.x_ + rect_.width_;
+				theta_ref = -PI/2.0;
+			}
+			break;
+		default:
+			ROS_INFO("Ya goofed");
+	}
+}
+
 public:
 	TurtleRect()
 	{
@@ -123,24 +190,28 @@ public:
 
 
 	void pose_callback(turtlesim::Pose req){
-		// printf("%f", req.x);
-		printf("we here ya\n");
+		printf("x: %f \t y: %f\n", req.x, req.y);
+		// printf("we here ya\n");
+		// ROS_INFO("FUCKKKKK");
 	}
 
-	void start_service(void){
-		//Define reset service
-		ros::ServiceServer reset_service;
-		reset_service = nh.advertiseService("/traj_reset", &TurtleRect::reset_callback, this);
-		ROS_INFO("Service Started");
-		ros::Subscriber pose_sub = nh.subscribe("turtle1/Pose", 1, &TurtleRect::pose_callback, this);
-		ROS_INFO("Subscriber Listening");
-	}
+	//why doesnt this work thats freaking crazy, it only works if i implement serviceserver and subscriber in my main loop
+	// void start_service(void){
+	// 	//Define reset service
+	// 	ros::ServiceServer reset_service;
+	// 	reset_service = nh.advertiseService("/traj_reset", &TurtleRect::reset_callback, this);
+		
+	// 	// ros::Subscriber pose_sub = nh.subscribe("/turtle1/pose", 1, &TurtleRect::pose_callback, this);
+	// 	// ROS_INFO("Subscriber Listening");
+	// }
 
 
-	int state = 0;
-	float i = 0;
+	
 	int loop(){
 		ros::ServiceServer reset_service = nh.advertiseService("/traj_reset", &TurtleRect::reset_callback, this);
+		ROS_INFO("Service Started");
+		ros::Subscriber pose_sub = nh.subscribe("/turtle1/pose", 1, &TurtleRect::pose_callback, this);
+		ROS_INFO("Subscriber Listening");
 		//start on trajectory
 		ros::Rate r(robo_.frequency_);
 		int state_flag = 0;
@@ -159,6 +230,7 @@ public:
 					// printf("ell: %f \t trav: %f\n", ellapsed, trav_time_width);
 					if (ellapsed > trav_time_width){
 						state_flag = 1;
+						dir_switch = !dir_switch;
 					}
 					break;
 				case 3:
@@ -167,8 +239,10 @@ public:
 					vel_req.linear.x = 0;
 
 					// printf("ell: %f \t trav: %f\n", ellapsed, trav_time_rot);
-					if (ellapsed > trav_time_rot){
+					if (ellapsed > (trav_time_rot - 1/robo_.frequency_)){
 						state_flag = 1;
+						dir_switch = !dir_switch;
+						theta_ref_prev = theta_refs[(++theta_refs_index % 4)];
 					}
 					break;
 				case 2:
@@ -177,6 +251,7 @@ public:
 
 					if (ellapsed > trav_time_height){
 						state_flag = 1;
+						dir_switch = !dir_switch;
 					}
 					break;
 
@@ -191,6 +266,8 @@ public:
 				i = 0;
 			}
 			vel_pub.publish(vel_req);
+
+			compute_error(ellapsed);
 			r.sleep();
 			ros::spinOnce();
 		}
@@ -201,9 +278,9 @@ public:
 
 int main(int argc, char * argv[])
 {
-	ros::init(argc, argv,"hello_world");
+	ros::init(argc, argv,"turtle_rect");
 	TurtleRect turtle_rect;
-	turtle_rect.start_service();
+	// turtle_rect.start_service() //see my comment at the member function declaration. i have no idea why its behaving like this
 	turtle_rect.loop();
 
 }
