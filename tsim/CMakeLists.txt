@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
   std_srvs
-  std_msgs
   turtlesim
   message_generation
   message_runtime
@@ -75,7 +74,6 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   geometry_msgs
-  std_msgs
 )
 
 ################################################
@@ -110,7 +108,7 @@ generate_messages(
 catkin_package(
  # INCLUDE_DIRS include
 #  LIBRARIES tsim
-  CATKIN_DEPENDS geometry_msgs roscpp std_srvs turtlesim
+  CATKIN_DEPENDS geometry_msgs roscpp std_srvs turtlesim message_runtime
 #  DEPENDS system_lib
 )
 
