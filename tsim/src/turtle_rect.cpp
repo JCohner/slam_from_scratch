@@ -107,6 +107,7 @@ int theta_refs_index = 0;
 float theta_ref_prev = 0;
 float time;
 int dir_switch = 1;
+
 void compute_error(float t){
 	switch(state){
 		case 0:
@@ -128,16 +129,20 @@ void compute_error(float t){
 
 			switch (theta_refs_index % 4){
 				case 0:
-					printf("corn 0\n");
+					x_ref = rect_.x_ + rect_.width_;
+					y_ref = rect_.y_;
 					break;
 				case 1:
-					printf("corn 1\n");
+					x_ref = rect_.x_ + rect_.width_;
+					y_ref = rect_.y_ + rect_.height_;
 					break;
 				case 2:
-					printf("corn 2\n");
+					x_ref = rect_.x_;
+					y_ref = rect_.y_ + rect_.height_;
 					break;
 				case 3:
-					printf("corn 3\n");
+					x_ref = rect_.x_;
+					y_ref = rect_.y_;
 					break;
 			}
 
@@ -156,6 +161,11 @@ void compute_error(float t){
 		default:
 			ROS_INFO("Ya goofed");
 	}
+
+	x_error = abs(x_ref - x_actual);
+	y_error = abs(y_ref - y_actual);
+	theta_error = abs(theta_ref - theta_actual);
+	printf("x_e: %f \t y_e: %f \t t_e: %f\n", x_error, y_error, theta_error);
 }
 
 public:
@@ -190,9 +200,10 @@ public:
 
 
 	void pose_callback(turtlesim::Pose req){
-		printf("x: %f \t y: %f\n", req.x, req.y);
-		// printf("we here ya\n");
-		// ROS_INFO("FUCKKKKK");
+		// printf("x: %f \t y: %f\n", req.x, req.y);
+		x_actual = req.x;
+		y_actual = req.y;
+		theta_actual = req.theta;
 	}
 
 	//why doesnt this work thats freaking crazy, it only works if i implement serviceserver and subscriber in my main loop
