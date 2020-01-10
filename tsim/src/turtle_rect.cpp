@@ -196,6 +196,8 @@ public:
 		this->teleportAbsolute_.call(tele_req);
 		state = 0;
 		i = 0;
+		theta_refs_index = 0;
+		dir_switch = 1;
 
 		//switch on pen
 		pen_req.request.off = 0;
