@@ -5,7 +5,11 @@ namespace rigid2d
 	//write constructor
 	Transform2D::Transform2D()
 	{
-
+		theta = 0;
+		ctheta = 0;
+		stheta = 0;
+		x = 0; 
+		y = 0;
 	}
 
 	std::ostream & operator<<(std::ostream & os, const Vector2D & v)
@@ -22,17 +26,19 @@ namespace rigid2d
 		return is;
 	}	
 
-	// std::ostream & operator<<(std::ostream & os, const Transform2D & tf)
-	// {
+	std::ostream & operator<<(std::ostream & os, const Transform2D & tf)
+	{
+		std::cout << tf.theta << "  "<< tf.x << "  " << tf.y;
+		return os;
+	}
 
-	// 	return os;
-	// }
-
-	// std::istream & operator>>(std::istream & is, Transform2D & tf)
-	// {
-
-	// 	return is;
-	// }
+	std::istream & operator>>(std::istream & is, Transform2D & tf)
+	{
+		std::cin >> tf.theta; 
+		std::cin >> tf.x;
+		std::cin >> tf.y;
+		return is;
+	}
 
 
 }
