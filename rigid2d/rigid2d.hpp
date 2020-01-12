@@ -3,8 +3,10 @@
 /// \file
 /// \brief Library for two-dimensional rigid body transformations.
 
-#include<iosfwd> // contains forward definitions for iostream objects
-#include<cmath>
+#include <iosfwd> // contains forward definitions for iostream objects
+#include <cmath>
+#include <iostream>
+
 namespace rigid2d
 {
     /// \brief PI.  Not in C++ standard until C++20.
@@ -87,6 +89,10 @@ namespace rigid2d
     /// \brief a rigid body transformation in 2 dimensions
     class Transform2D
     {
+    private:
+        Transform2D(double theta, double ctheta, double stheta, double x, double y); //angle, sin, cos, x ,y
+        double theta, ctheta, stheta, x, y;
+
     public:
         /// \brief Create an identity transformation
         Transform2D();
