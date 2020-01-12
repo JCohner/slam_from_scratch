@@ -98,6 +98,9 @@ namespace rigid2d
 		return prod;
 	}
 
-	
+	Transform2D& operator*=(Transform2D& lhs, const Transform2D & rhs){
+		lhs = lhs * rhs;
+		return lhs;
+	}	
 
 }
