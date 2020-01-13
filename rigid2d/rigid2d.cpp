@@ -39,6 +39,14 @@ namespace rigid2d
 		y = trans.y;
 	}
 
+	//aply transform to vector
+	Vector2D Transform2D::operator()(Vector2D v) const{
+		Vector2D v_new;
+		v_new.x = this->ctheta * v.x - this->stheta * v.y + this->x;
+		v_new.y = this->stheta * v.x + this->ctheta * v.y + this->y;
+		return v_new;
+	}
+
 	Transform2D Transform2D::inv() const {
 		Transform2D inv;
 		inv.x = -cos(deg2rad(this->theta)) * this->x - sin(deg2rad(this->theta)) * this->y;
@@ -90,10 +98,10 @@ namespace rigid2d
 	Transform2D operator*(Transform2D lhs, const Transform2D & rhs){
 		Transform2D prod; 
 		prod.theta = lhs.theta + rhs.theta;
-		prod.ctheta = cos(prod.theta);
-		prod.stheta = sin(prod.theta);
-		prod.x = cos(lhs.theta) * rhs.x - sin(lhs.theta) * rhs.y + lhs.x;
-		prod.y = cos(lhs.theta) * rhs.y + sin(lhs.theta) * rhs.x + lhs.y; 
+		prod.ctheta = cos(deg2rad(prod.theta));
+		prod.stheta = sin(deg2rad(prod.theta));
+		prod.x = cos(deg2rad(lhs.theta)) * rhs.x - sin(deg2rad(lhs.theta)) * rhs.y + lhs.x;
+		prod.y = cos(deg2rad(lhs.theta)) * rhs.y + sin(deg2rad(lhs.theta)) * rhs.x + lhs.y; 
 
 		return prod;
 	}
