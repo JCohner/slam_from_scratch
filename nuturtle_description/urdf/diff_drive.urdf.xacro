@@ -10,14 +10,16 @@
 	<xacro:macro name="base_link_gen" params="width length height">
 		<link name="base_link">
 			<visual>
+				<origin xyz="${length/2 - radius} 0 0" rpy="0 0 0"/>
 				<geometry>
 					<box size="${length} ${width} ${height}"/>  
 				</geometry>
 				<material name="red_guy">
-					<color rgba="1 0 0 .5"/>
+					<color rgba="1 0 0 .75"/>
 				</material>
 			</visual>
 			<collision>
+				<origin xyz="${length/2 - radius} 0 0" rpy="0 0 0"/>
 				<geometry>
 					<box size="${length} ${width} ${height}"/>  
 				</geometry>
@@ -29,6 +31,7 @@
 	<xacro:macro name="wheel_gen" params="name radius width">
 		<link name="${name}">
 			<visual>
+				<origin xyz = "0 0 0" rpy="${pi/2} 0 0"/>
 				<geometry>
 					<cylinder radius="${radius}" length="${width}"/>  
 				</geometry>
@@ -37,6 +40,7 @@
 				</material>
 			</visual>
 			<collision>
+				<origin xyz = "0 0 0" rpy="${pi/2} 0 0"/>
 				<geometry>
 					<cylinder radius="${radius}" length="${width}"/>  
 				</geometry>
@@ -44,13 +48,42 @@
 		</link>
 	</xacro:macro>
 
+	<!-- macro for making caster -->
+	<xacro:macro name="caster_gen" params="name radius">
+		<link name="${name}">
+			<visual>
+				<geometry>
+					<sphere radius="${radius}"/>
+				</geometry>
+				<material name="purp_guy">
+					<color rgba="1 0 1 .5"/>
+				</material>
+			</visual>
+			<collision>
+				<geometry>
+					<sphere radius="${radius}"/>
+				</geometry>
+			</collision>
+		</link>
+	</xacro:macro>
+
+
 	<!-- macro for making joints -->
 	<xacro:macro name="joint_gen" params="name parent child origin rotate">
 		<joint name="${name}" type="continuous">
-			<axis xyz="0 0 1"/>
+			<axis xyz="0 1 0"/>
 			<parent link="${parent}"/>
 			<child link="${child}"/>
-			<origin xyz="${-length/4} ${origin}  0" rpy="${pi/2} 0 ${rotate}"/>
+			<origin xyz="0 ${origin}  0" rpy="0 0 ${rotate}"/>
+		</joint>
+	</xacro:macro>
+
+	<!-- macro for caster joints -->
+	<xacro:macro name="caster_joint" params="name parent child origin_z">
+		<joint name="${name}" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${child}"/>
+			<origin xyz="${length/2} 0 ${origin_z}" rpy="0 0 0"/>
 		</joint>
 	</xacro:macro>
 
@@ -61,6 +94,9 @@
 	<xacro:base_link_gen width="${base - width}" length="${length}" height="${thickness}"/>
 	<xacro:wheel_gen radius="${radius}" name="wheel1" width="${width}"/>
 	<xacro:wheel_gen radius="${radius}" name="wheel2" width="${width}"/>
+	<xacro:caster_gen radius="${radius/2}" name="caster1"/>
+	<xacro:caster_gen radius="${radius/2}" name="caster2"/>
+
 
 	<!-- generate joints between links -->
 	<joint name="to_base" type="fixed">
@@ -68,8 +104,10 @@
 		<child link="base_link"/>
 		<origin xyz="0 0 ${radius}" rpy="0 0 ${pi/2}"/>
 	</joint>
-	<xacro:joint_gen name="wheel1_joint" parent="base_link" child="wheel1" origin="${base/2}" rotate="0"/>
-	<xacro:joint_gen name="wheel2_joint" parent="base_link" child="wheel2" origin="${-base/2}" rotate="0"/>
+	<xacro:joint_gen name="left_wheel_axel" parent="base_link" child="wheel1" origin="${base/2}" rotate="0"/>
+	<xacro:joint_gen name="right_wheel_axel" parent="base_link" child="wheel2" origin="${-base/2}" rotate="0"/>
+	<xacro:caster_joint name="cast_joint1" parent="base_link" child="caster1" origin_z="${radius/2}"/>
+	<xacro:caster_joint name="cast_joint2" parent="base_link" child="caster2" origin_z="${-radius/2}"/>
 	
 
 
