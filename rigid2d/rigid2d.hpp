@@ -74,7 +74,7 @@ namespace rigid2d
     //I tried to make this nice, but it mainly seems contrived, would like some feedback on how to make it better
     class NormVector2D : Vector2D {
         Vector2D norm;
-        float mag; 
+        double mag; 
         void normalize(Vector2D vec){
             mag = sqrt((pow(norm.x,2) + pow(norm.y,2)));
             norm.x = vec.x / mag;
@@ -90,7 +90,7 @@ namespace rigid2d
                 normalize(dir);
                 return norm;
             }
-            Vector2D get(void){
+            Vector2D get(){
                 return norm;
             }
     };
@@ -184,6 +184,36 @@ namespace rigid2d
     /// HINT: This function can be implemented in terms of *=
     Transform2D operator*(Transform2D lhs, const Transform2D & rhs);
     Transform2D& operator*=(Transform2D& lhs, const Transform2D & rhs);
+
+
+    class Twist2D
+    {
+        //Angular rotation
+        double omega;
+        Vector2D vel;
+        public:
+            Twist2D();
+            //pure translation
+            explicit Twist2D(const Vector2D & vel);
+            explicit Twist2D(double angular);
+            Twist2D(double angular, Vector2D vel);
+            //friend declarations to allow for stream io
+            friend std::ostream & operator<<(std::ostream & os, const Twist2D & V);
+            friend std::istream & operator>>(std::istream & is, Twist2D & V);
+    };
+
+    /// \brief should print a human readable version of the twist:
+    /// An example output:
+    /// dtheta (degrees/s): 90 vx: 3 vy: 5
+    /// \param os - an output stream
+    /// \param v - the twist to print
+    std::ostream & operator<<(std::ostream & os, const Twist2D & V);
+
+    /// \brief Read a twist from stdin
+    /// Should be able to read input either as output by operator<< or
+    /// as 3 numbers (degrees/s, vx, vy) separated by spaces or newlines
+    std::istream & operator>>(std::istream & is, Twist2D & V);
+
 }
 
 #endif
