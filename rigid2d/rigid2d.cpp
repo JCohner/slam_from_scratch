@@ -49,8 +49,11 @@ namespace rigid2d
 
 	Transform2D Transform2D::inv() const {
 		Transform2D inv;
-		inv.x = -cos(deg2rad(this->theta)) * this->x - sin(deg2rad(this->theta)) * this->y;
-		inv.y = sin(deg2rad(this->theta)) * this->x - cos(deg2rad(this->theta)) * this->y;
+		float x_temp = -cos(deg2rad(this->theta)) * this->x - sin(deg2rad(this->theta)) * this->y;
+		float y_temp = sin(deg2rad(this->theta)) * this->x - cos(deg2rad(this->theta)) * this->y;
+		(almost_equal(x_temp, 0.0)) ? (inv.x = 0) : (inv.x =  x_temp);
+		(almost_equal(y_temp, 0.0)) ? (inv.y  = 0) : (inv.y  =  y_temp);
+
 		inv.theta = -(this->theta);
 		inv.ctheta = this->ctheta;
 		inv.stheta = -(this->stheta);
