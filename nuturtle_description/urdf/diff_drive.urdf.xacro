@@ -92,8 +92,8 @@
 	</link>
 
 	<xacro:base_link_gen width="${base - width}" length="${length}" height="${thickness}"/>
-	<xacro:wheel_gen radius="${radius}" name="wheel1" width="${width}"/>
-	<xacro:wheel_gen radius="${radius}" name="wheel2" width="${width}"/>
+	<xacro:wheel_gen radius="${radius}" name="left_wheel" width="${width}"/>
+	<xacro:wheel_gen radius="${radius}" name="right_wheel" width="${width}"/>
 	<xacro:caster_gen radius="${radius/2}" name="caster1"/>
 	<xacro:caster_gen radius="${radius/2}" name="caster2"/>
 
@@ -104,8 +104,8 @@
 		<child link="base_link"/>
 		<origin xyz="0 0 ${radius}" rpy="0 0 ${pi/2}"/>
 	</joint>
-	<xacro:joint_gen name="left_wheel_axel" parent="base_link" child="wheel1" origin="${base/2}" rotate="0"/>
-	<xacro:joint_gen name="right_wheel_axel" parent="base_link" child="wheel2" origin="${-base/2}" rotate="0"/>
+	<xacro:joint_gen name="left_wheel_axel" parent="base_link" child="left_wheel" origin="${base/2}" rotate="0"/>
+	<xacro:joint_gen name="right_wheel_axel" parent="base_link" child="right_wheel" origin="${-base/2}" rotate="0"/>
 	<xacro:caster_joint name="cast_joint1" parent="base_link" child="caster1" origin_z="${radius/2}"/>
 	<xacro:caster_joint name="cast_joint2" parent="base_link" child="caster2" origin_z="${-radius/2}"/>
 	
