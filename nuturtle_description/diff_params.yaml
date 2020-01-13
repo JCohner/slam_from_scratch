@@ -1,0 +1,7 @@
+wheel:
+  width: 0.05 #width of wheels
+  radius: 0.10 #radius of wheels
+  base: 0.20 #distance between centers of wheels
+chassis:
+  length: .30 #length of mainlink
+  thickness: .055 #thickness of mainlink 
