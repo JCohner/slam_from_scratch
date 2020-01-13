@@ -1,0 +1,13 @@
+<launch>
+	<!-- load parameters in parameter server -->
+	<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml"/>
+
+	<!-- load generated urdf from xacro into parameter server -->
+	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_description)/urdf/diff_drive.urdf.xacro'"/>
+	
+	<!-- define arg -->
+	<arg name="use_jsp_gui" default="true" doc="Launch the joint_state_publisher gui to publish joint angles"/>
+
+	<!-- Launch rviz with and load in settings -->
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find nuturtle_description)/rviz/view_robot.rviz"/>
+</launch>
