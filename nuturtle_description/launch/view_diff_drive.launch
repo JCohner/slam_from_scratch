@@ -1,4 +1,8 @@
 <launch>
+	<!-- 
+	This launchfile is used to load differential drive robot parameters into parameter server, to then xacro a urdf of a differential drive robot into the robot description of the parameter server. Then launch the robot and joint state publishers with the optional jsp_gui. 
+	 -->
+
 	<!-- load parameters in parameter server -->
 	<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml"/>
 
@@ -6,7 +10,7 @@
 	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_description)/urdf/diff_drive.urdf.xacro'"/>
 	
 	<!-- Launch rviz with and load in settings -->
-	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find nuturtle_description)/rviz/view_robot.rviz"/>
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find nuturtle_description)/rviz/view_robot.rviz" required="true"/>
 	
 	<!--launch robot state publisher which grabs urdf data from /robot_description parameter and listens to joint info on the /joint_states topic-->
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
