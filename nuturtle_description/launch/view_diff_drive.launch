@@ -5,9 +5,16 @@
 	<!-- load generated urdf from xacro into parameter server -->
 	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_description)/urdf/diff_drive.urdf.xacro'"/>
 	
-	<!-- define arg -->
-	<arg name="use_jsp_gui" default="true" doc="Launch the joint_state_publisher gui to publish joint angles"/>
-
 	<!-- Launch rviz with and load in settings -->
 	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find nuturtle_description)/rviz/view_robot.rviz"/>
+	
+	<!--launch robot state publisher which grabs urdf data from /robot_description parameter and listens to joint info on the /joint_states topic-->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+	<!-- define arg -->
+	<arg name="use_jsp_gui" default="true" doc="Launch the joint_state_publisher gui to publish joint angles"/>
+	<!-- launch joint_state_publisher -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" if="$(arg use_jsp_gui)">
+    	<param name="use_gui" value="(arg use_jsp_gui)"/>
+  	</node>
 </launch>
