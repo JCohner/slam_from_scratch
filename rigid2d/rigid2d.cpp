@@ -69,7 +69,7 @@ namespace rigid2d
 	//outstream op overload for vectors
 	std::ostream & operator<<(std::ostream & os, const Vector2D & v)
 	{
-		std::cout << "x: " << v.x << "\n";
+		std::cout << "x: " << v.x << "\t";
 		std::cout << "y: " << v.y << "\n";
 		return os;
 	} 
@@ -125,7 +125,7 @@ namespace rigid2d
 	//Twist output operator overload
 	std::ostream & operator<<(std::ostream & os, const Twist2D & V)
 	{
-		std::cout << "omega: " << V.omega << "\n" << "v.x: " << V.vel.x << "\t" << "v.y: " << V.vel.y <<"\n";
+		std::cout << "omega: " << V.omega << "\t" << "v.x: " << V.vel.x << "\t" << "v.y: " << V.vel.y <<"\n";
 		return os;
 	}
 
