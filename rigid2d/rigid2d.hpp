@@ -110,6 +110,29 @@ namespace rigid2d
     /// https://en.cppreference.com/w/cpp/io/basic_istream/get
     std::istream & operator>>(std::istream & is, Vector2D & v);
 
+
+    struct Twist2D
+    {
+        //Angular rotation (oh boy did this as a class at first and learned why there are reasons one does not do that)
+        double omega;
+        Vector2D vel;
+    };
+
+    /// \brief should print a human readable version of the twist:
+    /// An example output:
+    /// dtheta (degrees/s): 90 vx: 3 vy: 5
+    /// \param os - an output stream
+    /// \param v - the twist to print
+    std::ostream & operator<<(std::ostream & os, const Twist2D & V);
+
+    /// \brief Read a twist from stdin
+    /// Should be able to read input either as output by operator<< or
+    /// as 3 numbers (degrees/s, vx, vy) separated by spaces or newlines
+    std::istream & operator>>(std::istream & is, Twist2D & V);
+
+
+
+
     /// \brief a rigid body transformation in 2 dimensions
     class Transform2D
     {
@@ -150,6 +173,12 @@ namespace rigid2d
         /// \returns a reference to the newly transformed operator
         Transform2D & operator*=(const Transform2D & rhs);
 
+        /// \brief from Transform2D calculates adjoint
+        /// applies adjoint to Twist2D to return Twist2D in new frame
+        /// \param Twist2D to convert
+        /// \returns Twist2D in a new frame defined by the adjoint of this Transform2D 
+        Twist2D adjoint(Twist2D V) const;
+
         /// \brief \see operator<<(...) (declared outside this class)
         /// for a description
         friend std::ostream & operator<<(std::ostream & os, const Transform2D & tf);
@@ -184,35 +213,6 @@ namespace rigid2d
     /// HINT: This function can be implemented in terms of *=
     Transform2D operator*(Transform2D lhs, const Transform2D & rhs);
     Transform2D& operator*=(Transform2D& lhs, const Transform2D & rhs);
-
-
-    class Twist2D
-    {
-        //Angular rotation
-        double omega;
-        Vector2D vel;
-        public:
-            Twist2D();
-            //pure translation
-            explicit Twist2D(const Vector2D & vel);
-            explicit Twist2D(double angular);
-            Twist2D(double angular, Vector2D vel);
-            //friend declarations to allow for stream io
-            friend std::ostream & operator<<(std::ostream & os, const Twist2D & V);
-            friend std::istream & operator>>(std::istream & is, Twist2D & V);
-    };
-
-    /// \brief should print a human readable version of the twist:
-    /// An example output:
-    /// dtheta (degrees/s): 90 vx: 3 vy: 5
-    /// \param os - an output stream
-    /// \param v - the twist to print
-    std::ostream & operator<<(std::ostream & os, const Twist2D & V);
-
-    /// \brief Read a twist from stdin
-    /// Should be able to read input either as output by operator<< or
-    /// as 3 numbers (degrees/s, vx, vy) separated by spaces or newlines
-    std::istream & operator>>(std::istream & is, Twist2D & V);
 
 }
 
