@@ -1,0 +1,37 @@
+When prompted enter two transforms: Tab and Tbc
+Please enter theta, x, & y of Tab
+Thank you, now please enter theta, x, & y of Tbc
+Tab:
+theta: 45	ctheta: 0.707107	stheta: 0.707107
+x: 1 	y: 1
+Tbc:
+theta: 90	ctheta: 0	stheta: 1
+x: 3 	y: 0
+Tba:
+theta: -45	ctheta: 0.707107	stheta: -0.707107
+x: -1.41421 	y: 0
+Tcb:
+theta: -90	ctheta: 0	stheta: -1
+x: 0 	y: 3
+Tac:
+theta: 135	ctheta: -0.707107	stheta: 0.707107
+x: 3.12132 	y: 3.12132
+Tca:
+theta: -135	ctheta: -0.707107	stheta: -0.707107
+x: 0 	y: 4.41421
+Awesome! Now enter a vector (specifying the x and y values) & a refrence frame (i.e. a, b, orc)
+Enter a twist (omega, vx, vy) in the same frame as the previous vector: 
+Vectors in frames a,b,c:
+v_a:
+x: -2.53553	y: 11.6066
+v_b:
+x: 5	y: 10
+v_c:
+x: 10	y: -2
+Twists in frames a,b,c:
+Va:
+omega: 7	v.x: 4.24264	v.y: 0
+Vb:
+omega: 7	v.x: 4	v.y: 2
+Vc:
+omega: 7	v.x: -4	v.y: 0
