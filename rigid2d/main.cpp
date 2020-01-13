@@ -82,17 +82,17 @@ int main(){
 
 	/*Output*/
 	std::cout << "Vectors in frames a,b,c:\n";
-	std::cout << "v_a:\n";
+	std::cout << "v_a:\t";
 	std::cout << va;
-	std::cout << "v_b:\n";
+	std::cout << "v_b:\t";
 	std::cout << vb;
-	std::cout << "v_c:\n";
+	std::cout << "v_c:\t";
 	std::cout << vc;
 	std::cout << "Twists in frames a,b,c:\n";
-	std::cout << "Va:\n";
+	std::cout << "Va:\t";
 	std::cout << Va;
-	std::cout << "Vb:\n";
+	std::cout << "Vb:\t";
 	std::cout << Vb;
-	std::cout << "Vc:\n";
+	std::cout << "Vc:\t";
 	std::cout << Vc;
 }
