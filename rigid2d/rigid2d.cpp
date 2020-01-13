@@ -95,7 +95,8 @@ namespace rigid2d
 		return is;
 	}
 
-	Transform2D operator*(Transform2D lhs, const Transform2D & rhs){
+	Transform2D operator*(Transform2D lhs, const Transform2D & rhs)
+	{
 		Transform2D prod; 
 		prod.theta = lhs.theta + rhs.theta;
 		prod.ctheta = cos(deg2rad(prod.theta));
@@ -106,9 +107,27 @@ namespace rigid2d
 		return prod;
 	}
 
-	Transform2D& operator*=(Transform2D& lhs, const Transform2D & rhs){
+	Transform2D& operator*=(Transform2D& lhs, const Transform2D & rhs)
+	{
 		lhs = lhs * rhs;
 		return lhs;
 	}	
+
+	//Twist output operator overload
+	std::ostream & operator<<(std::ostream & os, const Twist2D & V)
+	{
+		std::cout << "omega: " << V.omega << "\n" << "v.x: " << V.vel.x << "\t" << "v.y: " << V.vel.y <<"\n";
+		return os;
+	}
+
+	//Twist input operator overload
+	std::istream & operator>>(std::istream & is, Twist2D & V)
+	{
+		std::cin >> V.omega;
+		std::cin >> V.vel.x;
+		std::cin >> V.vel.y;
+		return is;
+	}
+
 
 }
