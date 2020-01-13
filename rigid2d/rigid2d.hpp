@@ -129,18 +129,24 @@ namespace rigid2d
         /// \brief \see operator<<(...) (declared outside this class)
         /// for a description
         friend std::ostream & operator<<(std::ostream & os, const Transform2D & tf);
-        friend std::ostream & operator<<(std::ostream & os, const Transform2D & tf);
+        
+        /// \brief \see operator>>(...) (declared outside this class)
+        /// for a description
         friend std::istream & operator>>(std::istream & is, Transform2D & tf);
-
+        
+        /// \brief \see operator*(...) (declared outside this class)
+        /// for a description
+        friend Transform2D operator*(Transform2D lhs, const Transform2D & rhs);
+        friend Transform2D& operator*=(Transform2D lhs, const Transform2D & rhs);
     };
 
-
+    /*MATT QUESTION: why does the redeclaration of this function not cause an error, how is this unique to 'friend'*/
     /// \brief should print a human readable version of the transform:
     /// An example output:
     /// dtheta (degrees): 90 dx: 3 dy: 5
     /// \param os - an output stream
     /// \param tf - the transform to print
-    // std::ostream & operator<<(std::ostream & os, const Transform2D & tf);
+    std::ostream & operator<<(std::ostream & os, const Transform2D & tf);
 
     /// \brief Read a transformation from stdin
     /// Should be able to read input either as output by operator<< or
@@ -153,6 +159,7 @@ namespace rigid2d
     /// \return the composition of the two transforms
     /// HINT: This function can be implemented in terms of *=
     Transform2D operator*(Transform2D lhs, const Transform2D & rhs);
+    Transform2D& operator*=(Transform2D& lhs, const Transform2D & rhs);
 }
 
 #endif
