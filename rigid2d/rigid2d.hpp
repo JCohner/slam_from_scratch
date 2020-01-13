@@ -71,6 +71,30 @@ namespace rigid2d
         double y = 0.0;
     };
 
+    //I tried to make this nice, but it mainly seems contrived, would like some feedback on how to make it better
+    class NormVector2D : Vector2D {
+        Vector2D norm;
+        float mag; 
+        void normalize(Vector2D vec){
+            mag = sqrt((pow(norm.x,2) + pow(norm.y,2)));
+            norm.x = vec.x / mag;
+            norm.y = vec.y / mag;
+
+        }
+        public:
+            NormVector2D();
+            explicit NormVector2D(const Vector2D & dir){
+                normalize(dir);
+            }
+            Vector2D reorient(Vector2D dir){
+                normalize(dir);
+                return norm;
+            }
+            Vector2D get(void){
+                return norm;
+            }
+    };
+
     /// \brief output a 2 dimensional vector as [xcomponent ycomponent]
     /// os - stream to output to
     /// v - the vector to print
