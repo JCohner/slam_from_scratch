@@ -34,37 +34,65 @@ int main(){
 	rigid2d::Vector2D va;
 	rigid2d::Vector2D vb;
 	rigid2d::Vector2D vc;
+	rigid2d::Twist2D V;
+	rigid2d::Twist2D Va;
+	rigid2d::Twist2D Vb;
+	rigid2d::Twist2D Vc;
 
-
-	std::cout << "Awesome! Now enter v (specifying the x and y values) & a refrence frame (i.e. a, b, orc)\n";
+	std::cout << "Awesome! Now enter a vector (specifying the x and y values) & a refrence frame (i.e. a, b, orc)\n";
 	std::cin >> v;
 	std::cin >> frame;
+	std::cout << "Enter a twist (omega, vx, vy) in the same frame as the previous vector: \n";
+	std::cin >> V;
 	
 	switch (frame){
 		case 'a':
+			//cache vector and twist in frame a
 			va = v;
-			vb = Tba(v);
-			vc = Tca(v);
+			Va = V;
+			//convert vector and twist to frames b and c
+			vb = Tba(va);
+			vc = Tca(va);
+			Vb = Tba.adjoint(Va);
+			Vc = Tca.adjoint(Va);
 			break;
 		case 'b':
+			//cache vector and twist in frame b
 			vb = v;
-			va = Tab(v);
-			vc = Tcb(v);
+			Vb = V;
+			//convert vector and twist to frames a and c
+			va = Tab(vb);
+			vc = Tcb(vb);
+			Va = Tab.adjoint(Vb);
+			Vc = Tcb.adjoint(Vb);
 			break;
 		case 'c':
+			//cache vector and twist in frame c
 			vc = v;
-			va = Tac(v);
-			vb = Tbc(v);
+			Vc = V;
+			//convert vector and twist to frames a and b
+			va = Tac(vc);
+			vb = Tbc(vc);
+			Va = Tac.adjoint(Vc);
+			Vb = Tbc.adjoint(Vc);
 			break;
 		default:
 			std::cout << "Ya goofed my dude\n";
 	}
-	std::cout << "Va:\n";
+
+	/*Output*/
+	std::cout << "Vectors in frames a,b,c:\n";
+	std::cout << "v_a:\n";
 	std::cout << va;
-	std::cout << "Vb:\n";
+	std::cout << "v_b:\n";
 	std::cout << vb;
-	std::cout << "Vc:\n";
+	std::cout << "v_c:\n";
 	std::cout << vc;
-
-
+	std::cout << "Twists in frames a,b,c:\n";
+	std::cout << "Va:\n";
+	std::cout << Va;
+	std::cout << "Vb:\n";
+	std::cout << Vb;
+	std::cout << "Vc:\n";
+	std::cout << Vc;
 }
