@@ -63,8 +63,8 @@ namespace rigid2d
 	Twist2D Transform2D::adjoint(Twist2D V) const{
 		Twist2D V_prime;
 		V_prime.omega = V.omega;
-		V_prime.vel.x = cos(deg2rad(this->theta)) * V.vel.x - sin(deg2rad(this->theta)) * V.vel.y;
-		V_prime.vel.y = sin(deg2rad(this->theta)) * V.vel.x + cos(deg2rad(this->theta)) * V.vel.y;
+		V_prime.vel.x = cos(deg2rad(this->theta)) * V.vel.x - sin(deg2rad(this->theta)) * V.vel.y + V_prime.omega * this->y;
+		V_prime.vel.y = sin(deg2rad(this->theta)) * V.vel.x + cos(deg2rad(this->theta)) * V.vel.y + V_prime.omega * this->x;
 
 		return V_prime;
 	}
