@@ -13,6 +13,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rostest #youre getting it whether you like it or not!
 )
 
 ## System dependencies are found with CMake's conventions
@@ -111,6 +112,8 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
+
+
 ###########
 ## Build ##
 ###########
@@ -141,7 +144,7 @@ add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME rigid2d PREFIX "")
+set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME ${PROJECT_NAME} PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -200,10 +203,16 @@ install(DIRECTORY include/${PROJECT_NAME}/
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_rigid2d.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+# catkin_add_gtest(${PROJECT_NAME}_test test/${PROJECT_NAME}/test_rigid2d.cpp)
+# if(TARGET ${PROJECT_NAME}_test)
+#   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+## Add gtest if we catkin_make run_tests
+if (CATKIN_ENABLE_TESTING)
+    catkin_add_gtest(${PROJECT_NAME}_test test/${PROJECT_NAME}/${PROJECT_NAME}_test.cpp)
+    target_link_libraries(${PROJECT_NAME}_test ${catkin_Libraries} gtest_main ${PROJECT_NAME})
+endif()
