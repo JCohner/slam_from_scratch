@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rigid2d)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-Wall -Werror) #might have to make it -std=c++17
+## Compile with error output
+add_compile_options(-Wall -Werror -pipe) 
+
+## Compile at 17 standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -137,7 +141,7 @@ add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME rigid2d PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
