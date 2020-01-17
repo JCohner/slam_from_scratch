@@ -72,16 +72,16 @@ namespace rigid2d
 	//outstream op overload for vectors
 	std::ostream & operator<<(std::ostream & os, const Vector2D & v)
 	{
-		std::cout << "x: " << v.x << "\t";
-		std::cout << "y: " << v.y << "\n";
+		os << "x: " << v.x << "\t";
+		os << "y: " << v.y << "\n";
 		return os;
 	} 
 
 	//instream op overload for vectors
 	std::istream & operator>>(std::istream & is, Vector2D & v)
 	{
-		std::cin >> v.x;
-		std::cin >> v.y;
+		is >> v.x;
+		is >> v.y;
 		return is;
 	}	
 
@@ -124,6 +124,16 @@ namespace rigid2d
 		lhs = lhs * rhs;
 		return lhs;
 	}	
+
+	// Transform2D Twist2D::integrateTwist(void){
+	// 	float theta = this->omega; //since we are traversing for one unit time, omega is theta
+	// 	Transform2D Trans = Transform2D();
+	// 	Trans.stheta = this->omega * sin(theta); //make sure omega in rad/s
+	// 	Trans.ctheta = -pow(this->omega, 2) * (1 - cos(theta)) + 1;
+	// 	Trans.x = this->vel.x * theta * (1 - pow(this->omega, 2)) + this->vel.y * this-> omega * (cos(theta) - 1) + this->vel.x * pow(this->omega, 2) * sin(theta);
+	// 	Trans.y = this->vel.y * theta * (1 - pow(this->omega, 2)) + this->vel.x * this-> omega * (cos(theta) - 1) + this->vel.y * pow(this->omega, 2) * sin(theta);
+	// 	return Trans; 		
+	// }
 
 	//Twist output operator overload
 	std::ostream & operator<<(std::ostream & os, const Twist2D & V)

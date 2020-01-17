@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 #include "rigid2d/rigid2d.hpp"
+#include <iostream>
+#include <sstream>
 
 namespace rigid2d {
 //Test our constant expressions
@@ -25,12 +27,19 @@ TEST(ConstExpr, almost_equal)
     ASSERT_EQ(almost_equal(0.001, 0.005, 1.0e-12), false);
 }
 
-// //test our 2D vectors
-// TEST(Vector2D, OutOpOverload){
-// 	Vector2D vec;
-// 	vec.x = 1;
-// 	vec.y = 2;
-// 	std::ostream os = std::cout << vec;
-// }
+//test our 2D vectors
+TEST(Vector2D, OutOpOverload){
+    std::string input = "3 2";
+    std::string output = "x: 3\ty: 2\n";
+    std::stringstream ss_in(input);
+    std::stringstream ss_out;
+
+    Vector2D vec;
+    ss_in >> vec;
+    ss_out << vec;
+
+    ASSERT_EQ(ss_out.str(), output);
+
+}
 
 }
