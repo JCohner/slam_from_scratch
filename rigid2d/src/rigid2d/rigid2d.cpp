@@ -69,6 +69,24 @@ namespace rigid2d
 		return V_prime;
 	}
 
+	double Vector2D::length(){
+		double len = sqrt(pow(this->x, 2) + pow(this->y, 2));
+		return len;
+	}
+
+	double Vector2D::distance(const Vector2D & vec){
+		//taking this to be the distance between the endpoints of the vectors
+		double delta_x = this->x - vec.x;
+		double delta_y = this->y - vec.y;
+		double dist = sqrt(pow(delta_x, 2) + pow(delta_y,2));
+		return dist;
+	}
+
+	double Vector2D::angle(){
+		double ang = atan2(this->y, this->x);
+		return ang;
+	}
+
 	//outstream op overload for vectors
 	std::ostream & operator<<(std::ostream & os, const Vector2D & v)
 	{
