@@ -69,6 +69,11 @@ namespace rigid2d
     {
         double x = 0.0;
         double y = 0.0;
+        Vector2D() : x(0), y(0) {}
+        Vector2D(double x, double y) : x(x), y(y) {}
+        double length();
+        double distance(const Vector2D & vec);
+        double angle();
     };
 
     /// \brief add or subtract two Vector2D objects
