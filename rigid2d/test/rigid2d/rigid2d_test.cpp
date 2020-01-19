@@ -28,7 +28,8 @@ TEST(ConstExpr, almost_equal)
 }
 
 //test our 2D vectors
-TEST(Vector2D, OutOpOverload){
+TEST(Vector2D, opOverload)
+{
     std::string input = "3 2";
     std::string output = "x: 3\ty: 2\n";
     std::stringstream ss_in(input);
@@ -41,5 +42,33 @@ TEST(Vector2D, OutOpOverload){
     ASSERT_EQ(ss_out.str(), output);
 
 }
+
+TEST(Vector2D, constructors)
+{
+    Vector2D vec;
+    ASSERT_EQ(vec.x, 0);
+    ASSERT_EQ(vec.y, 0);
+
+    Vector2D vec2(3,2);
+    ASSERT_EQ(vec2.x, 3);
+    ASSERT_EQ(vec2.y, 2);
+}
+
+TEST(Vector2D, length_angle)
+{
+    Vector2D vec(3,4);
+    Vector2D vec2(-5,12);
+    ASSERT_EQ(5, vec.length());
+    ASSERT_EQ(13, vec2.length());
+}
+
+TEST(Vector2D, dist)
+{
+    Vector2D vec(8,15);
+    Vector2D vec1;
+    ASSERT_EQ(vec.distance(vec1), 17);
+}
+
+
 
 }
