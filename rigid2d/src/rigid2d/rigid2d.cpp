@@ -85,6 +85,55 @@ namespace rigid2d
 		return is;
 	}	
 
+	Vector2D operator+(Vector2D lhs, const Vector2D & rhs){
+		Vector2D output;
+		output.x = lhs.x + rhs.x;
+		output.y = lhs.y + rhs.y;
+		return output;
+	}
+
+	Vector2D& operator+=(Vector2D& lhs, const Vector2D & rhs){
+		lhs = lhs + rhs;
+		return lhs;
+	}
+
+	Vector2D operator-(Vector2D lhs, const Vector2D & rhs){
+		Vector2D output;
+		output.x = lhs.x - rhs.x;
+		output.y = lhs.y - rhs.y;
+		return output;
+	}
+
+	Vector2D& operator-=(Vector2D& lhs, const Vector2D & rhs){
+		lhs = lhs - rhs;
+		return lhs;
+	}
+
+	Vector2D operator*(double lhs, const Vector2D & rhs){
+		Vector2D vec;
+		vec.x = rhs.x * lhs;
+		vec.y = rhs.y * lhs;
+		return vec;
+	}
+
+	Vector2D& operator*=(double lhs, Vector2D & rhs){
+		rhs = lhs * rhs;
+		return rhs;
+	}
+
+	Vector2D operator*(Vector2D lhs, double rhs){
+		Vector2D vec;
+		vec.x = lhs.x * rhs;
+		vec.y = lhs.y * rhs;
+		return vec; 
+	}
+
+	Vector2D& operator*=(Vector2D& lhs, double rhs){
+		lhs = lhs * rhs;
+		return lhs;
+	}
+
+
 	//outstream op overload for transforms2ds
 	std::ostream & operator<<(std::ostream & os, const Transform2D & tf)
 	{
@@ -125,14 +174,14 @@ namespace rigid2d
 		return lhs;
 	}	
 
-	// Transform2D Twist2D::integrateTwist(void){
-	// 	float theta = this->omega; //since we are traversing for one unit time, omega is theta
+	// Transform2D Transform2D::integrateTwist(Twist2D twist){
+	// 	float theta = twist.omega; //since we are traversing for one unit time, omega is theta
 	// 	Transform2D Trans = Transform2D();
-	// 	Trans.stheta = this->omega * sin(theta); //make sure omega in rad/s
-	// 	Trans.ctheta = -pow(this->omega, 2) * (1 - cos(theta)) + 1;
-	// 	Trans.x = this->vel.x * theta * (1 - pow(this->omega, 2)) + this->vel.y * this-> omega * (cos(theta) - 1) + this->vel.x * pow(this->omega, 2) * sin(theta);
-	// 	Trans.y = this->vel.y * theta * (1 - pow(this->omega, 2)) + this->vel.x * this-> omega * (cos(theta) - 1) + this->vel.y * pow(this->omega, 2) * sin(theta);
-	// 	return Trans; 		
+	// 	Trans.stheta = twist.omega * sin(theta); //make sure omega in rad/s
+	// 	Trans.ctheta = -pow(twist.omega, 2) * (1 - cos(theta)) + 1;
+	// 	Trans.x = twist.vel.x * theta * (1 - pow(twist.omega, 2)) + twist.vel.y * twist.omega * (cos(theta) - 1) + twist.vel.x * pow(twist.omega, 2) * sin(theta);
+	// 	Trans.y = twist.vel.y * theta * (1 - pow(twist.omega, 2)) + twist.vel.x * twist.omega * (cos(theta) - 1) + twist.vel.y * pow(twist.omega, 2) * sin(theta);
+	// 	return Trans; 
 	// }
 
 	//Twist output operator overload

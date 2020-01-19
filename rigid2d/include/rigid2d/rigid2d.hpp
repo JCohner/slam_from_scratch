@@ -71,6 +71,24 @@ namespace rigid2d
         double y = 0.0;
     };
 
+    /// \brief add or subtract two Vector2D objects
+    /// \param lhs - the left hand operand
+    /// \param rhs - the right hand operand
+    /// \return the sum of two Vector2D objects
+    Vector2D operator+(Vector2D lhs, const Vector2D & rhs);
+    Vector2D& operator+=(Vector2D& lhs, const Vector2D & rhs);
+    Vector2D operator-(Vector2D lhs, const Vector2D & rhs);
+    Vector2D& operator-=(Vector2D& lhs, const Vector2D & rhs);
+
+    /// \brief multiply a scalar and a vector
+    /// \param lhs - the left hand operand
+    /// \param rhs - the right hand operand
+    /// \return product of the scalar and the vector (both rhs & lhs options)
+    Vector2D operator*(double lhs, const Vector2D & rhs);
+    Vector2D& operator*=(double lhs, const Vector2D & rhs);
+    Vector2D operator*(Vector2D lhs, double rhs);
+    Vector2D& operator*=(Vector2D& lhs, double rhs);
+
     //I tried to make this nice, but it mainly seems contrived, would like some feedback on how to make it better
     class NormVector2D : Vector2D {
         Vector2D norm;
@@ -116,6 +134,10 @@ namespace rigid2d
         //Angular rotation (oh boy did this as a class at first and learned why there are reasons one does not do that)
         double omega;
         Vector2D vel;
+        /* I am choosing to not implement a displacement function
+         that returns the member variables,
+         as they are public in this struct eitherway 
+         and this implementation is cleaner*/
     };
 
     /// \brief should print a human readable version of the twist:
@@ -129,8 +151,6 @@ namespace rigid2d
     /// Should be able to read input either as output by operator<< or
     /// as 3 numbers (degrees/s, vx, vy) separated by spaces or newlines
     std::istream & operator>>(std::istream & is, Twist2D & V);
-
-
 
 
     /// \brief a rigid body transformation in 2 dimensions
@@ -179,6 +199,12 @@ namespace rigid2d
         /// \returns Twist2D in a new frame defined by the adjoint of this Transform2D 
         Twist2D adjoint(Twist2D V) const;
 
+        /// \brief from Transform2D integrate twist (for one unit time) 
+        /// applies adjoint to Twist2D to return Twist2D in new frame
+        /// \param Twist2D to traverse for one unit time
+        /// \returns Transform2D that results from moving our current transform along the twist for one unit time
+        Transform2D intergrateTwist(Twist2D twist);
+
         /// \brief \see operator<<(...) (declared outside this class)
         /// for a description
         friend std::ostream & operator<<(std::ostream & os, const Transform2D & tf);
@@ -193,7 +219,6 @@ namespace rigid2d
         friend Transform2D& operator*=(Transform2D lhs, const Transform2D & rhs);
     };
 
-    /*MATT QUESTION: why does the redeclaration of this function not cause an error, how is this unique to 'friend'*/
     /// \brief should print a human readable version of the transform:
     /// An example output:
     /// dtheta (degrees): 90 dx: 3 dy: 5
