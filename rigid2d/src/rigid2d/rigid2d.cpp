@@ -155,16 +155,16 @@ namespace rigid2d
 	//outstream op overload for transforms2ds
 	std::ostream & operator<<(std::ostream & os, const Transform2D & tf)
 	{
-		std::cout << "theta: " << tf.theta << "\t" <<"ctheta: " << tf.ctheta << "\t" << "stheta: " << tf.stheta << "\n"<< "x: " << tf.x << " \t" << "y: " << tf.y << "\n";
+		os << "theta: " << tf.theta << "\t" <<"ctheta: " << tf.ctheta << "\t" << "stheta: " << tf.stheta << "\n"<< "x: " << tf.x << "\t" << "y: " << tf.y << "\n";
 		return os;
 	}
 
 	//insteam op overload for transforms
 	std::istream & operator>>(std::istream & is, Transform2D & tf)
 	{
-		std::cin >> tf.theta; 
-		std::cin >> tf.x;
-		std::cin >> tf.y;
+		is >> tf.theta; 
+		is >> tf.x;
+		is >> tf.y;
 		//use as an opprtunity to fill out fields defined by input
 		float x = cos(deg2rad(tf.theta));
 		float y = sin(deg2rad(tf.theta));
@@ -205,18 +205,23 @@ namespace rigid2d
 	//Twist output operator overload
 	std::ostream & operator<<(std::ostream & os, const Twist2D & V)
 	{
-		std::cout << "omega: " << V.omega << "\t" << "v.x: " << V.vel.x << "\t" << "v.y: " << V.vel.y <<"\n";
+		os << "omega: " << V.omega << "\t" << "v.x: " << V.vel.x << "\t" << "v.y: " << V.vel.y <<"\n";
 		return os;
 	}
 
 	//Twist input operator overload
 	std::istream & operator>>(std::istream & is, Twist2D & V)
 	{
-		std::cin >> V.omega;
-		std::cin >> V.vel.x;
-		std::cin >> V.vel.y;
+		is >> V.omega;
+		is >> V.vel.x;
+		is >> V.vel.y;
 		return is;
 	}
 
+	NormVector2D::NormVector2D(){
+		mag = 0;
+		Vector2D vec; // i would like to learn how to not have to include this line, something to do with new operator
+		norm = vec;
+	}
 
 }
