@@ -134,10 +134,11 @@ namespace rigid2d
 		return vec;
 	}
 
-	Vector2D& operator*=(double lhs, Vector2D & rhs){
-		rhs = lhs * rhs;
-		return rhs;
-	}
+	/*Ask if we need this implementation*/
+	// Vector2D& operator*=(double lhs, Vector2D & rhs){
+	// 	rhs = lhs * rhs;
+	// 	return rhs;
+	// }
 
 	Vector2D operator*(Vector2D lhs, double rhs){
 		Vector2D vec;
