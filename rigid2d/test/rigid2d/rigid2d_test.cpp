@@ -69,6 +69,47 @@ TEST(Vector2D, dist)
     ASSERT_EQ(vec.distance(vec1), 17);
 }
 
+TEST(Vector2D, add)
+{
+    Vector2D vec1(1,1);
+    Vector2D vec2(2,3);
+    Vector2D vec3;
+    Vector2D test_vec(3,4);
+    vec3 = vec1 + vec2;
+    ASSERT_EQ(vec3, test_vec);
+    vec1 += vec2;
+    ASSERT_EQ(vec1, vec3);
+}
+
+TEST(Vector2D, sub)
+{
+    Vector2D vec1(1,1);
+    Vector2D vec2(2,3);
+    Vector2D vec3;
+    Vector2D test_vec(1,2);
+    vec3 = vec2 - vec1;
+    ASSERT_EQ(vec3, test_vec);
+    vec2 -= vec1;
+    ASSERT_EQ(vec2, vec3);
+}
+
+TEST(Vector2D, mult)
+{
+    Vector2D vec1(1,2);
+    Vector2D test_vec(5,10);
+    double mul = 5;
+    Vector2D rhs_mul;
+    Vector2D lhs_mul;
+    rhs_mul = vec1 * mul;
+    lhs_mul = mul * vec1;
+    ASSERT_EQ(test_vec, lhs_mul);
+    ASSERT_EQ(lhs_mul, rhs_mul);
+    vec1 *= mul;
+    Vector2D vec2(1,2);
+    ASSERT_EQ(vec1, lhs_mul);
+
+}
+
 TEST(NormVector2D, constructors)
 {
     NormVector2D nvec;
