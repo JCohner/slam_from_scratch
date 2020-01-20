@@ -94,6 +94,12 @@ namespace rigid2d
     Vector2D operator*(Vector2D lhs, double rhs);
     Vector2D& operator*=(Vector2D& lhs, double rhs);
 
+    /// \brief check equality
+    /// \param lhs - the left hand operand
+    /// \param rhs - the right hand operand
+    /// \return bool of equality
+    bool operator==(const Vector2D & lhs, const Vector2D & rhs);
+
     //I tried to make this nice, but it mainly seems contrived, would like some feedback on how to make it better
     class NormVector2D : Vector2D {
         Vector2D norm;
