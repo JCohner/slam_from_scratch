@@ -151,6 +151,10 @@ namespace rigid2d
 		return lhs;
 	}
 
+	bool operator==(const Vector2D & lhs, const Vector2D & rhs)
+	{
+		return ((lhs.x - rhs.x == 0) && (lhs.y - rhs.y == 0));
+	}
 
 	//outstream op overload for transforms2ds
 	std::ostream & operator<<(std::ostream & os, const Transform2D & tf)
