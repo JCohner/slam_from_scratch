@@ -98,19 +98,27 @@ namespace rigid2d
     class NormVector2D : Vector2D {
         Vector2D norm;
         double mag; 
+        
         void normalize(Vector2D vec){
-            mag = sqrt((pow(norm.x,2) + pow(norm.y,2)));
-            norm.x = vec.x / mag;
-            norm.y = vec.y / mag;
+            mag = pow(vec.x,2) + pow(vec.y,2);
+            norm.x = pow(vec.x,2) / mag;
+            norm.y = pow(vec.y,2) / mag;
 
         }
         public:
             NormVector2D();
             explicit NormVector2D(const Vector2D & dir){
                 normalize(dir);
+                mag = 1;
+            }
+            NormVector2D(double x, double y){
+                Vector2D vec(x,y);
+                normalize(vec);
+                mag = 1;
             }
             Vector2D reorient(Vector2D dir){
                 normalize(dir);
+                mag = 1;
                 return norm;
             }
             Vector2D get(){
