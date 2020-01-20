@@ -69,6 +69,42 @@ TEST(Vector2D, dist)
     ASSERT_EQ(vec.distance(vec1), 17);
 }
 
+TEST(NormVector2D, constructors)
+{
+    NormVector2D nvec;
+    ASSERT_EQ(nvec.get().x , 0);
+    ASSERT_EQ(nvec.get().y , 0);
+    //this also tests normalization
+    NormVector2D nvec2(3, 4);
+    ASSERT_EQ(nvec2.get().y , pow(4,2)/pow(5,2));
+    ASSERT_EQ(nvec2.get().x , pow(3,2)/pow(5,2));
+}
 
+TEST(Twist2D, opOverload)
+{
+    std::string input = "5 3 2";
+    std::string output = "omega: 5\tv.x: 3\tv.y: 2\n";
+    std::stringstream ss_in(input);
+    std::stringstream ss_out;
+
+    Twist2D twist;
+    ss_in >> twist;
+    ss_out << twist;
+
+    ASSERT_EQ(ss_out.str(), output);
+}
+
+TEST(Transform2D, constructors_iooverloads)
+{
+    Transform2D Tab;
+    std::string input = "90 1 1";
+    std::string output = "theta: 90\tctheta: 0\tstheta: 1\nx: 1\ty: 1\n";
+    std::stringstream ss_in(input);
+    std::stringstream ss_out;
+    input = "0 2 2";
+    ss_in >> Tab;
+    ss_out << Tab;
+    ASSERT_EQ(ss_out.str(), output);
+}
 
 }
