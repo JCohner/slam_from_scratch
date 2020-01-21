@@ -153,6 +153,9 @@ namespace rigid2d
         //Angular rotation (oh boy did this as a class at first and learned why there are reasons one does not do that)
         double omega;
         Vector2D vel;
+        Twist2D() : omega(0), vel(0,0) {};
+        Twist2D(double omega, double vx, double vy) : omega(omega), vel(vx,vy) {};
+
     };
 
     /// \brief should print a human readable version of the twist:
