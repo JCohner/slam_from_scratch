@@ -171,10 +171,87 @@ TEST(Transform2D, opOverload)
     std::string output = "theta: 90\tctheta: 0\tstheta: 1\nx: 1\ty: 1\n";
     std::stringstream ss_in(input);
     std::stringstream ss_out;
-    input = "0 2 2";
     ss_in >> Tab;
     ss_out << Tab;
     ASSERT_EQ(ss_out.str(), output);
+}
+
+TEST(Transform2D, inv)
+{
+    Vector2D vec0(1,1);
+    Vector2D vec1(2,2);
+    Transform2D Tab(vec0, PI/2);
+    Transform2D Tbc(vec1, 0);
+    Transform2D Tba, Tcb, Tac, Tca;
+    Tba = Tab.inv();
+    Tcb = Tbc.inv();
+    Tac = Tab * Tbc;
+    Tca = Tac.inv();
+
+    double arr0[3];
+    double arr1[3];
+    Tac.displacement(arr0);
+    ASSERT_DOUBLE_EQ(arr0[0], 90);
+    ASSERT_DOUBLE_EQ(arr0[1], -1);
+    ASSERT_DOUBLE_EQ(arr0[2], 3);
+    Tba.displacement(arr1);
+    ASSERT_DOUBLE_EQ(arr1[0], -90);
+    ASSERT_DOUBLE_EQ(arr1[1], -1);
+    ASSERT_DOUBLE_EQ(arr1[2], 1);
+    Tac.inv().displacement(arr0);
+    ASSERT_DOUBLE_EQ(arr0[0], -90);
+    ASSERT_DOUBLE_EQ(arr0[1], -3);
+    ASSERT_DOUBLE_EQ(arr0[2], -1);
+
+}
+
+TEST(Transform2D, parenOpOverload)
+{
+    Vector2D vec0(1,1);
+    Vector2D vec1(2,2);
+    Transform2D Tab(vec0, PI/2);
+    Transform2D Tbc(vec1, 0);
+    Transform2D Tba, Tcb, Tac, Tca;
+    Tba = Tab.inv();
+    Tcb = Tbc.inv();
+    Tac = Tab * Tbc;
+    Tca = Tac.inv();
+    Vector2D va, vb, vc(3,3);
+    va = Tac(vc);
+    vb = Tbc(vc);
+    ASSERT_DOUBLE_EQ(va.x, -4);
+    ASSERT_DOUBLE_EQ(va.y, 6);
+    ASSERT_DOUBLE_EQ(vb.x, 5);    
+    ASSERT_DOUBLE_EQ(vb.y, 5);    
+}
+
+TEST(Transform2D, adjoint)
+{
+    Vector2D vec0(1,1);
+    Vector2D vec1(2,2);
+    Transform2D Tab(vec0, PI/2);
+    Transform2D Tbc(vec1, 0);
+    Transform2D Tba, Tcb, Tac, Tca;
+    Tba = Tab.inv();
+    Tcb = Tbc.inv();
+    Tac = Tab * Tbc;
+    Tca = Tac.inv();
+    Vector2D va(1,1), vb(4,4), vc(3,3); //va and vb here reflect the expected velocity components of twists produced by the adjoint of Tac & Tbc
+
+    Twist2D Va, Vb, Vc(1,2,2);
+    Va = Tac.adjoint(Vc);
+    Vb = Tbc.adjoint(Vc);
+    ASSERT_EQ(1, Va.omega);
+    ASSERT_EQ(1, Vb.omega);
+    ASSERT_DOUBLE_EQ(va.x, Va.vel.x);
+    ASSERT_DOUBLE_EQ(va.y, Va.vel.y);
+    ASSERT_DOUBLE_EQ(vb.x, Vb.vel.x);
+    ASSERT_DOUBLE_EQ(vb.y, Vb.vel.y);
+}
+
+TEST(Transform2D, integrateTwist)
+{
+    //TODO: implement this
 }
 
 }
