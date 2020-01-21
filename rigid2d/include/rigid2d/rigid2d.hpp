@@ -50,10 +50,20 @@ namespace rigid2d
         return deg;
     }
 
+    constexpr double normalize_angle(double rad)
+    {
+        int sign = rad / abs(rad);
+        while (abs(rad) >= PI){
+            if (sign){
+                rad -= 2 * PI;
+            } else {
+                rad += 2 * PI;
+            }
+        }
+        return rad;
+    }
+
     /// static_assertions test compile time assumptions.
-    /// You should write at least one more test for each function
-    /// You should also purposely (and temporarily) make one of these tests fail
-    /// just to see what happens
     static_assert(almost_equal(0, 0), "is_zero failed");
     static_assert(almost_equal(0.001, 0.005, 1.0e-2), "is_zero failed");
 
@@ -62,6 +72,10 @@ namespace rigid2d
     static_assert(almost_equal(rad2deg(0.0), 0.0), "rad2deg) failed");
 
     static_assert(almost_equal(deg2rad(rad2deg(2.1)), 2.1), "deg2rad failed");
+
+    static_assert(almost_equal(normalize_angle(1.5 * PI), -0.5 * PI), "normalize_angle failed");
+    static_assert(almost_equal(normalize_angle(3 * PI), PI), "normalize_angle failed");
+    static_assert(almost_equal(normalize_angle(-.75 * PI), -.75 * PI), "normalize_angle failed");
 
 
     /// \brief A 2-Dimensional Vector
