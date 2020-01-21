@@ -153,10 +153,6 @@ namespace rigid2d
         //Angular rotation (oh boy did this as a class at first and learned why there are reasons one does not do that)
         double omega;
         Vector2D vel;
-        /* I am choosing to not implement a displacement function
-         that returns the member variables,
-         as they are public in this struct eitherway 
-         and this implementation is cleaner*/
     };
 
     /// \brief should print a human readable version of the twist:
@@ -197,6 +193,10 @@ namespace rigid2d
         /// \param rot - the rotation, in radians
         Transform2D(const Vector2D & trans, double radians);
 
+        /// \brief Returns private variables theta,x,y of object
+        /// \param arr - pointer to double array where parameters will be stored
+        void displacement(double * arr);
+
         /// \brief apply a transformation to a Vector2D
         /// \param v - the vector to transform
         /// \return a vector in the new coordinate system
@@ -205,12 +205,6 @@ namespace rigid2d
         /// \brief invert the transformation
         /// \return the inverse transformation. 
         Transform2D inv() const;
-
-        /// \brief compose this transform with another and store the result 
-        /// in this object
-        /// \param rhs - the first transform to apply
-        /// \returns a reference to the newly transformed operator
-        Transform2D & operator*=(const Transform2D & rhs);
 
         /// \brief from Transform2D calculates adjoint
         /// applies adjoint to Twist2D to return Twist2D in new frame
