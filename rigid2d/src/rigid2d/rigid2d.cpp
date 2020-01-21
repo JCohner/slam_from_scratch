@@ -31,7 +31,8 @@ namespace rigid2d
 	}
 
 	//combo constructor
-	Transform2D::Transform2D(const Vector2D & trans, double radians){
+	Transform2D::Transform2D(const Vector2D & trans, double radians)
+	{
 		theta = rad2deg(radians);
 		ctheta = cos(radians);
 		stheta = sin(radians);
@@ -40,14 +41,24 @@ namespace rigid2d
 	}
 
 	//aply transform to vector
-	Vector2D Transform2D::operator()(Vector2D v) const{
+	Vector2D Transform2D::operator()(Vector2D v) const
+	{
 		Vector2D v_new;
 		v_new.x = this->ctheta * v.x - this->stheta * v.y + this->x;
 		v_new.y = this->stheta * v.x + this->ctheta * v.y + this->y;
 		return v_new;
 	}
 
-	Transform2D Transform2D::inv() const {
+	void Transform2D::displacement(double * arr)
+	{
+            arr[0] = theta;
+            arr[1] = x;
+            arr[2] = y;
+            return;
+	}
+
+	Transform2D Transform2D::inv() const 
+	{
 		Transform2D inv;
 		float x_temp = -cos(deg2rad(this->theta)) * this->x - sin(deg2rad(this->theta)) * this->y;
 		float y_temp = sin(deg2rad(this->theta)) * this->x - cos(deg2rad(this->theta)) * this->y;
@@ -60,7 +71,8 @@ namespace rigid2d
 		return inv;
 	}
 
-	Twist2D Transform2D::adjoint(Twist2D V) const{
+	Twist2D Transform2D::adjoint(Twist2D V) const
+	{
 		Twist2D V_prime;
 		V_prime.omega = V.omega;
 		V_prime.vel.x = cos(deg2rad(this->theta)) * V.vel.x - sin(deg2rad(this->theta)) * V.vel.y + V_prime.omega * this->y;
@@ -69,7 +81,8 @@ namespace rigid2d
 		return V_prime;
 	}
 
-	double Vector2D::length(){
+	double Vector2D::length()
+	{
 		double len = sqrt(pow(this->x, 2) + pow(this->y, 2));
 		return len;
 	}

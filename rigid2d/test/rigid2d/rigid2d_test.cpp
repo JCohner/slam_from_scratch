@@ -107,7 +107,6 @@ TEST(Vector2D, mult)
     vec1 *= mul;
     Vector2D vec2(1,2);
     ASSERT_EQ(vec1, lhs_mul);
-
 }
 
 TEST(NormVector2D, constructors)
@@ -135,7 +134,37 @@ TEST(Twist2D, opOverload)
     ASSERT_EQ(ss_out.str(), output);
 }
 
-TEST(Transform2D, constructors_iooverloads)
+TEST(Transform2D, constructors)
+{
+    Transform2D Tab;
+    double arr[3];
+    Tab.displacement(arr);
+    ASSERT_EQ(arr[0],0);
+    ASSERT_EQ(arr[1],0);
+    ASSERT_EQ(arr[2],0);
+
+    Vector2D vec(2,4);
+    Transform2D Tbc(vec);
+    Tbc.displacement(arr);
+    ASSERT_EQ(arr[0],0);
+    ASSERT_EQ(arr[1],2);
+    ASSERT_EQ(arr[2],4);
+
+    Transform2D Txy(PI);
+    Txy.displacement(arr);
+    ASSERT_EQ(arr[0], rad2deg(PI));
+    ASSERT_EQ(arr[1],0);
+    ASSERT_EQ(arr[2],0);
+
+    Transform2D Tblorb(vec, PI);
+    Tblorb.displacement(arr);
+    ASSERT_EQ(arr[0],rad2deg(PI));
+    ASSERT_EQ(arr[1],2);
+    ASSERT_EQ(arr[2],4);
+
+}
+
+TEST(Transform2D, opOverload)
 {
     Transform2D Tab;
     std::string input = "90 1 1";
