@@ -214,7 +214,7 @@ namespace rigid2d
 		Transform2D Trans; //from transform *this aka Twb we will find where input twist takes it aka Twbp
 		if (twist.omega != 0){
 			Vector2D vel = twist.vel;
-			float theta = rad2deg(twist.omega) + this->theta; //since we are traversing for one unit time, omega is theta
+			float theta = rad2deg(twist.omega); //+ this->theta; //since we are traversing for one unit time, omega is theta
 			int omega = twist.omega/abs(twist.omega); //get the correct sign for unit omega
 			float stheta = sin(deg2rad(theta));
 			float ctheta = cos(deg2rad(theta));
@@ -223,9 +223,9 @@ namespace rigid2d
 			Trans.theta = rad2deg(atan2(Trans.stheta, Trans.ctheta));
 			float x = vel.x * sin(deg2rad(theta)) + vel.y * omega * (cos(deg2rad(theta)) - 1);
 			float y = vel.x * omega * (1-cos(deg2rad(theta))) + vel.y * sin(deg2rad(theta));
-			Trans.x = x + this->x;
-			Trans.y = y + this->y;
-			std::cout << Trans;
+			Trans.x = x;//+ this->x;
+			Trans.y = y; //+ this->y;
+			Trans = *this * Trans; //Trans is Tbb' here, premultiply it by Twb to get Twb'
 		} else {
 			//no rotation case
 			Vector2D vel = (*this)(twist.vel); //velocity of input twist in frame Twb
