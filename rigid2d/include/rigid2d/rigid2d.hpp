@@ -53,7 +53,7 @@ namespace rigid2d
     constexpr double normalize_angle(double rad)
     {
         int sign = rad / abs(rad);
-        while (abs(rad) >= PI){
+        while (abs(rad) > PI){
             if (sign){
                 rad -= 2 * PI;
             } else {
@@ -164,8 +164,8 @@ namespace rigid2d
 
     struct Twist2D
     {
-        //Angular rotation (oh boy did this as a class at first and learned why there are reasons one does not do that)
-        double omega;
+        //Angular rotation 
+        double omega; //rad
         Vector2D vel;
         Twist2D() : omega(0), vel(0,0) {};
         Twist2D(double omega, double vx, double vy) : omega(omega), vel(vx,vy) {};
@@ -246,7 +246,7 @@ namespace rigid2d
         /// \brief \see operator*(...) (declared outside this class)
         /// for a description
         friend Transform2D operator*(Transform2D lhs, const Transform2D & rhs);
-        friend Transform2D& operator*=(Transform2D lhs, const Transform2D & rhs);
+        friend Transform2D& operator*=(Transform2D & lhs, const Transform2D & rhs);
     };
 
     /// \brief should print a human readable version of the transform:
