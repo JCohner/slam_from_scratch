@@ -210,15 +210,37 @@ namespace rigid2d
 		return lhs;
 	}	
 
-	// Transform2D Transform2D::integrateTwist(Twist2D twist){
-	// 	float theta = twist.omega; //since we are traversing for one unit time, omega is theta
-	// 	Transform2D Trans = Transform2D();
-	// 	Trans.stheta = twist.omega * sin(theta); //make sure omega in rad/s
-	// 	Trans.ctheta = -pow(twist.omega, 2) * (1 - cos(theta)) + 1;
-	// 	Trans.x = twist.vel.x * theta * (1 - pow(twist.omega, 2)) + twist.vel.y * twist.omega * (cos(theta) - 1) + twist.vel.x * pow(twist.omega, 2) * sin(theta);
-	// 	Trans.y = twist.vel.y * theta * (1 - pow(twist.omega, 2)) + twist.vel.x * twist.omega * (cos(theta) - 1) + twist.vel.y * pow(twist.omega, 2) * sin(theta);
-	// 	return Trans; 
-	// }
+	Transform2D Transform2D::intergrateTwist(Twist2D twist){
+		Transform2D Trans; //from transform *this aka Twb we will find where input twist takes it aka Twbp
+		if (twist.omega != 0){
+			Vector2D vel = twist.vel;
+			float theta = rad2deg(twist.omega) + this->theta; //since we are traversing for one unit time, omega is theta
+			int omega = twist.omega/abs(twist.omega); //get the correct sign for unit omega
+			float stheta = sin(deg2rad(theta));
+			float ctheta = cos(deg2rad(theta));
+			Trans.stheta = (almost_equal(stheta,0, 1.0e-6)) ? 0 : stheta; //make sure omega in rad/s
+			Trans.ctheta = (almost_equal(ctheta, 0,1.0e-6)) ? 0 : ctheta;
+			Trans.theta = rad2deg(atan2(Trans.stheta, Trans.ctheta));
+			float x = vel.x * sin(deg2rad(theta)) + vel.y * omega * (cos(deg2rad(theta)) - 1);
+			float y = vel.x * omega * (1-cos(deg2rad(theta))) + vel.y * sin(deg2rad(theta));
+			Trans.x = x + this->x;
+			Trans.y = y + this->y;
+			std::cout << Trans;
+		} else {
+			//no rotation case
+			Vector2D vel = (*this)(twist.vel); //velocity of input twist in frame Twb
+			Trans.theta = this->theta;
+			Trans.ctheta = this->ctheta;
+			Trans.stheta = this->stheta;
+			//new position based on unit timestep of velocity
+			Trans.x = vel.x;
+			Trans.y = vel.y; //NOT SURE IF THIS IS RIGHT
+		}
+		// //return the transform wrt to the base frame that started the twist
+		// Trans*= *this;
+		return Trans;
+
+	}
 
 	//Twist output operator overload
 	std::ostream & operator<<(std::ostream & os, const Twist2D & V)
