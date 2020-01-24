@@ -249,9 +249,37 @@ TEST(Transform2D, adjoint)
     ASSERT_DOUBLE_EQ(vb.y, Vb.vel.y);
 }
 
-TEST(Transform2D, integrateTwist)
+TEST(Transform2D, intergrateTwist)
 {
-    //TODO: implement this
+    Transform2D Twb, Tbbp, Twbp;
+    std::string input = "90 -1 3";
+    std::stringstream ss(input);
+    ss >> Twb;
+    Twist2D twist;
+    input = " 0 1 1";
+    ss.str(std::string());
+    ss.clear();
+    ss << input;
+    ss >> twist;
+    Twbp = Twb.intergrateTwist(twist);
+    double Twbp_vals[3];
+    Twbp.displacement(Twbp_vals);
+    ASSERT_EQ(Twbp_vals[0], 90);
+    ASSERT_EQ(Twbp_vals[1], -2);
+    ASSERT_EQ(Twbp_vals[2], 4);
+
+    //now with nonzero angular vel
+    input = "1 1 1";
+    ss.str(std::string());
+    ss.clear();
+    ss << input;
+    ss >> twist;
+    Twbp = Twb.intergrateTwist(twist);
+    Twbp.displacement(Twbp_vals);
+    ASSERT_EQ(almost_equal(Twbp_vals[0], 147.296, 1.0e-3), 1);
+    ASSERT_EQ(almost_equal(Twbp_vals[1], -2.30117, 1.0e-4), 1);
+    ASSERT_EQ(almost_equal(Twbp_vals[2], 5.38177, 1.0e-4), 1);
+
 }
 
 }
