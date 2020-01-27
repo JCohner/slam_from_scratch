@@ -1,7 +1,6 @@
 *.png
 *.mp4
 /CMakeLists.txt
-nuturtle_description/CMakeLists.txt
 rigid2d_test
 rigid2d/output.txt
 testy*
