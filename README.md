@@ -2,8 +2,8 @@
 #### Josh Cohen
 
 ## Current Task (s):
-### E.001
-### E.002
+### E.003
+### E.004
 
 ## Tasks Submitted:
 ### A.000
@@ -28,5 +28,7 @@
 ### C.009
 ### C.010
 ### E.000
+### E.001
+### E.002
 
 ## Tasks Completed:
