@@ -30,6 +30,7 @@ namespace rigid2d
 	    /// \param wheel_radius - the raidus of the wheels
 	    DiffDrive(Twist2D pose, double wr, double wb): Twb(pose.vel, pose.omega), wheel_base(wb), wheel_radius(wr), wheel_vels() {};
 	    DiffDrive(double wr, double wb): Twb(), wheel_base(wb), wheel_radius(wr) {};
+	    DiffDrive(Transform2D pose): Twb(pose) {};
 	    /// \brief determine the wheel velocities required to make the robot
 	    ///        move with the desired linear and angular velocities
 	    /// \param twist - the desired twist in the body frame of the robot
