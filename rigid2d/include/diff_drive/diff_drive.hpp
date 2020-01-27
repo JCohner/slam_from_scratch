@@ -7,6 +7,7 @@ namespace rigid2d
 {
 	struct WheelVelocities {
 		WheelVelocities(): left(0), right(0){};
+		WheelVelocities(double left, double right) : left(left), right(right) {};
 		double left; //when looking from behind
 		double right;
 	};
@@ -27,7 +28,7 @@ namespace rigid2d
 	    /// \param wheel_base - the distance between the wheel centers
 	    /// \param wheel_radius - the raidus of the wheels
 	    DiffDrive(Twist2D pose, double wr, double wb): Twb(pose.vel, pose.omega), wheel_base(wb), wheel_radius(wr), wheel_vels() {};
-
+	    DiffDrive(double wr, double wb): Twb(), wheel_base(wb), wheel_radius(wr) {};
 	    /// \brief determine the wheel velocities required to make the robot
 	    ///        move with the desired linear and angular velocities
 	    /// \param twist - the desired twist in the body frame of the robot
