@@ -2,6 +2,7 @@
 #define DIFF_DRIVE_INCLUDE_GUARD_HPP
 
 #include "rigid2d/rigid2d.hpp"
+#include <exception>
 
 namespace rigid2d
 {

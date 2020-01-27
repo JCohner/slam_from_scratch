@@ -2,6 +2,9 @@
 
 namespace rigid2d{
 	WheelVelocities DiffDrive::twistToWheels(Twist2D Vb){		
+		if (Vb.vel.y != 0){
+			throw std::invalid_argument("invalid body twist: y component request\n");
+		}
 		//sets and returns wheel vel from body twist
 		double r = this->wheel_radius;
 		double d = this->wheel_base;
