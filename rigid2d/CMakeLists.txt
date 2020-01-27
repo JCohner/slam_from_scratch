@@ -128,6 +128,7 @@ include_directories(
 
 # # Declare a C++ library
 add_library(${PROJECT_NAME}
+  src/waypoints/waypoints.cpp
   src/diff_drive/diff_drive.cpp
   src/${PROJECT_NAME}/${PROJECT_NAME}.cpp
 )
@@ -218,6 +219,8 @@ install(DIRECTORY include/${PROJECT_NAME}/
 if (CATKIN_ENABLE_TESTING)
     catkin_add_gtest(${PROJECT_NAME}_test test/${PROJECT_NAME}/${PROJECT_NAME}_test.cpp)
     catkin_add_gtest(diff_drive_test test/diff_drive/diff_drive_test.cpp)
+    catkin_add_gtest(waypoints_test test/waypoints/waypoints_test.cpp)
     target_link_libraries(${PROJECT_NAME}_test ${catkin_Libraries} gtest_main ${PROJECT_NAME})
     target_link_libraries(diff_drive_test ${catkin_Libraries} gtest_main ${PROJECT_NAME})
+    target_link_libraries(waypoints_test ${catkin_Libraries} gtest_main ${PROJECT_NAME})
 endif()
