@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   rostest 
   sensor_msgs
   nav_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -111,7 +112,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 # INCLUDE_DIRS include
 # LIBRARIES rigid2d
-#  CATKIN_DEPENDS roscpp
+ CATKIN_DEPENDS nav_msgs sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -144,16 +145,19 @@ add_library(${PROJECT_NAME}
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
+add_executable(odometer_node src/odometer.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME ${PROJECT_NAME}_node PREFIX "")
+set_target_properties(odometer_node PROPERTIES OUTPUT_NAME odometer PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(odometer_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
@@ -161,7 +165,11 @@ target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
   # diff_drive causes linking error will have to think about how to incorp
 )
-
+target_link_libraries(odometer_node
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}
+  # diff_drive causes linking error will have to think about how to incorp
+)
 #############
 ## Install ##
 #############
@@ -179,6 +187,9 @@ target_link_libraries(${PROJECT_NAME}_node
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
 install(TARGETS ${PROJECT_NAME}_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+install(TARGETS odometer_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
