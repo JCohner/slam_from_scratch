@@ -39,15 +39,39 @@ namespace rigid2d {
 
 	TEST(DiffDrive,wheelsToTwist)
 	{
+		WheelVelocities vels(-19.6349, 19.6349);
+		DiffDrive driver(0.02, 1.0);
+		Twist2D twist = driver.wheelsToTwist(vels);
+		ASSERT_NEAR(twist.omega, PI/4, 1.0e-4);
+		ASSERT_EQ(twist.vel.x, 0);
+		ASSERT_EQ(twist.vel.y, 0);
+		vels.left = 30.36504;
+		vels.right = 69.6349;
+		twist = driver.wheelsToTwist(vels);
+		ASSERT_NEAR(twist.omega, PI/4, 1.0e-4);
+		ASSERT_NEAR(twist.vel.x, 1,1.0e-4);
+		ASSERT_EQ(twist.vel.y, 0);
 
 	}
 	TEST(DiffDrive, updateOdometry)
 	{
-
+		DiffDrive diff_drive(0.2, 1.0);
+		diff_drive.updateOdometry(10,10);
+		Twist2D pose;
+		pose = diff_drive.pose();
+		ASSERT_EQ(pose.omega, 0); //theta should remain zero
+		ASSERT_EQ(pose.vel.x, 0.4);
+		ASSERT_EQ(pose.vel.y, 0);
 	}
 	TEST(DiffDrive, feedforward)
 	{
-
+		DiffDrive diff_drive(0.2, 1.0);
+		Twist2D Vb(PI/2, 5, 0);
+		diff_drive.feedforward(Vb);
+		Twist2D pos = diff_drive.pose();
+		ASSERT_EQ(deg2rad(pos.omega), PI/2);
+		ASSERT_EQ(pos.vel.y, 5);
+		ASSERT_EQ(pos.vel.x, 5);
 	}
 	TEST(DiffDrive, pose)
 	{
