@@ -54,6 +54,9 @@
   <exec_depend>roscpp</exec_depend>
   <test_depend>rosunit</test_depend>
   <build_depend>rostest</build_depend>
+  <depend>tf</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

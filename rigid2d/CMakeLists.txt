@@ -14,7 +14,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rostest #youre getting it whether you like it or not!
+  rostest 
+  sensor_msgs
+  nav_msgs
 )
 
 ## System dependencies are found with CMake's conventions
