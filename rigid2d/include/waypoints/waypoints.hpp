@@ -13,16 +13,17 @@ namespace rigid2d
 		double angular_vel = 1;
 		double trans_vel = 2;
 		unsigned int time_it = 0;
-		std::vector<std::vector <double>> waypoints{ {1,1,0}, {1,3, PI/4.0}, {2,4, -PI/4.0}, {3,3, -PI/2}, {3,1, -PI} };
+		std::vector<std::vector <int>> waypoints;
 		unsigned int state;
 		double freq;
-		void init();
 		int state_check(double dist, double speed, double ellapsed);
 	public:
-		Waypoints() : state(0), freq(60)  {init();};
+		Waypoints() : state(0), freq(60)  {};
+		void init();
 		/// \brief based on current state returns needed body velocity to get to next waypoint
 		/// \return a bdy velocity that gets turtlebot to the next waypoint
 		Twist2D nextWaypoint();
+		void addWaypoint(std::vector<int> newWaypoint);
 		void loop();
 	};
 }
