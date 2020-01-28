@@ -51,7 +51,7 @@ void js_callback(sensor_msgs::JointState data){
 	transformStamped.transform.translation.y = data.position[1];
 	transformStamped.transform.translation.z = 0.0;
 	tf2::Quaternion q;
-	q.setRPY(0,0,data.posiiton[2]); //really not sure if this correlates to theta or z, supposed to be theta
+	q.setRPY(0,0,data.position[2]); //really not sure if this correlates to theta or z, supposed to be theta
 	transformStamped.transform.rotation.x = q.x();
 	transformStamped.transform.rotation.y = q.y();
 	transformStamped.transform.rotation.z = q.z();
