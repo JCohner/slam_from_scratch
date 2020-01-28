@@ -50,4 +50,9 @@ namespace rigid2d
 		}
 		return flag;
 	}
+
+	void Waypoints::addWaypoint(std::vector<int> newWaypoint){
+		waypoints.push_back(newWaypoint); //TODO: implement error checking
+		return;
+	}
 }
