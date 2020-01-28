@@ -17,10 +17,17 @@ rigid2d::DiffDrive robot;
 
 void vel_callback(geometry_msgs::Twist data){
 	sensor_msgs::JointState msg;
+	//we are representing this as 1/frequency of the twist 
+	rigid2d::Twist2D Vb(data.angular.z/freq, data.linear.x/freq, 0);	
+	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(Vb); //commanded velocities
+	
+	robot.updateOdometry(wheel_vels.left, wheel_vels.right); //simulate what the motors actually do
+	int encoders[2];
+	robot.get_encoders(encoders);
+	robot.set_encoders(encoders[0] + wheel_vels.left, encoders[1] + wheel_vels.right); //simulate what the encoders read
 
-
-
-
+	msg.name= {left_wheel, right_wheel};
+	msg.velocity = {wheel_vels.left, wheel_vels.right};
 	js_pub.publish(msg);
 }
 	
@@ -37,10 +44,10 @@ void setup(){
 }
 
 void loop(){
-
+	ros::Rate r(freq);
 	while(ros::ok()){
 		ros::spinOnce();
-
+		r.sleep();
 	}
 }
 
