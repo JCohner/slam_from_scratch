@@ -18,19 +18,20 @@ namespace rigid2d
 	private:
 		Transform2D Twb;
 		double wheel_base, wheel_radius;
+		int left_count, right_count;
 		WheelVelocities wheel_vels;
 	public:
 	    /// \brief the default constructor creates a robot at (0,0,0), with a fixed wheel base and wheel radius
-	    DiffDrive() : Twb(), wheel_base(.2), wheel_radius(.1), wheel_vels() {}; 
+	    DiffDrive() : Twb(), wheel_base(.2), wheel_radius(.1), left_count(0), right_count(0), wheel_vels() {}; 
 
 	    /// \brief create a DiffDrive model by specifying the pose, and geometry
 	    ///
 	    /// \param pose - the current position of the robot
 	    /// \param wheel_base - the distance between the wheel centers
 	    /// \param wheel_radius - the raidus of the wheels
-	    DiffDrive(Twist2D pose, double wr, double wb): Twb(pose.vel, pose.omega), wheel_base(wb), wheel_radius(wr), wheel_vels() {};
-	    DiffDrive(double wr, double wb): Twb(), wheel_base(wb), wheel_radius(wr) {};
-	    DiffDrive(Transform2D pose): Twb(pose) {};
+	    DiffDrive(Twist2D pose, double wr, double wb): Twb(pose.vel, pose.omega), wheel_base(wb), wheel_radius(wr), left_count(0), right_count(0), wheel_vels() {};
+	    DiffDrive(double wr, double wb): Twb(), wheel_base(wb), wheel_radius(wr), left_count(0), right_count(0), wheel_vels(){};
+	    DiffDrive(Transform2D pose): Twb(pose), left_count(0), right_count(0), wheel_vels() {};
 	    /// \brief determine the wheel velocities required to make the robot
 	    ///        move with the desired linear and angular velocities
 	    /// \param twist - the desired twist in the body frame of the robot
@@ -69,6 +70,24 @@ namespace rigid2d
 	    /// \param wr - wheel radius in m
 	    /// \prarm wb - wheel base in m
 	    void set_wheel_props(double wr, double wb);
+
+	 	/// \get encoder counts
+	    /// \param takes an int counts[2] that it will populate with the left and right encoder counts
+	    void get_encoders(int * counts){
+	    	counts[0] = left_count;
+	    	counts[1] = right_count;
+	    	return;
+	    }
+		
+		 /// \set encoder counts
+	    /// \param left - left encoder count
+	    /// \prarm right - right encoder count
+	    void set_encoders(int left, int right){
+	    	left_count = left;
+	    	right_count = right;
+	    	return;
+	    }
+
 
 	};
 } 
