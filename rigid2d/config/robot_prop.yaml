@@ -1,0 +1,4 @@
+wheel:
+  width: 0.05 #width of wheels
+  radius: 0.10 #radius of wheels
+  base: 0.20 #distance between centers of wheels
