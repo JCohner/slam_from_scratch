@@ -1,0 +1,4 @@
+<launch>
+	<rosparam command="load" file="$(find tsim)/config/turtle_way.yaml"/>
+	<!-- <node pkg="tsim" type="turtle_way" name="turtle_way"/> -->
+</launch>
