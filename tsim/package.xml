@@ -67,7 +67,10 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_srvs</exec_depend>
   <exec_depend>turtlesim</exec_depend>
-
+  <build_depend>rigid2d</build_depend>
+  <exec_depend>rigid2d</exec_depend>
+  <build_export_depend>rigid2d</build_export_depend>
+  <!-- <depend>rigid2d</depend> -->
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
