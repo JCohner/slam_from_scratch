@@ -1,4 +1,3 @@
-#include <ros/ros.h>
 #include "waypoints/waypoints.hpp"
 
 namespace rigid2d
