@@ -260,7 +260,7 @@ public:
 	// }
 
 	//Main Loop Function	
-	int loop(){
+	void loop(){
 		ros::ServiceServer reset_service = nh.advertiseService("/traj_reset", &TurtleRect::reset_callback, this);
 		ROS_INFO("Service Started");
 		ros::Subscriber pose_sub = nh.subscribe("/turtle1/pose", 1, &TurtleRect::pose_callback, this);
