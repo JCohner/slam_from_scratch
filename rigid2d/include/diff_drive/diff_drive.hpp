@@ -65,6 +65,11 @@ namespace rigid2d
 	    /// \brief reset the robot to the given position/orientation
 	    void reset(Twist2D ps);
 
+	    /// \set wheel variables after creation
+	    /// \param wr - wheel radius in m
+	    /// \prarm wb - wheel base in m
+	    void set_wheel_props(double wr, double wb);
+
 	};
 } 
 
