@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tsim)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+## Compile with error output
+add_compile_options(-Wall -Werror -pipe) 
+
+## Compile at 17 standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -14,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   turtlesim
   message_generation
   message_runtime
+  rigid2d
 )
 
 ## System dependencies are found with CMake's conventions
@@ -106,9 +113,9 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- # INCLUDE_DIRS include
+ INCLUDE_DIRS ${rigid2d_INCLUDE_DIRS}
 #  LIBRARIES tsim
-  CATKIN_DEPENDS geometry_msgs roscpp std_srvs turtlesim message_runtime
+  CATKIN_DEPENDS geometry_msgs roscpp std_srvs turtlesim message_runtime rigid2d
 #  DEPENDS system_lib
 )
 
@@ -121,6 +128,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${rigid2d_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -156,6 +164,7 @@ target_link_libraries(${PROJECT_NAME}_turtle_rect
   ${catkin_LIBRARIES}
 )
 target_link_libraries(${PROJECT_NAME}_turtle_way
+  ${rigid2d_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 
