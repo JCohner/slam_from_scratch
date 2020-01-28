@@ -147,6 +147,7 @@ add_library(${PROJECT_NAME}
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
 add_executable(odometer_node src/odometer.cpp)
+add_executable(fake_diff_encoders_node src/fake_diff_encoders.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -154,11 +155,13 @@ add_executable(odometer_node src/odometer.cpp)
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME ${PROJECT_NAME}_node PREFIX "")
 set_target_properties(odometer_node PROPERTIES OUTPUT_NAME odometer PREFIX "")
+set_target_properties(fake_diff_encoders_node PROPERTIES OUTPUT_NAME fake_diff_encoders PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(odometer_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(fake_diff_encoders_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
@@ -167,6 +170,11 @@ target_link_libraries(${PROJECT_NAME}_node
   # diff_drive causes linking error will have to think about how to incorp
 )
 target_link_libraries(odometer_node
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}
+  # diff_drive causes linking error will have to think about how to incorp
+)
+target_link_libraries(fake_diff_encoders_node
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}
   # diff_drive causes linking error will have to think about how to incorp
@@ -191,6 +199,9 @@ install(TARGETS ${PROJECT_NAME}_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 install(TARGETS odometer_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+install(TARGETS fake_diff_encoders_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
