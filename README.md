@@ -1,11 +1,23 @@
 # ME495 Sensing, Navigation, and Machine Learning
 #### Josh Cohen
 
-## Current Task (s):
+## Current Task(s):
 ### E.003
 ### E.004
+### E.005
 
 ## Tasks Submitted:
+### C.005
+### C.006
+### C.007
+### C.008 
+### C.009
+### C.010
+### E.000
+### E.001
+### E.002
+
+## Tasks Completed:
 ### A.000
 ### A.001
 ### A.002
@@ -21,14 +33,3 @@
 ### C.002
 ### C.003
 ### C.004
-### C.005
-### C.006
-### C.007
-### C.008 
-### C.009
-### C.010
-### E.000
-### E.001
-### E.002
-
-## Tasks Completed:
