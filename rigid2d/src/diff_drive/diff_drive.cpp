@@ -67,4 +67,9 @@ namespace rigid2d{
 		return;
 	}
 
+	void DiffDrive::set_wheel_props(double wr, double wb){
+		wheel_base = wb;
+		wheel_radius = wr;
+		return;
+	}
 }
