@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   message_runtime
   rigid2d
+  nuturtle_description
 )
 
 ## System dependencies are found with CMake's conventions
