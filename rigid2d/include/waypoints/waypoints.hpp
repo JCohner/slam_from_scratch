@@ -14,8 +14,8 @@ namespace rigid2d
 		double trans_vel; //maybe move to diff drive
 		std::vector<std::vector<double>> waypoints;
 		unsigned int time_it = 0;
-		unsigned int state;
-		unsigned int waypoint_index;
+		unsigned int state; //between 0-1 0: trans || 1: rot
+		unsigned int waypoint_index; //keep this between 0-4 5 pts on pent
 		double freq;
 		int state_check(double dist, double speed, double ellapsed);
 	public:
@@ -30,6 +30,13 @@ namespace rigid2d
 		void addWaypoint(std::vector<double> newWaypoint, int index);
 		std::vector<double> get_curr_waypoint();
 		void loop();
+
+		double get_freq(){
+			return freq;
+		}
+
+		/// \brief prepares waypoint statemachine for begining 
+		void start();
 	};
 }
 
