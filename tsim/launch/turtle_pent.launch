@@ -1,7 +1,7 @@
 <launch>
 	<rosparam command="load" file="$(find tsim)/config/turtle_way.yaml"/>
 	<node pkg="turtlesim" type="turtlesim_node" name="turtlesim_node"/>
-	<node pkg="tsim" type="turtle_way" name="turtle_way" output="screen"/>
+	<node pkg="tsim" type="turtle_way" name="turtle_way"/>
 	<arg name="plot_gui" default="true" doc="when set false hides plotting of error"/>
 	<node pkg="rqt_plot" type="rqt_plot" name="rqt_plot" if="$(arg plot_gui)" args="pose_error/x_error pose_error/y_error pose_error/theta_error"/>
 </launch>
