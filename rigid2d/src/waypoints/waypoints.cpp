@@ -2,12 +2,8 @@
 
 namespace rigid2d
 {
-	void Waypoints::init(){
-		Vector2D init_pos(waypoints.front()[0], waypoints.front()[1]);
-		Transform2D init_pose(init_pos, 0);
-		DiffDrive init_robot(init_pose);
-		robot = init_robot;
-		return;
+	std::vector<double> Waypoints::get_curr_waypoint(){
+		return waypoints.at(waypoint_index);
 	}
 
 	Twist2D Waypoints::nextWaypoint(){
@@ -51,8 +47,8 @@ namespace rigid2d
 		return flag;
 	}
 
-	void Waypoints::addWaypoint(std::vector<int> newWaypoint){
-		waypoints.push_back(newWaypoint); //TODO: implement error checking
+	void Waypoints::addWaypoint(std::vector<double> newWaypoint, int index){
+		waypoints.at(index) = newWaypoint; 
 		return;
 	}
 }
