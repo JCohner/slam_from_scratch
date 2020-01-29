@@ -1,5 +1,7 @@
 <launch>
+	<!-- LAUNCH TURTLE WAY & TURTLESIM -->
 	<include file="$(find tsim)/launch/turtle_pent.launch"/>
+	<!-- LAUNCH RVIZ W OUR ROBOT, ODOM AS BASE-->
 	<!-- Launch rviz with and load in settings -->
 	<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml"/>
 	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_description)/urdf/diff_drive.urdf.xacro'"/>
@@ -11,4 +13,11 @@
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     	<param name="use_gui" value="(arg use_jsp_gui)"/>
   	</node>
+	<!-- LAUNCH FAKE ENCODERS -& ODOMOTER -->
+	<node pkg="rigid2d" type="fake_diff_encoders" name="fake_diff_encoders"/>
+	<node pkg="rigid2d" type="odometer" name="odometer">
+		<!-- load name of frames as private to the node in param server -->
+		<rosparam command="load" file="$(find rigid2d)/config/frame_names.yaml"/>
+	</node>
+
 </launch>
