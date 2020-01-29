@@ -1,7 +1,7 @@
 <launch>
 
 	<node pkg="rigi2d" type="odometer" name="odo_node">
-		<rosparam command="load" file="$(find rigi2d)/config/frame_names.yaml"/>
+		<rosparam command="load" file="$(find rigid2d)/config/frame_names.yaml"/>
 	</node>
 
 </launch>
