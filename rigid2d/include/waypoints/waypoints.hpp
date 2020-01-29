@@ -34,7 +34,22 @@ namespace rigid2d
 		double get_freq(){
 			return freq;
 		}
+		unsigned int get_state(){
+			return state;
+		}
+		unsigned int get_index(){
+			return waypoint_index;
+		}
 
+		double get_ang_vel(){
+			return angular_vel; //not super effecient buttt
+		}
+		double get_trans_vel(){
+			return trans_vel; //not super effecient buttt
+		}
+		double get_ellapsed(){
+			return (time_it/freq); //not super effecient buttt
+		}
 		/// \brief prepares waypoint statemachine for begining 
 		void start();
 	};
