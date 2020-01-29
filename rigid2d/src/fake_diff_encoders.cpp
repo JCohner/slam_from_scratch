@@ -8,7 +8,6 @@
 double wheel_base;
 double wheel_radius;
 double freq;
-ros::NodeHandle nh;
 ros::Subscriber vel_sub;
 ros::Publisher js_pub;
 std::string left_wheel;
@@ -32,13 +31,15 @@ void vel_callback(geometry_msgs::Twist data){
 }
 	
 void setup(){
+	ros::NodeHandle nh;
+	ros::NodeHandle nh_priv("~");
 	//get public params
 	nh.getParam("wheel/radius", wheel_radius);
 	nh.getParam("wheel/base", wheel_base);
 	nh.getParam("freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
-	nh.getParam("~left_wheel_axel", left_wheel);
-	nh.getParam("~right_wheel_axel", right_wheel);
+	nh_priv.getParam("left_wheel_axel", left_wheel);
+	nh_priv.getParam("right_wheel_axel", right_wheel);
 	vel_sub = nh.subscribe("/turtle1/cmd_vel", 1, &vel_callback);
 	js_pub = nh.advertise<sensor_msgs::JointState>("/joint_state",5);
 }

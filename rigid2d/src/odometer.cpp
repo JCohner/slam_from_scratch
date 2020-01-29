@@ -18,7 +18,6 @@ std::string left_wheel;
 std::string right_wheel;
 
 //ros node setup
-ros::NodeHandle nh;
 ros::Subscriber js_sub;
 ros::Publisher odom_pub;
 // tf2_ros::TransformBroadcaster odom_broadcaster;
@@ -62,16 +61,18 @@ void js_callback(sensor_msgs::JointState data){
 }
 
 void setup(){
+	ros::NodeHandle nh;
+	ros::NodeHandle nh_priv("~");
 	//get public params
 	nh.getParam("wheel/radius", wheel_radius);
 	nh.getParam("wheel/base", wheel_base);
 	nh.getParam("freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
 	//get private params
-	nh.getParam("~odom", odom);
-	nh.getParam("~base_link", body);
-	nh.getParam("~left_wheel_axel", left_wheel);
-	nh.getParam("~right_wheel_axel", right_wheel);
+	nh_priv.getParam("odom", odom);
+	nh_priv.getParam("base_link", body);
+	nh_priv.getParam("left_wheel_axel", left_wheel);
+	nh_priv.getParam("right_wheel_axel", right_wheel);
 
 	js_sub = nh.subscribe("/joint_states", 1, &js_callback);
 	odom_pub = nh.advertise<nav_msgs::Odometry>("/tf", 1);
