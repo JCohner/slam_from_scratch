@@ -34,7 +34,7 @@ void init_telop(){
 
 	tele_req.request.x = curr_waypoint.at(0);  
 	tele_req.request.y = curr_waypoint.at(1);
-	tele_req.request.theta = curr_waypoint.at(2); 
+	tele_req.request.theta = 1.57079; 
 
 	teleportAbsolute.call(tele_req);
 
