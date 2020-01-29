@@ -20,9 +20,8 @@ ros::Publisher vel_pub;
 
 //vectors for holding waypoints
 // std::vector<std::vector<int>> points(5, std::vector<int>(3, 0));
-std::vector<double> x(5,0);
-std::vector<double> y(5,0);
-std::vector<double> th(5,0);
+std::vector<double> curr_waypoint(3,0);
+
 
 //define rot and trans vels
 const double rot_vel = 0.5; //rad/s
@@ -30,7 +29,6 @@ const double trans_vel = 0.5; //m/s
 
 //time trackers
 double freq = 60;
-ros::Rate r(freq);
 unsigned int i; 
 
 void init_telop(){
@@ -40,9 +38,10 @@ void init_telop(){
 	setPen.call(pen_req);
 
 	turtlesim::TeleportAbsolute tele_req;
-	// tele_req.request.x = points.at(0).at(0);  
-	// tele_req.request.y = points.at(0).at(1);
-	// tele_req.request.theta = points.at(0).at(2); 
+
+	tele_req.request.x = curr_waypoint.at(0);  
+	tele_req.request.y = curr_waypoint.at(1);
+	tele_req.request.theta = curr_waypoint.at(2); 
 
 	teleportAbsolute.call(tele_req);
 
@@ -65,14 +64,16 @@ void wait_services(void){
 void setup(){
 	ros::NodeHandle nh;
 	//get parameters
+	std::vector<double> x(5,0);
+	std::vector<double> y(5,0);
+	std::vector<double> th(5,0);
 	nh.getParam("/waypoint_x", x);
 	nh.getParam("/waypoint_y", y);
 	nh.getParam("/waypoint_th", th);
 	for (unsigned int i = 0; i < x.size(); i++){
-		// points.at(i) = std::vector<int> {x[i], y[i], th[i]};
 		waypoints.addWaypoint(std::vector<double> {x[i], y[i], th[i]}, i);
-		// ROS_INFO("%d %d",y[i], points.at(i).at(1)); //first .at(waypoint).at(x or y)
 	}
+	curr_waypoint = waypoints.get_curr_waypoint();
 	wait_services();
 	//iniitalize publishers, services, and subscribers
 	setPen = nh.serviceClient<turtlesim::SetPen>("/turtle1/set_pen");
@@ -85,51 +86,9 @@ void setup(){
 
 void loop(){
 
-
+	ros::Rate r(freq);
 	while(ros::ok()){
-		// float ellapsed = (i/freq);
-		// float trav_time_width = (rect_.width_ / ((float) robo_.trans_vel_));
-		// float trav_time_height = (rect_.height_ / ((float) robo_.trans_vel_));
-		// float trav_time_rot = ((PI/2.0) / (float) robo_.rot_vel_);
-		// switch (state){
-		// 	case 0:
-		// 		vel_req.linear.x = robo_.trans_vel_;
-		// 		vel_req.angular.z = 0;
-
-		// 		// printf("ell: %f \t trav: %f\n", ellapsed, trav_time_width);
-		// 		if (ellapsed > trav_time_width){
-		// 			state_flag = 1;
-		// 			dir_switch = !dir_switch;
-		// 		}
-		// 		break;
-		// 	case 3:
-		// 	case 1:
-		// 		vel_req.angular.z = robo_.rot_vel_;
-		// 		vel_req.linear.x = 0;
-
-		// 		// printf("ell: %f \t trav: %f\n", ellapsed, trav_time_rot);
-		// 		if (ellapsed > (trav_time_rot - 1/robo_.frequency_)){
-		// 			state_flag = 1;
-		// 			// dir_switch = !dir_switch;
-		// 			theta_ref_prev = theta_refs[(++theta_refs_index % 4)];
-		// 		}
-		// 		break;
-		// 	case 2:
-		// 		vel_req.linear.x = robo_.trans_vel_;
-		// 		vel_req.angular.z = 0;
-
-		// 		if (ellapsed > trav_time_height){
-		// 			state_flag = 1;
-		// 			// dir_switch = !dir_switch;
-		// 		}
-		// 		break;
-
-		// 	default:
-		// 		ROS_INFO("Oh bud you really done goofed\n"); //TODO: replace with std::exception of sorts
-
-		// }
-		// ++i;
-
+		
 		// compute_error();
 		ros::spinOnce();
 		r.sleep();
