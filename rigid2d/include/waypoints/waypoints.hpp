@@ -10,20 +10,25 @@ namespace rigid2d
 	/// \brief calculates velocities for robot to travel between waypoints
 	class Waypoints {
 		DiffDrive robot;
-		double angular_vel = 1;
-		double trans_vel = 2;
+		double angular_vel; //maybe move to diff drive
+		double trans_vel; //maybe move to diff drive
+		std::vector<std::vector<double>> waypoints;
 		unsigned int time_it = 0;
-		std::vector<std::vector <int>> waypoints;
 		unsigned int state;
+		unsigned int waypoint_index;
 		double freq;
 		int state_check(double dist, double speed, double ellapsed);
 	public:
-		Waypoints() : state(0), freq(60)  {};
-		void init();
+		Waypoints() : waypoints(5, std::vector<double>(3,0)), time_it(0), state(0), waypoint_index(0){};
+		
+		Waypoints(Transform2D pose, double angular_vel, double trans_vel, double freq) : 
+		robot(pose), angular_vel(angular_vel), trans_vel(trans_vel), waypoints(5, std::vector<double>(3,0)), time_it(0), state(0), waypoint_index(0), freq(freq){};
+		
 		/// \brief based on current state returns needed body velocity to get to next waypoint
 		/// \return a bdy velocity that gets turtlebot to the next waypoint
 		Twist2D nextWaypoint();
-		void addWaypoint(std::vector<int> newWaypoint);
+		void addWaypoint(std::vector<double> newWaypoint, int index);
+		std::vector<double> get_curr_waypoint();
 		void loop();
 	};
 }
