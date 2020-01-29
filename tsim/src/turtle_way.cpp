@@ -22,13 +22,6 @@ ros::Publisher vel_pub;
 // std::vector<std::vector<int>> points(5, std::vector<int>(3, 0));
 std::vector<double> curr_waypoint(3,0);
 
-
-//define rot and trans vels
-const double rot_vel = 0.5; //rad/s
-const double trans_vel = 0.5; //m/s
-
-//time trackers
-double freq = 60;
 unsigned int i; 
 
 void init_telop(){
@@ -63,17 +56,27 @@ void wait_services(void){
 
 void setup(){
 	ros::NodeHandle nh;
-	//get parameters
+	//containers for params
 	std::vector<double> x(5,0);
 	std::vector<double> y(5,0);
 	std::vector<double> th(5,0);
+	double rot_vel = 0; 
+	double trans_vel = 0; 
+	double freq = 0;
+
 	nh.getParam("/waypoint_x", x);
 	nh.getParam("/waypoint_y", y);
 	nh.getParam("/waypoint_th", th);
+	nh.getParam("/freq", freq);
+	nh.getParam("/rot_vel", rot_vel);
+	nh.getParam("/trans_vel", trans_vel);
+	
+	waypoints = rigid2d::Waypoints(rigid2d::Transform2D(rigid2d::Vector2D(x[0],y[0]), th[0]), rot_vel, trans_vel, freq);
 	for (unsigned int i = 0; i < x.size(); i++){
 		waypoints.addWaypoint(std::vector<double> {x[i], y[i], th[i]}, i);
 	}
 	curr_waypoint = waypoints.get_curr_waypoint();
+
 	wait_services();
 	//iniitalize publishers, services, and subscribers
 	setPen = nh.serviceClient<turtlesim::SetPen>("/turtle1/set_pen");
@@ -84,20 +87,30 @@ void setup(){
 	init_telop();
 }
 
-void loop(){
+geometry_msgs::Twist VbToRos(rigid2d::Twist2D Vb){
+	geometry_msgs::Twist twist;
+	twist.linear.x = Vb.vel.x;
+	twist.angular.z = Vb.omega;
+	return twist;
+}
 
-	ros::Rate r(freq);
+void loop(){
+	ros::Rate r(waypoints.get_freq());
+	geometry_msgs::Twist cmd_twist;
 	while(ros::ok()){
-		
-		// compute_error();
+		cmd_twist = VbToRos(waypoints.nextWaypoint());
+		// ROS_INFO("%f, %f, %f")
+		vel_pub.publish(cmd_twist);
 		ros::spinOnce();
 		r.sleep();
 	}
 }
 
+
 int main(int argc, char * argv[]){
 	ros::init(argc, argv,"turtle_way");
 	setup();
+	waypoints.start();
 	loop();
 	return 0;
 }
