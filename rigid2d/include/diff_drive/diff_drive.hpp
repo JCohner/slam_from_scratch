@@ -18,7 +18,7 @@ namespace rigid2d
 	private:
 		Transform2D Twb;
 		double wheel_base, wheel_radius;
-		int left_count, right_count;
+		double left_count, right_count;
 		WheelVelocities wheel_vels;
 	public:
 	    /// \brief the default constructor creates a robot at (0,0,0), with a fixed wheel base and wheel radius
@@ -73,7 +73,7 @@ namespace rigid2d
 
 	 	/// \get encoder counts
 	    /// \param takes an int counts[2] that it will populate with the left and right encoder counts
-	    void get_encoders(int * counts){
+	    void get_encoders(double * counts){
 	    	counts[0] = left_count;
 	    	counts[1] = right_count;
 	    	return;
@@ -82,7 +82,7 @@ namespace rigid2d
 		 /// \set encoder counts
 	    /// \param left - left encoder count
 	    /// \prarm right - right encoder count
-	    void set_encoders(int left, int right){
+	    void set_encoders(double left, double right){
 	    	left_count = left;
 	    	right_count = right;
 	    	return;
