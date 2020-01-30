@@ -21,12 +21,14 @@ void vel_callback(geometry_msgs::Twist data){
 	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(Vb); //commanded velocities
 	
 	robot.updateOdometry(wheel_vels.left, wheel_vels.right); //simulate what the motors actually do
-	int encoders[2];
+	double encoders[2];
 	robot.get_encoders(encoders);
 	robot.set_encoders(encoders[0] + wheel_vels.left, encoders[1] + wheel_vels.right); //simulate what the encoders read
-
+	robot.get_encoders(encoders);
+	msg.header.stamp = ros::Time::now();
 	msg.name= {left_wheel, right_wheel};
-	msg.velocity = {wheel_vels.left, wheel_vels.right};
+	msg.position = {encoders[0], encoders[1]};
+	ROS_INFO("%f %f", msg.position[0], msg.position[1]);
 	js_pub.publish(msg);
 }
 	
@@ -38,10 +40,10 @@ void setup(){
 	nh.getParam("wheel/base", wheel_base);
 	nh.getParam("freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
-	nh_priv.getParam("left_wheel_axel", left_wheel);
-	nh_priv.getParam("right_wheel_axel", right_wheel);
+	nh_priv.getParam("/odometer/frame_names/left_wheel_joint", left_wheel);
+	nh_priv.getParam("/odometer/frame_names/right_wheel_joint", right_wheel);
 	vel_sub = nh.subscribe("/turtle1/cmd_vel", 1, &vel_callback);
-	js_pub = nh.advertise<sensor_msgs::JointState>("/joint_state",5);
+	js_pub = nh.advertise<sensor_msgs::JointState>("/joint_states",5);
 }
 
 void loop(){
