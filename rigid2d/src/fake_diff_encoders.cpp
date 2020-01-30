@@ -22,8 +22,9 @@ void vel_callback(geometry_msgs::Twist data){
 	//we are representing this as 1/frequency of the twist 
 	rigid2d::Twist2D Vb(data.angular.z/freq, data.linear.x/freq, 0);	
 	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(Vb); //commanded velocities
-	ROS_INFO("wheel vels: %f %f", wheel_vels.left, wheel_vels.right);
-	robot.updateOdometry(wheel_vels.left, wheel_vels.right, freq); //robot updating odom based on the resultant wheel twist from commanded body twist
+	// ROS_INFO("wheel vels: %f %f", wheel_vels.left, wheel_vels.right);
+	// robot.updateOdometry(wheel_vels.left, wheel_vels.right, 1); //robot updating odom based on the resultant wheel twist from commanded body twist
+	robot.feedforward(Vb);
 	double encoders[2];
 	robot.get_encoders(encoders);
 	robot.set_encoders(encoders[0] + wheel_vels.left, encoders[1] + wheel_vels.right); //simulate what the encoders read
@@ -31,7 +32,7 @@ void vel_callback(geometry_msgs::Twist data){
 	msg.header.stamp = ros::Time::now();
 	msg.name= {left_wheel, right_wheel};
 	msg.position = {encoders[0], encoders[1]};
-	ROS_INFO("enc counts: %f %f", msg.position[0], msg.position[1]);
+	// ROS_INFO("enc counts: %f %f", msg.position[0], msg.position[1]);
 	js_pub.publish(msg); //publish as joint state message what the encoders read, this rotates wheels in rviz
 }
 	
