@@ -27,11 +27,13 @@ namespace rigid2d{
 	void DiffDrive::updateOdometry(double left_rad, double right_rad, double freq){
 		double r = wheel_radius;
 		double d = wheel_base;
-		double left_dist = left_rad * r; //seen as delta ul
-		double right_dist = right_rad * r; //seen as delta ur
+		// double left_dist = left_rad * r; //seen as delta ul
+		// double right_dist = right_rad * r; //seen as delta ur
 		Twist2D Vb;
-		Vb.omega = r/d * (-left_dist + right_dist) / freq;
-		Vb.vel.x = r/2 * (left_dist + right_dist) / freq;
+		// Vb.omega = r/d * (-left_dist + right_dist) / freq;
+		// Vb.vel.x = r/2 * (left_dist + right_dist) / freq;
+		Vb.omega = r/d * (-left_rad + right_rad) / freq;
+		Vb.vel.x = r/2 * (left_rad + right_rad) / freq;
 		Twb = Twb.intergrateTwist(Vb);
 		this->twistToWheels(Vb);
 		// this->wheel_vels.left = left_rad;
