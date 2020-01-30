@@ -57,8 +57,6 @@ void publishOdom(){ //rigid2d::Twist2D Vb
 	th += delta_th;
 
 	geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
-	// tf2::Quaternion odom_quat;
-	// odom_quat.setRPY(0,0,th);
 
 	//publish transform over tf using broadcaster
 	geometry_msgs::TransformStamped odom_trans;
@@ -97,14 +95,13 @@ void publishOdom(){ //rigid2d::Twist2D Vb
 
 void js_callback(sensor_msgs::JointState data){
 	ROS_INFO("%f %f", data.position[0], data.position[1]);
-	// w_pos_curr = rigid2d::WheelVelocities(data.position[0],data.position[1]);
-	// wheel_vels = rigid2d::WheelVelocities(w_pos_curr.left - w_pos_prev.left,w_pos_curr.right - w_pos_prev.right); //finds delta between read encoder values, turns to a velocity
-	// rigid2d::Twist2D Vb = robot.wheelsToTwist(wheel_vels); //turns the read V_wheels to V_b
-	// robot.updateOdometry(wheel_vels.left, wheel_vels.right, freq);	//here what the wheels 'actually' did from encoder
-	// publishOdom(Vb);
-	robot.updateOdometry(data.position[0], data.position[1], freq);
+	/*Attempt 0*/
+	double encoders[2];
+	robot.get_encoders(encoders); //pervious val
+	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], freq);
+	robot.set_encoders(data.position[0], data.position[1]);
 	publishOdom();
-	// w_pos_prev = w_pos_curr;
+	
 	return;
 }
 
