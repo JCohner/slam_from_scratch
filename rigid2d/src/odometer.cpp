@@ -100,10 +100,10 @@ void setup(){
 	nh.getParam("freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
 	//get private params
-	nh_priv.getParam("odom", odom);
-	nh_priv.getParam("base_link", body);
-	nh_priv.getParam("left_wheel_axel", left_wheel);
-	nh_priv.getParam("right_wheel_axel", right_wheel);
+	nh_priv.getParam("frame_names/odom_frame_id", odom);
+	nh_priv.getParam("frame_names/body_frame_id", body);
+	nh_priv.getParam("frame_names/left_wheel_joint", left_wheel);
+	nh_priv.getParam("frame_names/right_wheel_joint", right_wheel);
 
 	js_sub = nh.subscribe("/joint_states", 1, &js_callback);
 	odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 50);
