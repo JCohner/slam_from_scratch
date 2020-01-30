@@ -3,6 +3,7 @@
 #include "rigid2d/rigid2d.hpp"
 #include <sensor_msgs/JointState.h>
 #include <tf2_ros/transform_broadcaster.h>
+#include <tf/transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <nav_msgs/Odometry.h>
@@ -20,7 +21,6 @@ std::string right_wheel;
 //ros node setup
 ros::Subscriber js_sub;
 ros::Publisher odom_pub;
-// tf2_ros::TransformBroadcaster odom_broadcaster;
 
 //ros time management
 ros::Time curr_time, prev_time;
@@ -34,29 +34,60 @@ double vx = 0.0;
 double vy = 0.0;
 double vth = 0.0;
 
+void publishOdom(){
+	static tf2_ros::TransformBroadcaster odom_broadcaster;
+	curr_time = ros::Time::now();
+	double dt = (curr_time - prev_time).toSec();
+	double delta_x = (vx * cos(th) - vy * sin(th)) * dt;
+	double delta_y = (vx * sin(th) + vy * cos(th)) * dt;
+	double delta_th = vth * dt;
+
+	x += delta_x;
+	y += delta_y;
+	th += delta_th;
+
+	geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
+	// tf2::Quaternion odom_quat;
+	// odom_quat.setRPY(0,0,th);
+
+	//publish transform over tf using broadcaster
+	geometry_msgs::TransformStamped odom_trans;
+	odom_trans.header.stamp = curr_time;
+	odom_trans.header.frame_id = odom;
+	odom_trans.child_frame_id = body;
+	odom_trans.transform.translation.x = x;
+	odom_trans.transform.translation.y = y;
+	odom_trans.transform.translation.z = 0.0;
+	odom_trans.transform.rotation = odom_quat;
+
+	//send transform
+	odom_broadcaster.sendTransform(odom_trans);
+
+	//set up odom message to be published over ROS this will make the transform between our baselink and the doom frame
+	nav_msgs::Odometry odom_msg;
+	odom_msg.header.stamp = curr_time;
+	odom_msg.header.frame_id = odom;
+
+	//set pos
+	odom_msg.pose.pose.position.x = x;
+	odom_msg.pose.pose.position.y = y;
+	odom_msg.pose.pose.position.z = 0.0;
+	odom_msg.pose.pose.orientation = odom_quat;
+
+	//set vel
+	odom_msg.child_frame_id = body;
+	odom_msg.twist.twist.linear.x = vx;
+	odom_msg.twist.twist.linear.y = vy;
+	odom_msg.twist.twist.angular.z = vth;
+
+	//publish odom message
+	odom_pub.publish(odom_msg);
+
+}
+
 void js_callback(sensor_msgs::JointState data){
 	robot.updateOdometry(data.position[0], data.position[1]);	
-	nav_msgs::Odometry msg;
-	msg.header.frame_id = odom;
-	msg.child_frame_id = body;
-	odom_pub.publish(msg);
-	
-	static tf2_ros::TransformBroadcaster br;
-	geometry_msgs::TransformStamped transformStamped;
-	transformStamped.header.stamp = ros::Time::now();
-	transformStamped.header.frame_id = odom;
-	transformStamped.child_frame_id = body;
-	transformStamped.transform.translation.x = data.position[0]; //see if my index guess is right
-	transformStamped.transform.translation.y = data.position[1];
-	transformStamped.transform.translation.z = 0.0;
-	tf2::Quaternion q;
-	q.setRPY(0,0,data.position[2]); //really not sure if this correlates to theta or z, supposed to be theta
-	transformStamped.transform.rotation.x = q.x();
-	transformStamped.transform.rotation.y = q.y();
-	transformStamped.transform.rotation.z = q.z();
-	transformStamped.transform.rotation.w = q.w();
-	br.sendTransform(transformStamped);
-
+	publishOdom();
 	return;
 }
 
@@ -75,10 +106,8 @@ void setup(){
 	nh_priv.getParam("right_wheel_axel", right_wheel);
 
 	js_sub = nh.subscribe("/joint_states", 1, &js_callback);
-	odom_pub = nh.advertise<nav_msgs::Odometry>("/tf", 1);
-
+	odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 50);
 }
-
 
 void loop(){
 	prev_time = ros::Time::now();
@@ -87,8 +116,6 @@ void loop(){
 	ros::Rate r(freq);
 	while(ros::ok()){
 		ros::spinOnce();
-		// curr_time = ros::Time::now();
-		// double dt = (curr_time - prev_time).toSec();
 
 	}
 }
