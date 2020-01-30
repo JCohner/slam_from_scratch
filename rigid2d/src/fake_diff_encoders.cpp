@@ -1,3 +1,10 @@
+/// \file
+/// \brief This implements the fake encoder node which listens for turtlesim commanded velocities and fakes encoder ticks which it publishes to join_states
+///
+/// PUBLISHES:
+///     joint_states: <sensor_msgs::JointState>: faked encoder ticks translated from commanded velocities using twistToWheels() from rigid2d diffdrive
+/// SUBSCRIBES:
+///     cmd_vel: <geometry_msgs::Twist>: represents commanded velocity to diff drive turtle
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/JointState.h>

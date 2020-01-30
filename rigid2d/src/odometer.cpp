@@ -1,3 +1,10 @@
+/// \file
+/// \brief This implements the odometer node. Which takes encoder reading from joint state and converts those into wheel then body twists. Those body twists are used to publish odometry transforms
+///
+/// PUBLISHES:
+///     odom: <nav_msgs::Odometry>: creates odom to base transfrom 
+/// SUBSCRIBES:
+///     joint_states: <sensor_msgs::JointState>: fake encoder values
 #include <ros/ros.h>
 #include "diff_drive/diff_drive.hpp"
 #include "rigid2d/rigid2d.hpp"

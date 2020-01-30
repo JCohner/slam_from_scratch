@@ -1,3 +1,13 @@
+/// \file
+/// \brief This implements the turtle way node, a trajectory commanding node that has a turtlesim turtle follow a pentagram pattern 
+///
+/// PUBLISHES:
+///     turtle1/cmd_vel: <geometry_msgs::Twist> commanded Vb of turtle
+///		pose_error : <tsim::PoseError> represents error from desired position
+/// SUBSCRIBES:
+///     turtle/pose: <turtlesim::Pose> represents actual location of turtle
+/// SERVICES:
+///		CLIENTS: set_pen (turtlesim::SetPen) & teleport_absolute(turtlesim::TeleportAbsolute)
 #include <ros/ros.h>
 #include <turtlesim/SetPen.h>
 #include <turtlesim/TeleportAbsolute.h>
