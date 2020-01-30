@@ -86,24 +86,13 @@
 			<origin xyz="${length/2} 0 ${origin_z}" rpy="0 0 0"/>
 		</joint>
 	</xacro:macro>
-
-	<!-- generate needed links -->
-	<link name="origin">
-	</link>
-
+	
 	<xacro:base_link_gen width="${base - width}" length="${length}" height="${thickness}"/>
 	<xacro:wheel_gen radius="${radius}" name="left_wheel" width="${width}"/>
 	<xacro:wheel_gen radius="${radius}" name="right_wheel" width="${width}"/>
 	<xacro:caster_gen radius="${radius/2}" name="caster1"/>
 	<xacro:caster_gen radius="${radius/2}" name="caster2"/>
 
-
-	<!-- generate joints between links -->
-	<joint name="to_base" type="fixed">
-		<parent link="origin"/>
-		<child link="base_link"/>
-		<origin xyz="0 0 ${radius}" rpy="0 0 ${pi/2}"/>
-	</joint>
 	<xacro:joint_gen name="left_wheel_axel" parent="base_link" child="left_wheel" origin="${base/2}" rotate="0"/>
 	<xacro:joint_gen name="right_wheel_axel" parent="base_link" child="right_wheel" origin="${-base/2}" rotate="0"/>
 	<xacro:caster_joint name="cast_joint1" parent="base_link" child="caster1" origin_z="${radius/2}"/>
