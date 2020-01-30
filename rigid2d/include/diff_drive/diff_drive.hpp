@@ -48,7 +48,7 @@ namespace rigid2d
 	    /// \brief Update the robot's odometry based on the current encoder readings
 	    /// \param left - the left encoder angle (in radians)
 	    /// \param right - the right encoder angle (in radians)
-	    void updateOdometry(double left_rad, double right_rad);
+	    void updateOdometry(double left_rad, double right_rad, double freq);
 
 	    /// \brief update the odometry of the diff drive robot, assuming that
 	    /// it follows the given body twist for one time  unit
@@ -85,6 +85,13 @@ namespace rigid2d
 	    void set_encoders(double left, double right){
 	    	left_count = left;
 	    	right_count = right;
+
+	    	if (abs(left_count) > 2 * PI){
+	    		left_count = deg2rad((int) rad2deg(left_count) % 360);
+	    	}
+	    	if (abs(right_count) > 2 * PI){
+	    		right_count = deg2rad((int) rad2deg(right_count) % 360);
+	    	}
 	    	return;
 	    }
 
