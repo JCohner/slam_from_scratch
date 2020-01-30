@@ -8,14 +8,14 @@
 	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find tsim)/rviz/view_robot.rviz" required="true"/>
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 		<!-- define arg -->
-	<arg name="use_jsp_gui" default="false" doc="Launch the joint_state_publisher gui to publish joint angles"/>
 	<!-- launch joint_state_publisher -->
-	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+	<arg name="use_jsp_gui" default="false" doc="Launch the joint_state_publisher gui to publish joint angles"/>
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" if="$(arg use_jsp_gui)">
     	<param name="use_gui" value="(arg use_jsp_gui)"/>
   	</node>
 	<!-- LAUNCH FAKE ENCODERS -& ODOMOTER -->
 	<node pkg="rigid2d" type="fake_diff_encoders" name="fake_diff_encoders"/>
-	<node pkg="rigid2d" type="odometer" name="odometer">
+	<node pkg="rigid2d" type="odometer" name="odometer" output="screen">
 		<!-- load name of frames as private to the node in param server -->
 		<rosparam command="load" file="$(find rigid2d)/config/frame_names.yaml"/>
 	</node>
