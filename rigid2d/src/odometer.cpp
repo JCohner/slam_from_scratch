@@ -48,6 +48,12 @@ double vth = 0.0;
 
 void publishOdom(){ //rigid2d::Twist2D Vb
 	rigid2d::Twist2D Vb = robot.wheelsToTwist(robot.wheelVelocities());
+	rigid2d::Twist2D pose = robot.pose();
+	x = pose.vel.x;
+	y = pose.vel.y;
+	th = rigid2d::deg2rad(pose.omega); 
+
+	// ROS_INFO("achieved body twist of: omega: %f, vx: %f, vy: %f", Vb.omega, Vb.vel.x, Vb.vel.y);
 	vy = Vb.vel.y;
 	vx = Vb.vel.x;
 	vth = Vb.omega; 
@@ -61,7 +67,7 @@ void publishOdom(){ //rigid2d::Twist2D Vb
 
 	x += delta_x;
 	y += delta_y;
-	th += delta_th;
+	th -= delta_th; //correct right hand rule notation 
 
 	geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
 
@@ -97,15 +103,19 @@ void publishOdom(){ //rigid2d::Twist2D Vb
 
 	//publish odom message
 	odom_pub.publish(odom_msg);
-
+	prev_time = curr_time;
 }
 
 void js_callback(sensor_msgs::JointState data){
-	ROS_INFO("%f %f", data.position[0], data.position[1]);
+	// ROS_INFO("heard encoders: %f %f", data.position[0], data.position[1]);
 	/*Attempt 0*/
 	double encoders[2];
 	robot.get_encoders(encoders); //pervious val
-	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], freq);
+	// ROS_INFO("delta encoders: %f, %f", data.position[0] - encoders[0], data.position[1] - encoders[1]);
+	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], 1);
+	// robot.updateOdometry(data.position[0], data.position[1], 1);
+	// rigid2d::Twist2D pose = robot.pose();
+	// ROS_INFO("im at x: %f, y: %f, th: %f", pose.vel.x, pose.vel.y, pose.omega);
 	robot.set_encoders(data.position[0], data.position[1]);
 	publishOdom();
 	
@@ -120,17 +130,20 @@ void setup(){
 	nh.getParam("wheel/base", wheel_base);
 	nh.getParam("freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
+	robot.reset(rigid2d::Twist2D(rigid2d::PI/2.0, 1, 1));
+	rigid2d::Twist2D pose = robot.pose();
+	x = pose.vel.x;
+	y = pose.vel.y;
+	th = rigid2d::deg2rad(pose.omega);
+	ROS_INFO("%f", th);
 	//get private params
 	nh_priv.getParam("frame_names/odom_frame_id", odom);
 	nh_priv.getParam("frame_names/body_frame_id", body);
 	nh_priv.getParam("frame_names/left_wheel_joint", left_wheel);
 	nh_priv.getParam("frame_names/right_wheel_joint", right_wheel);
 
-	w_pos_prev = rigid2d::WheelVelocities(0,0);
-
 	js_sub = nh.subscribe("/joint_states", 1, &js_callback);
-	odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 50);
-
+	odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 1);
 
 }
 
@@ -141,7 +154,7 @@ void loop(){
 	ros::Rate r(freq);
 	while(ros::ok()){
 		ros::spinOnce();
-
+		r.sleep();
 	}
 }
 
