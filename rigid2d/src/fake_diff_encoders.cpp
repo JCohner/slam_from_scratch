@@ -28,17 +28,20 @@ void vel_callback(geometry_msgs::Twist data){
 	sensor_msgs::JointState msg;
 	//we are representing this as 1/frequency of the twist 
 	rigid2d::Twist2D Vb(data.angular.z/freq, data.linear.x/freq, 0);	
+	// ROS_INFO("commanded body twist: omega: %f, vx: %f, vy: %f", Vb.omega, Vb.vel.x, Vb.vel.y);
 	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(Vb); //commanded velocities
-	// ROS_INFO("wheel vels: %f %f", wheel_vels.left, wheel_vels.right);
-	// robot.updateOdometry(wheel_vels.left, wheel_vels.right, 1); //robot updating odom based on the resultant wheel twist from commanded body twist
+	// ROS_INFO("commanded wheel vels: %f %f", wheel_vels.left, wheel_vels.right);
 	robot.feedforward(Vb);
 	double encoders[2];
 	robot.get_encoders(encoders);
+	// ROS_INFO("encoders prev: %f, %f", encoders[0], encoders[1]);
 	robot.set_encoders(encoders[0] + wheel_vels.left, encoders[1] + wheel_vels.right); //simulate what the encoders read
 	robot.get_encoders(encoders);
+	// ROS_INFO("encoders curr: %f, %f", encoders[0], encoders[1]);
 	msg.header.stamp = ros::Time::now();
 	msg.name= {left_wheel, right_wheel};
 	msg.position = {encoders[0], encoders[1]};
+	// msg.position = {wheel_vels.left, wheel_vels.right};
 	// ROS_INFO("enc counts: %f %f", msg.position[0], msg.position[1]);
 	js_pub.publish(msg); //publish as joint state message what the encoders read, this rotates wheels in rviz
 }
@@ -51,6 +54,7 @@ void setup(){
 	nh.getParam("wheel/base", wheel_base);
 	nh.getParam("freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
+	robot.reset(rigid2d::Twist2D(1.57079, 1, 1));
 	nh_priv.getParam("/odometer/frame_names/left_wheel_joint", left_wheel);
 	nh_priv.getParam("/odometer/frame_names/right_wheel_joint", right_wheel);
 	vel_sub = nh.subscribe("/turtle1/cmd_vel", 1, &vel_callback);
