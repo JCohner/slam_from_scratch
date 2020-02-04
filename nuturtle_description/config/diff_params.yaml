@@ -6,6 +6,7 @@ wheel:
 chassis:
   length: .138 #length of mainlink
   thickness: .178 #thickness of mainlink 
+  height: .192 #heigh of chassis
 velocity:
   max_trans: 0.22
   max_rot: 2.84

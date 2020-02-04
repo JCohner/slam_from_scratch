@@ -6,6 +6,7 @@
 	<xacro:property name="base" value= "${load_yaml('$(find nuturtle_description)/config/diff_params.yaml')['wheel']['base']}"/>	
 	<xacro:property name="length" value= "${load_yaml('$(find nuturtle_description)/config/diff_params.yaml')['chassis']['length']}"/>	
 	<xacro:property name="thickness" value= "${load_yaml('$(find nuturtle_description)/config/diff_params.yaml')['chassis']['thickness']}"/>	
+	<xacro:property name="height" value= "${load_yaml('$(find nuturtle_description)/config/diff_params.yaml')['chassis']['height']}"/>	
 	<!-- macro for making  base_link link -->
 	<xacro:macro name="base_link_gen" params="width length height">
 		<link name="base_link">
@@ -74,7 +75,7 @@
 			<axis xyz="0 1 0"/>
 			<parent link="${parent}"/>
 			<child link="${child}"/>
-			<origin xyz="0 ${origin}  0" rpy="0 0 ${rotate}"/>
+			<origin xyz="0 ${origin}  ${-height/2}" rpy="0 0 ${rotate}"/>
 		</joint>
 	</xacro:macro>
 
@@ -83,20 +84,20 @@
 		<joint name="${name}" type="fixed">
 			<parent link="${parent}"/>
 			<child link="${child}"/>
-			<origin xyz="${length/2} 0 ${origin_z}" rpy="0 0 0"/>
+			<origin xyz="${length/2} 0 ${-height/2 - origin_z}" rpy="0 0 0"/>
 		</joint>
 	</xacro:macro>
 	
-	<xacro:base_link_gen width="${base - width}" length="${length}" height="${thickness}"/>
+	<xacro:base_link_gen width="${base - width}" length="${length}" height="${height}"/>
 	<xacro:wheel_gen radius="${radius}" name="left_wheel" width="${width}"/>
 	<xacro:wheel_gen radius="${radius}" name="right_wheel" width="${width}"/>
 	<xacro:caster_gen radius="${radius/2}" name="caster1"/>
-	<xacro:caster_gen radius="${radius/2}" name="caster2"/>
+	<!-- <xacro:caster_gen radius="${radius/2}" name="caster2"/> -->
 
 	<xacro:joint_gen name="left_wheel_axel" parent="base_link" child="left_wheel" origin="${base/2}" rotate="0"/>
 	<xacro:joint_gen name="right_wheel_axel" parent="base_link" child="right_wheel" origin="${-base/2}" rotate="0"/>
 	<xacro:caster_joint name="cast_joint1" parent="base_link" child="caster1" origin_z="${radius/2}"/>
-	<xacro:caster_joint name="cast_joint2" parent="base_link" child="caster2" origin_z="${-radius/2}"/>
+	<!-- <xacro:caster_joint name="cast_joint2" parent="base_link" child="caster2" origin_z="${-radius/2}"/> -->
 	
 
 
