@@ -5,6 +5,8 @@
 ///     odom: <nav_msgs::Odometry>: creates odom to base transfrom 
 /// SUBSCRIBES:
 ///     joint_states: <sensor_msgs::JointState>: fake encoder values
+/// SERVICES:
+///     set pose: <turtlesim::TeleportAbsolute>: fake encoder values
 #include <ros/ros.h>
 #include "diff_drive/diff_drive.hpp"
 #include "rigid2d/rigid2d.hpp"
@@ -14,6 +16,8 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <nav_msgs/Odometry.h>
+#include <turtlesim/TeleportAbsolute.h> //if youre running this on a turtlebot without turtlesim installed just make your own srv (lazy)
+#include <std_srvs/Empty.h>
 
 //robot specs
 double wheel_base;
@@ -33,6 +37,7 @@ std::string right_wheel;
 //ros node setup
 ros::Subscriber js_sub;
 ros::Publisher odom_pub;
+ros::ServiceServer set_pose;
 
 //ros time management
 ros::Time curr_time, prev_time;
@@ -125,6 +130,16 @@ void js_callback(sensor_msgs::JointState data){
 	return;
 }
 
+
+bool set_pose_callback(turtlesim::TeleportAbsolute::Request& request, turtlesim::TeleportAbsolute::Response& response){
+	robot.reset(rigid2d::Twist2D(request.theta,request.x,request.y));
+	rigid2d::Twist2D turt_pose = robot.pose();
+	x = turt_pose.vel.x;
+	y = turt_pose.vel.y;
+	th = rigid2d::deg2rad(turt_pose.omega);
+	return true;
+}
+
 void setup(){
 	ros::NodeHandle nh;
 	ros::NodeHandle nh_priv("~");
@@ -146,7 +161,7 @@ void setup(){
 
 	js_sub = nh.subscribe("/joint_states", 1, &js_callback);
 	odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 1);
-
+	set_pose = nh.advertiseService("set_pose", &set_pose_callback);
 }
 
 void loop(){
