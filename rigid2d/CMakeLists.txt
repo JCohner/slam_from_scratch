@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   tf
   tf2
+  turtlesim #used for pose messages
 )
 
 ## System dependencies are found with CMake's conventions
