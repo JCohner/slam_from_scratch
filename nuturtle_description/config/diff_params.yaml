@@ -1,7 +1,15 @@
 wheel:
-  width: 0.05 #width of wheels
-  radius: 0.10 #radius of wheels
-  base: 0.20 #distance between centers of wheels
+  width: 0.018 #width of wheels
+  radius: 0.033 #radius of wheels
+  base: 0.160 #distance between centers of wheels
+  encoder_ticks_per_rev: 4096
 chassis:
-  length: .30 #length of mainlink
-  thickness: .055 #thickness of mainlink 
+  length: .138 #length of mainlink
+  thickness: .178 #thickness of mainlink 
+velocity:
+  max_trans: 0.22
+  max_rot: 2.84
+motor:
+  no_load_speed: 6.35492 #rad/s speed
+  max_power: 265 #plus/minus this is the strongest effort you can request from ESC
+
