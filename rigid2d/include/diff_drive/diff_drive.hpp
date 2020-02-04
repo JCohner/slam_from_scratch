@@ -85,14 +85,6 @@ namespace rigid2d
 	    void set_encoders(double left, double right){
 	    	left_count = left;
 	    	right_count = right;
-
-	    	// if (abs(left_count) > 2 * PI){
-	    	// 	left_count = deg2rad((int) rad2deg(left_count) % 360);
-	    	// }
-	    	// if (abs(right_count) > 2 * PI){
-	    	// 	right_count = deg2rad((int) rad2deg(right_count) % 360);
-	    	// }
-	    	return;
 	    }
 
 
