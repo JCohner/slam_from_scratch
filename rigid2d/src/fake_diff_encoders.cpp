@@ -27,7 +27,7 @@ rigid2d::DiffDrive robot;
 void vel_callback(geometry_msgs::Twist data){
 	sensor_msgs::JointState msg;
 	//we are representing this as 1/frequency of the twist 
-	rigid2d::Twist2D Vb(data.angular.z/freq, data.linear.x/freq, 0);	
+	rigid2d::Twist2D Vb(data.angular.z, data.linear.x, 0);	
 	// ROS_INFO("commanded body twist: omega: %f, vx: %f, vy: %f", Vb.omega, Vb.vel.x, Vb.vel.y);
 	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(Vb); //commanded velocities
 	// ROS_INFO("commanded wheel vels: %f %f", wheel_vels.left, wheel_vels.right);

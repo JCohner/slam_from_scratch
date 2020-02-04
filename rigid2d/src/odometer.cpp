@@ -48,10 +48,10 @@ double vth = 0.0;
 
 void publishOdom(){ //rigid2d::Twist2D Vb
 	rigid2d::Twist2D Vb = robot.wheelsToTwist(robot.wheelVelocities());
-	rigid2d::Twist2D pose = robot.pose();
-	x = pose.vel.x;
-	y = pose.vel.y;
-	th = rigid2d::deg2rad(pose.omega); 
+	// rigid2d::Twist2D pose = robot.pose();
+	// x = pose.vel.x;
+	// y = pose.vel.y;
+	// th = rigid2d::deg2rad(pose.omega); 
 
 	// ROS_INFO("achieved body twist of: omega: %f, vx: %f, vy: %f", Vb.omega, Vb.vel.x, Vb.vel.y);
 	vy = Vb.vel.y;
@@ -67,7 +67,10 @@ void publishOdom(){ //rigid2d::Twist2D Vb
 
 	x += delta_x;
 	y += delta_y;
-	th -= delta_th; //correct right hand rule notation 
+	th += delta_th; //correct right hand rule notation 
+	// ROS_INFO(")DOM at x: %f, y: %f, th: %f", x, y, th);
+
+
 
 	geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
 
@@ -114,8 +117,8 @@ void js_callback(sensor_msgs::JointState data){
 	// ROS_INFO("delta encoders: %f, %f", data.position[0] - encoders[0], data.position[1] - encoders[1]);
 	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], 1);
 	// robot.updateOdometry(data.position[0], data.position[1], 1);
-	// rigid2d::Twist2D pose = robot.pose();
-	// ROS_INFO("im at x: %f, y: %f, th: %f", pose.vel.x, pose.vel.y, pose.omega);
+	rigid2d::Twist2D pose = robot.pose();
+	ROS_INFO("im at x: %f, y: %f, th: %f", pose.vel.x, pose.vel.y, pose.omega);
 	robot.set_encoders(data.position[0], data.position[1]);
 	publishOdom();
 	
@@ -135,7 +138,6 @@ void setup(){
 	x = pose.vel.x;
 	y = pose.vel.y;
 	th = rigid2d::deg2rad(pose.omega);
-	ROS_INFO("%f", th);
 	//get private params
 	nh_priv.getParam("frame_names/odom_frame_id", odom);
 	nh_priv.getParam("frame_names/body_frame_id", body);
