@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(rigid2d)
 
 ## Compile with error output
-add_compile_options(-Wall -Werror -pipe) 
+add_compile_options(-Wall -Werror -Wno-psabi -pipe) 
 
 ## Compile at 17 standard
 set(CMAKE_CXX_STANDARD 17)
