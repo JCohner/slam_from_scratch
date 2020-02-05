@@ -4,8 +4,8 @@
 	<group if="$(eval arg('robot') == 0)">
 		<machine name="turtlebot" address="localhost" unless="$(arg robot)" />
 	</group>
-	<group if="$(eval arg('robot') == True)">
-		<machine name="turtlebot" user="student" address="turtleBot$(arg robot)" env-loader="/home/student/install/env.sh">
+	<group if="$(eval arg('robot') > 0)">
+		<machine name="turtlebot" user="student" address="turtlebot$(arg robot)" env-loader="/home/student/josh_install/env.sh">
 			<!-- <env name="" value=""/>  COUlD set ros master here-->
 		</machine> 
 	</group>
