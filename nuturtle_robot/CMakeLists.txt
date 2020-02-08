@@ -10,7 +10,8 @@ project(nuturtle_robot)
 find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	geometry_msgs
-	nuturtlebot #not sure why im not supposed to include this
+	nuturtlebot 
+	sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,7 +106,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES nuturtle_robot
- CATKIN_DEPENDS nuturtlebot
+ CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 
