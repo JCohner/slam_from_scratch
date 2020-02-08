@@ -9,9 +9,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
-
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -20,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 	geometry_msgs
 	nuturtlebot 
 	sensor_msgs
+	rigid2d
 )
 
 ## System dependencies are found with CMake's conventions
@@ -112,9 +110,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+ INCLUDE_DIRS ${rigid2d_INCLUDE_DIRS}
 #  LIBRARIES nuturtle_robot
- CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs
+ CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d
 #  DEPENDS system_lib
 )
 
@@ -127,6 +125,7 @@ catkin_package(
 include_directories(
 include
 ${catkin_INCLUDE_DIRS}
+${rigid2d_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -156,6 +155,7 @@ add_dependencies(turtle_interface_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(turtle_interface_node
+  ${rigid2d_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 
