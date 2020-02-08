@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(nuturtle_robot)
 
+## Compile with error output
+add_compile_options(-Wall -Werror -Wno-psabi -pipe) 
+
+## Compile at 17 standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
