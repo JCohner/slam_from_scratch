@@ -57,7 +57,6 @@
   <depend>geometry_msgs</depend>
   <depend>rigid2d</depend>
   <test_depend>rostest</test_depend>
-  <!-- <depend>rostest</depend> -->
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

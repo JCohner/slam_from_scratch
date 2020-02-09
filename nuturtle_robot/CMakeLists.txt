@@ -151,7 +151,7 @@ add_executable(turtle_interface_node src/turtle_interface.cpp)
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(turtle_interface_node PROPERTIES OUTPUT_NAME node PREFIX "")
+set_target_properties(turtle_interface_node PROPERTIES OUTPUT_NAME turtle_interface PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -163,7 +163,7 @@ target_link_libraries(turtle_interface_node
   ${catkin_LIBRARIES}
 )
 
-if (CATKIN_ENABLE_TESTING)
+if(CATKIN_ENABLE_TESTING)
 	add_rostest_gtest(turtle_interface_test test/turtle_interface_test.test test/turtle_interface_test.cpp)
 	target_link_libraries(turtle_interface_test 
 		${rigid2d_LIBRARIES}
@@ -171,10 +171,10 @@ if (CATKIN_ENABLE_TESTING)
 	)
 endif()
 
-#if we want to launch test launchfile upon catkin_make run_tests
-if (CATKIN_ENABLE_TESTING)
-	add_rostest(test/turtle_interface_test.test)
-endif()
+# #if we want to launch test launchfile upon catkin_make run_tests
+# if(CATKIN_ENABLE_TESTING)
+# 	add_rostest(test/turtle_interface_test.test)
+# endif()
 
 #############
 ## Install ##
