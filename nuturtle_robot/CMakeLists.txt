@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 	nuturtlebot 
 	sensor_msgs
 	rigid2d
+	message_generation
 )
 
 if (CATKIN_ENABLE_TESTING)
@@ -65,11 +66,10 @@ endif()
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  Start.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -79,10 +79,10 @@ endif()
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -116,7 +116,7 @@ endif()
 catkin_package(
  # INCLUDE_DIRS include
  # LIBRARIES rostest
- CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d 
+ CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d message_runtime
 #  DEPENDS system_lib
 )
 
@@ -146,19 +146,26 @@ ${catkin_INCLUDE_DIRS}
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(turtle_interface_node src/turtle_interface.cpp)
+add_executable(rotation_node src/rotation.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 set_target_properties(turtle_interface_node PROPERTIES OUTPUT_NAME turtle_interface PREFIX "")
+set_target_properties(rotation_node PROPERTIES OUTPUT_NAME rotation PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(turtle_interface_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(rotation_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(turtle_interface_node
+  ${rigid2d_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(rotation_node
   ${rigid2d_LIBRARIES}
   ${catkin_LIBRARIES}
 )
@@ -195,7 +202,9 @@ endif()
 install(TARGETS turtle_interface_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-
+install(TARGETS rotation_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
 # install(TARGETS ${PROJECT_NAME}
@@ -220,6 +229,9 @@ install(TARGETS turtle_interface_node
 
 install (DIRECTORY launch/ 
 	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+install (DIRECTORY test/ 
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/test
 )
 #############
 ## Testing ##

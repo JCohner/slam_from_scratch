@@ -57,6 +57,8 @@
   <depend>geometry_msgs</depend>
   <depend>rigid2d</depend>
   <test_depend>rostest</test_depend>
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
