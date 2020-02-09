@@ -20,6 +20,10 @@ find_package(catkin REQUIRED COMPONENTS
 	rigid2d
 )
 
+if (CATKIN_ENABLE_TESTING)
+	find_package(rostest REQUIRED)
+endif()
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -158,6 +162,19 @@ target_link_libraries(turtle_interface_node
   ${rigid2d_LIBRARIES}
   ${catkin_LIBRARIES}
 )
+
+if (CATKIN_ENABLE_TESTING)
+	add_rostest_gtest(turtle_interface_test test/turtle_interface_test.test test/turtle_interface_test.cpp)
+	target_link_libraries(turtle_interface_test 
+		${rigid2d_LIBRARIES}
+  		${catkin_LIBRARIES}
+	)
+endif()
+
+# #if we want to launch test launchfile upon catkin_make run_tests
+# if (CATKIN_ENABLE_TESTING)
+# 	add_rostest(test/turtle_interface_test.test)
+# endif()
 
 #############
 ## Install ##
