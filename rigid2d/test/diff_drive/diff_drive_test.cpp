@@ -56,11 +56,11 @@ namespace rigid2d {
 	TEST(DiffDrive, updateOdometry)
 	{
 		DiffDrive diff_drive(0.2, 1.0);
-		diff_drive.updateOdometry(10,10);
+		diff_drive.updateOdometry(10.0,10.0,1);
 		Twist2D pose;
 		pose = diff_drive.pose();
 		ASSERT_EQ(pose.omega, 0); //theta should remain zero
-		ASSERT_EQ(pose.vel.x, 0.4);
+		ASSERT_EQ(pose.vel.x, 2);
 		ASSERT_EQ(pose.vel.y, 0);
 	}
 	TEST(DiffDrive, feedforward)
