@@ -1,3 +1,4 @@
 <launch>
 	<test test-name="turtle_interface_test" pkg="nuturtle_robot" type="turtle_interface_test"/>
+	<node name="turtle_interface" pkg="nuturtle_robot" type="turtle_interface"/>
 </launch>
