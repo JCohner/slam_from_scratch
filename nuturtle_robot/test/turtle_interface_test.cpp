@@ -17,6 +17,7 @@ TEST(cmd_vel, no_rot)
 	msg.linear.x = 0.02;
 	vel_pub.publish(msg);
 	ros::Rate r(60);
+	x = true;
 	while(x)
 	{
 		r.sleep();
@@ -24,7 +25,39 @@ TEST(cmd_vel, no_rot)
 	}
 
 	ASSERT_EQ(wheel_vels.left, wheel_vels.right);
-	// ASSERT_EQ(1,1);
+}
+
+TEST(cmd_vel, pure_rot)
+{
+	geometry_msgs::Twist msg;
+	msg.angular.z = 0.5;
+	msg.linear.x = 0;
+	vel_pub.publish(msg);
+	ros::Rate r(60);
+	x = true;
+	while(x)
+	{
+		r.sleep();
+		ros::spinOnce();
+	}
+	ASSERT_EQ(wheel_vels.left, -wheel_vels.right);	
+}
+
+TEST(cmd_vel, trans_and_rot)
+{
+	geometry_msgs::Twist msg;
+	msg.angular.z = 0.5;
+	msg.linear.x = 0.5;
+	vel_pub.publish(msg);
+	ros::Rate r(60);
+	x = true;
+	while(x)
+	{
+		r.sleep();
+		ros::spinOnce();
+	}
+	ASSERT_EQ(wheel_vels.left, 37);	
+	ASSERT_EQ(wheel_vels.right, 44);	
 }
 
 void wheel_cmd_sub_callback(nuturtlebot::WheelCommands data)
