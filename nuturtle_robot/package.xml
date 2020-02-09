@@ -2,7 +2,7 @@
 <package format="2">
   <name>nuturtle_robot</name>
   <version>0.0.1</version>
-  <description>A package that will compile and run ROS code on the TurtleBot</description>
+  <description>Compiles and runs ROS code on the TurtleBot</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -56,7 +56,8 @@
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>rigid2d</depend>
-  <depend>rostest</depend>
+  <test_depend>rostest</test_depend>
+  <!-- <depend>rostest</depend> -->
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

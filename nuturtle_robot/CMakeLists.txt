@@ -114,9 +114,9 @@ endif()
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS ${rigid2d_INCLUDE_DIRS}
-#  LIBRARIES nuturtle_robot
- CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d rostest
+ # INCLUDE_DIRS include
+ # LIBRARIES rostest
+ CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d 
 #  DEPENDS system_lib
 )
 
@@ -127,9 +127,9 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-include
+#include
 ${catkin_INCLUDE_DIRS}
-${rigid2d_INCLUDE_DIRS}
+# ${rigid2d_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -171,10 +171,10 @@ if (CATKIN_ENABLE_TESTING)
 	)
 endif()
 
-# #if we want to launch test launchfile upon catkin_make run_tests
-# if (CATKIN_ENABLE_TESTING)
-# 	add_rostest(test/turtle_interface_test.test)
-# endif()
+#if we want to launch test launchfile upon catkin_make run_tests
+if (CATKIN_ENABLE_TESTING)
+	add_rostest(test/turtle_interface_test.test)
+endif()
 
 #############
 ## Install ##
