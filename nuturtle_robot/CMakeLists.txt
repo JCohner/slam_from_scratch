@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 	sensor_msgs
 	rigid2d
 	message_generation
+	turtlesim #this is just used for TeleportAbsolute srv, used in set_pose service, could be changed 
 )
 
 if (CATKIN_ENABLE_TESTING)
