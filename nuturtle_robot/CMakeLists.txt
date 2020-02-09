@@ -116,7 +116,7 @@ endif()
 catkin_package(
  INCLUDE_DIRS ${rigid2d_INCLUDE_DIRS}
 #  LIBRARIES nuturtle_robot
- CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d
+ CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d rostest
 #  DEPENDS system_lib
 )
 
