@@ -73,10 +73,17 @@ void vel_sub_callback(geometry_msgs::Twist data)
 void sens_sub_callback(nuturtlebot::SensorData data)
 {
 	sensor_msgs::JointState msg;
-	msg.position = {data.left_encoder, data.right_encoder};
-	msg.velocity = 
-	msg.name = {left_wheel, right_wheel}
-	msh.header.stamp = ros::Time::now();
+	double update[2] = {(double(data.left_encoder)),(double(data.right_encoder)) };
+
+	msg.position = {update[0], update[1]};
+	double encoders[2];
+	robot.get_encoders(encoders);
+	rigid2d::WheelVelocities vels(update[0] - encoders[0], update[1] - encoders[1]); //TODO: decide if we need to scale by freq
+	robot.set_encoders(encoders[0] + update[0], encoders[1] + update[1]);
+
+	msg.velocity = {vels.left, vels.right};
+	msg.name = {left_wheel, right_wheel};
+	msg.header.stamp = ros::Time::now();
 	js_pub.publish(msg);
 	return;
 }
