@@ -144,9 +144,9 @@ void setup(){
 	ros::NodeHandle nh;
 	ros::NodeHandle nh_priv("~");
 	//get public params
-	nh.getParam("wheel/radius", wheel_radius);
-	nh.getParam("wheel/base", wheel_base);
-	nh.getParam("freq", freq);
+	nh.getParam("/wheel/radius", wheel_radius);
+	nh.getParam("/wheel/base", wheel_base);
+	nh.getParam("/freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
 	robot.reset(rigid2d::Twist2D(rigid2d::PI/2.0, 1, 1));
 	rigid2d::Twist2D pose = robot.pose();
@@ -159,7 +159,7 @@ void setup(){
 	nh_priv.getParam("frame_names/left_wheel_joint", left_wheel);
 	nh_priv.getParam("frame_names/right_wheel_joint", right_wheel);
 
-	js_sub = nh.subscribe("/joint_states", 1, &js_callback);
+	js_sub = nh.subscribe("joint_states", 1, &js_callback);
 	odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 1);
 	set_pose = nh.advertiseService("set_pose", &set_pose_callback);
 }

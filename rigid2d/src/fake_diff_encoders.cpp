@@ -50,15 +50,16 @@ void setup(){
 	ros::NodeHandle nh;
 	ros::NodeHandle nh_priv("~");
 	//get public params
-	nh.getParam("wheel/radius", wheel_radius);
-	nh.getParam("wheel/base", wheel_base);
-	nh.getParam("freq", freq);
+	nh.getParam("/wheel/radius", wheel_radius);
+	nh.getParam("/wheel/base", wheel_base);
+	nh.getParam("/freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
 	robot.reset(rigid2d::Twist2D(1.57079, 1, 1));
 	nh_priv.getParam("/odometer/frame_names/left_wheel_joint", left_wheel);
 	nh_priv.getParam("/odometer/frame_names/right_wheel_joint", right_wheel);
-	vel_sub = nh.subscribe("/turtle1/cmd_vel", 1, &vel_callback);
-	js_pub = nh.advertise<sensor_msgs::JointState>("/joint_states",5);
+	// vel_sub = nh.subscribe("/turtle1/cmd_vel", 1, &vel_callback);
+	vel_sub = nh.subscribe("/cmd_vel", 1, &vel_callback); //switching to this for F.007
+	js_pub = nh.advertise<sensor_msgs::JointState>("joint_states",5);
 }
 
 void loop(){
