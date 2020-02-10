@@ -1,0 +1,10 @@
+<launch>
+	<arg name="robot" default="0" doc="specify which robot you're running on!"/>
+	<include file="$(find nuturtle_robot)/launch/basic_remote.launch">
+		<arg name="robot" value="$(arg robot)"/>
+	</include>
+
+	
+
+
+</launch>
