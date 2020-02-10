@@ -4,7 +4,14 @@
 		<arg name="robot" value="$(arg robot)"/>
 	</include>
 
-	
+	<!-- Load parameters into server -->
+	<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml"/>
+	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_description)/urdf/diff_drive.urdf.xacro'"/>
 
+	<node machine="turtlebot" pkg="nuturtle_robot" type="turtle_interface" name="turtle_interface"/>
+	<node machine="turtlebot" pkg="nuturtle_robot" type="rotation" name="rotation"/>
+	<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom1"/>
+	<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom2"/>
+	<node machine="turtlebot" pkg="rigid2d" type="fake_diff_encoders" name="fake_diff_encoders"/>
 
 </launch>
