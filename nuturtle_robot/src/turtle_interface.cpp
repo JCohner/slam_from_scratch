@@ -47,8 +47,8 @@ void vel_sub_callback(geometry_msgs::Twist data)
 
 	//convert commanded twist to wheel speeds
 	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(rigid2d::Twist2D(angular_speed, linear_speed, 0));
-	double wheel_command_max = 44;
-	//clamp wheel vels at no load motor speeds, map output between -44,44
+	double wheel_command_max = 264; //TODO: grab from parameter server
+	//clamp wheel vels at no load motor speeds, map output between -265,265
 	//clamp
 	wheel_vels.left = wheel_vels.left / max_motor_speed * wheel_command_max;
 	wheel_vels.right = wheel_vels.right / max_motor_speed * wheel_command_max;
