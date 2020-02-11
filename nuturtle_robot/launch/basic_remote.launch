@@ -1,5 +1,6 @@
 <launch>
 	<arg name="robot" default="0" doc="robot #"/>
+	<machine name="kdozer" address="kdozer"/>
 	<!-- <arg name="machine_name"/> -->
 	<group if="$(eval arg('robot') == 0)">
 		<machine name="turtlebot" address="localhost" unless="$(arg robot)" />
