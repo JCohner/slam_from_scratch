@@ -7,14 +7,14 @@
 #include "rigid2d/rigid2d.hpp"
 #include "diff_drive/diff_drive.hpp"
 
-ros::Publisher	vel_pub;
-ros::Subscriber wheel_cmd_sub; 
-ros::Publisher	sensor_pub;
-ros::Subscriber js_sub; 
-bool x;
-bool y;
-rigid2d::WheelVelocities wheel_vels;
-sensor_msgs::JointState js;
+static ros::Publisher	vel_pub;
+static ros::Subscriber wheel_cmd_sub; 
+static ros::Publisher	sensor_pub;
+static ros::Subscriber js_sub; 
+static bool x;
+static bool y;
+static rigid2d::WheelVelocities wheel_vels;
+static sensor_msgs::JointState js;
 
 TEST(cmd_vel, no_rot)
 {
@@ -62,8 +62,8 @@ TEST(cmd_vel, trans_and_rot)
 		r.sleep();
 		ros::spinOnce();
 	}
-	ASSERT_EQ(wheel_vels.left, 37);	
-	ASSERT_EQ(wheel_vels.right, 44);	
+	ASSERT_EQ(wheel_vels.left, 226);	
+	ASSERT_EQ(wheel_vels.right, 264);	
 }
 
 TEST(sens_sub, encoder_counts)
@@ -115,6 +115,8 @@ int main(int argc, char * argv[])
 	testing::InitGoogleTest(&argc, argv);
     ros::init(argc, argv, "test_node_name");
     setup();
-    return RUN_ALL_TESTS();
+    const auto x = RUN_ALL_TESTS();
+    ros::shutdown();
+    return x;
 }
 
