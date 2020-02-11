@@ -1,0 +1,5 @@
+frame_names:
+  odom_frame_id: "fake_odom"
+  body_frame_id: "fake_base_link"
+  left_wheel_joint: "fake_left_wheel_axel"
+  right_wheel_joint: "fake_right_wheel_axel"
