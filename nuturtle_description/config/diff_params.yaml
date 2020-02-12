@@ -9,7 +9,7 @@ chassis:
   height: .192 #heigh of chassis
 velocity:
   max_trans: 0.22
-  max_rot: 2.84
+  max_rot: 2.84 #rad/s
 motor:
   no_load_speed: 6.35492 #rad/s speed
   max_power: 265 #plus/minus this is the strongest effort you can request from ESC
