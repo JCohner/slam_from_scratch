@@ -122,8 +122,8 @@ void js_callback(sensor_msgs::JointState data){
 	// ROS_INFO("delta encoders: %f, %f", data.position[0] - encoders[0], data.position[1] - encoders[1]);
 	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], 1);
 	// robot.updateOdometry(data.position[0], data.position[1], 1);
-	rigid2d::Twist2D pose = robot.pose();
-	ROS_INFO("im at x: %f, y: %f, th: %f", pose.vel.x, pose.vel.y, pose.omega);
+	// rigid2d::Twist2D pose = robot.pose();
+	// ROS_INFO("im at x: %f, y: %f, th: %f", pose.vel.x, pose.vel.y, pose.omega);
 	robot.set_encoders(data.position[0], data.position[1]);
 	publishOdom();
 	
@@ -148,7 +148,7 @@ void setup(){
 	nh.getParam("/wheel/base", wheel_base);
 	nh.getParam("/freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
-	robot.reset(rigid2d::Twist2D(rigid2d::PI/2.0, 1, 1));
+	robot.reset(rigid2d::Twist2D(0, 0, 0));
 	rigid2d::Twist2D pose = robot.pose();
 	x = pose.vel.x;
 	y = pose.vel.y;
