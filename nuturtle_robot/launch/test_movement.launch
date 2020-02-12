@@ -9,12 +9,12 @@
 	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_description)/urdf/diff_drive.urdf.xacro'"/>
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 	<!-- Optionally launch rviz if robot is not 0 -->
-	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find tsim)/rviz/view_robot.rviz" if="$(eval arg('robot') > 0)"/>
+	<node machine="kdozer" pkg="rviz" type="rviz" name="rviz" args="-d $(find tsim)/rviz/view_robot.rviz" if="$(eval arg('robot') > 0)"/>
 
 	<node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 fake/odom odom" />
 
 	<node machine="turtlebot" pkg="nuturtle_robot" type="turtle_interface" name="turtle_interface"/>
-	<node machine="turtlebot" pkg="nuturtle_robot" type="rotation" name="rotation"/>
+	<node machine="turtlebot" pkg="nuturtle_robot" type="rotation" name="rotation" output="screen"/>
 	<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom">
 		<rosparam command="load" file="$(find nuturtle_robot)/config/frame_names.yaml"/>
 	</node>
