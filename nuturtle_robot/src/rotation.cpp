@@ -14,12 +14,12 @@ static bool set_pose_available;
 static int start = 0; //0 -> rotation, 1 paused
 static int num_rots = 0; 
 static double max_rot_vel = 2.84;
-static double frac_vel = 0.25; //TODO:make this a command line or param server parameter //fraction of max velocity
-static double rot_speed = frac_vel * max_rot_vel; //TODO: will have to move this to setup 
+static double frac_vel; //fraction of max velocity
+static double rot_speed;
 static ros::Timer rot_timer;
 static double freq;
-static double rotation = 2 * rigid2d::PI;
-static double rot_periodT = rotation/rot_speed;
+static double rotation;
+static double rot_periodT;
 static double counts_per_rev;
 double count = 0;
 // static ros::Timer pause_timer;
@@ -89,9 +89,16 @@ void rot_timerCallback(const ros::TimerEvent& ev)
 void setup()
 {
 	ros::NodeHandle nh;
-	/*get freq*/
+	ros::NodeHandle nh_priv("~");
+	/*Read from parameter server*/
 	nh.getParam("/freq", freq);
-	ROS_INFO("ROTATION: %f", rot_periodT);
+	nh_priv.getParam("frac_vel",frac_vel);
+	rot_speed = frac_vel * max_rot_vel; //put frac_vel back in
+	rotation = 2 * rigid2d::PI;
+	rot_periodT = rotation/rot_speed;
+
+	// ROS_INFO("ROTATION: %f", rot_periodT);
+
 	rot_timer = nh.createTimer(ros::Duration(1.0/freq), rot_timerCallback);
 	// pause_timer = nh.createTimer(ros::Duration(rot_periodT/20.0), pause_timerCallback);
 	// nh.getParam("velocity/max_rot", max_rot_vel);
@@ -116,6 +123,8 @@ void setup()
 		set_pose.call(pose);
 		fake_set_pose.call(pose);
 		ROS_INFO("set pose!");
+		ROS_INFO("frac_vel: %f, max_vel: %f", frac_vel, max_rot_vel);
+		ROS_INFO("freq: %f, max_rot: %f, rot_speed: %f, rot_P: %f", freq, max_rot_vel, rot_speed, rot_periodT);
 	} else {
 		ROS_INFO("SetPose service is not available");
 		set_pose_available = false;
