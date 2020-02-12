@@ -14,7 +14,10 @@
 	<node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 fake/odom odom" />
 
 	<node machine="turtlebot" pkg="nuturtle_robot" type="turtle_interface" name="turtle_interface"/>
-	<node machine="turtlebot" pkg="nuturtle_robot" type="rotation" name="rotation" output="screen"/>
+	<arg name="frac_vel" default="1" doc="fraction of max velocity to use"/>
+	<node machine="turtlebot" pkg="nuturtle_robot" type="rotation" name="rotation" output="screen">
+		<param name="frac_vel" type="double" value="1.0"/>
+	</node>
 	<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom">
 		<rosparam command="load" file="$(find nuturtle_robot)/config/frame_names.yaml"/>
 	</node>
