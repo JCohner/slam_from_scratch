@@ -22,6 +22,7 @@
 //robot specs
 static double wheel_base;
 static double wheel_radius;
+static double encoder_ticks_per_rev;
 static double freq;
 //this robots listens the encoder updates published on joint states & updates its perception of wheel velocities accordingly
 static rigid2d::DiffDrive robot;
@@ -115,16 +116,14 @@ void publishOdom(){ //rigid2d::Twist2D Vb
 }
 
 void js_callback(sensor_msgs::JointState data){
-	// ROS_INFO("heard encoders: %f %f", data.position[0], data.position[1]);
-	/*Attempt 0*/
 	double encoders[2];
 	robot.get_encoders(encoders); //pervious val
-	// ROS_INFO("delta encoders: %f, %f", data.position[0] - encoders[0], data.position[1] - encoders[1]);
+	ROS_INFO("delta encoders: %f, %f", data.position[0], data.position[1]);
 	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], 1);
 	// robot.updateOdometry(data.position[0], data.position[1], 1);
 	// rigid2d::Twist2D pose = robot.pose();
 	// ROS_INFO("im at x: %f, y: %f, th: %f", pose.vel.x, pose.vel.y, pose.omega);
-	robot.set_encoders(data.position[0], data.position[1]);
+	robot.set_encoders(data.position[0], data.position[1] );
 	publishOdom();
 	
 	return;
@@ -138,6 +137,7 @@ bool set_pose_callback(turtlesim::TeleportAbsolute::Request& request, turtlesim:
 	y = turt_pose.vel.y;
 	th = rigid2d::deg2rad(turt_pose.omega);
 	ROS_INFO("Turtle placed at: %f, %f, %f", x, y, th);
+	// publishOdom();
 	return true;
 }
 
@@ -148,6 +148,7 @@ void setup(){
 	nh.getParam("/wheel/radius", wheel_radius);
 	nh.getParam("/wheel/base", wheel_base);
 	nh.getParam("/freq", freq);
+	nh.getParam("/wheel/encoder_ticks_per_rev", encoder_ticks_per_rev);
 	robot.set_wheel_props(wheel_radius, wheel_base);
 	robot.reset(rigid2d::Twist2D(0, 0, 0));
 	rigid2d::Twist2D pose = robot.pose();

@@ -25,6 +25,7 @@ static std::string right_wheel;
 static rigid2d::DiffDrive robot;
 
 void vel_callback(geometry_msgs::Twist data){
+	ROS_INFO("%f", data.angular.z);
 	sensor_msgs::JointState msg;
 	//we are representing this as 1/frequency of the twist 
 	rigid2d::Twist2D Vb(data.angular.z, data.linear.x, 0);	
@@ -39,6 +40,7 @@ void vel_callback(geometry_msgs::Twist data){
 	msg.header.stamp = ros::Time::now();
 	msg.name= {left_wheel, right_wheel};
 	msg.position = {encoders[0], encoders[1]};
+	msg.velocity = {wheel_vels.left, wheel_vels.right};
 	js_pub.publish(msg); //publish as joint state message what the encoders read, this rotates wheels in rviz
 }
 	
@@ -51,8 +53,8 @@ void setup(){
 	nh.getParam("/freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
 	robot.reset(rigid2d::Twist2D(0, 0, 0));
-	nh_priv.getParam("/odometer/frame_names/left_wheel_joint", left_wheel);
-	nh_priv.getParam("/odometer/frame_names/right_wheel_joint", right_wheel);
+	nh_priv.getParam("frame_names/left_wheel_joint", left_wheel);
+	nh_priv.getParam("frame_names/right_wheel_joint", right_wheel);
 	// vel_sub = nh.subscribe("/turtle1/cmd_vel", 1, &vel_callback);
 	vel_sub = nh.subscribe("/cmd_vel", 1, &vel_callback); //switching to this for F.007
 	js_pub = nh.advertise<sensor_msgs::JointState>("joint_states",5);
