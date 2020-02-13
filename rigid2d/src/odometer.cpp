@@ -20,36 +20,36 @@
 #include <std_srvs/Empty.h>
 
 //robot specs
-double wheel_base;
-double wheel_radius;
-double freq;
+static double wheel_base;
+static double wheel_radius;
+static double freq;
 //this robots listens the encoder updates published on joint states & updates its perception of wheel velocities accordingly
-rigid2d::DiffDrive robot;
-rigid2d::WheelVelocities w_pos_curr;
-rigid2d::WheelVelocities w_pos_prev;
-rigid2d::WheelVelocities wheel_vels;
+static rigid2d::DiffDrive robot;
+static rigid2d::WheelVelocities w_pos_curr;
+static rigid2d::WheelVelocities w_pos_prev;
+static rigid2d::WheelVelocities wheel_vels;
 
-std::string odom;
-std::string body;
-std::string left_wheel;
-std::string right_wheel;
+static std::string odom;
+static std::string body;
+static std::string left_wheel;
+static std::string right_wheel;
 
 //ros node setup
-ros::Subscriber js_sub;
-ros::Publisher odom_pub;
-ros::ServiceServer set_pose;
+static ros::Subscriber js_sub;
+static ros::Publisher odom_pub;
+static ros::ServiceServer set_pose;
 
 //ros time management
-ros::Time curr_time, prev_time;
+static ros::Time curr_time, prev_time;
 
 //tf generation variables
-double x = 0.0;
-double y = 0.0;
-double th = 0.0;
+static double x = 0.0;
+static  double y = 0.0;
+static double th = 0.0;
 
-double vx = 0.0;
-double vy = 0.0;
-double vth = 0.0;
+static double vx = 0.0;
+static double vy = 0.0;
+static double vth = 0.0;
 
 void publishOdom(){ //rigid2d::Twist2D Vb
 	rigid2d::Twist2D Vb = robot.wheelsToTwist(robot.wheelVelocities());
@@ -137,6 +137,7 @@ bool set_pose_callback(turtlesim::TeleportAbsolute::Request& request, turtlesim:
 	x = turt_pose.vel.x;
 	y = turt_pose.vel.y;
 	th = rigid2d::deg2rad(turt_pose.omega);
+	ROS_INFO("Turtle placed at: %f, %f, %f", x, y, th);
 	return true;
 }
 

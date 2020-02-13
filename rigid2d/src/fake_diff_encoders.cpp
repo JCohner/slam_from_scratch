@@ -12,17 +12,17 @@
 #include "diff_drive/diff_drive.hpp"
 
 //define globals
-double wheel_base;
-double wheel_radius;
-double freq;
-ros::Subscriber vel_sub;
-ros::Publisher js_pub;
-std::string left_wheel;
-std::string right_wheel;
+static double wheel_base;
+static double wheel_radius;
+static double freq;
+static ros::Subscriber vel_sub;
+static ros::Publisher js_pub;
+static std::string left_wheel;
+static std::string right_wheel;
 
 //this robot translates commanded body twist to wheel twist
 //tracks 'real change' in encoders
-rigid2d::DiffDrive robot;
+static rigid2d::DiffDrive robot;
 
 void vel_callback(geometry_msgs::Twist data){
 	sensor_msgs::JointState msg;
@@ -34,15 +34,11 @@ void vel_callback(geometry_msgs::Twist data){
 	robot.feedforward(Vb);
 	double encoders[2];
 	robot.get_encoders(encoders);
-	// ROS_INFO("encoders prev: %f, %f", encoders[0], encoders[1]);
 	robot.set_encoders(encoders[0] + wheel_vels.left, encoders[1] + wheel_vels.right); //simulate what the encoders read
 	robot.get_encoders(encoders);
-	// ROS_INFO("encoders curr: %f, %f", encoders[0], encoders[1]);
 	msg.header.stamp = ros::Time::now();
 	msg.name= {left_wheel, right_wheel};
 	msg.position = {encoders[0], encoders[1]};
-	// msg.position = {wheel_vels.left, wheel_vels.right};
-	// ROS_INFO("enc counts: %f %f", msg.position[0], msg.position[1]);
 	js_pub.publish(msg); //publish as joint state message what the encoders read, this rotates wheels in rviz
 }
 	
@@ -54,7 +50,7 @@ void setup(){
 	nh.getParam("/wheel/base", wheel_base);
 	nh.getParam("/freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
-	robot.reset(rigid2d::Twist2D(1.57079, 1, 1));
+	robot.reset(rigid2d::Twist2D(0, 0, 0));
 	nh_priv.getParam("/odometer/frame_names/left_wheel_joint", left_wheel);
 	nh_priv.getParam("/odometer/frame_names/right_wheel_joint", right_wheel);
 	// vel_sub = nh.subscribe("/turtle1/cmd_vel", 1, &vel_callback);
