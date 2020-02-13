@@ -6,18 +6,18 @@ namespace rigid2d{
 			throw std::invalid_argument("invalid body twist: y component request\n");
 		}
 		//sets and returns wheel vel from body twist
-		double r = this->wheel_radius;
-		double d = this->wheel_base;
-		this->wheel_vels.left = 1/r * (-(d)/2 * Vb.omega + Vb.vel.x);
-		this->wheel_vels.right = 1/r * ((d)/2 * Vb.omega + Vb.vel.x);
-		return this->wheel_vels;
+		double r = wheel_radius;
+		double d = wheel_base;
+		wheel_vels.left = 1/r * (-(d)/2 * Vb.omega + Vb.vel.x);
+		wheel_vels.right = 1/r * ((d)/2 * Vb.omega + Vb.vel.x);
+		return wheel_vels;
 	}
 
 
 	Twist2D DiffDrive::wheelsToTwist(WheelVelocities vel){
 		Twist2D Vb;
-		double r = this->wheel_radius;
-		double d = this->wheel_base;
+		double r = wheel_radius;
+		double d = wheel_base;
 		Vb.omega = -r/d * vel.left + r/d * vel.right;
 		Vb.vel.x = r/2 * (vel.left + vel.right);
 
@@ -52,7 +52,7 @@ namespace rigid2d{
 		/*Important note: using Twist2D to represent theta, x, & y of TF */
 		Twist2D pose;
 		double Twb_pose[3];
-		(this->Twb).displacement(Twb_pose);
+		Twb.displacement(Twb_pose);
 		pose.omega = Twb_pose[0];
 		pose.vel.x = Twb_pose[1];
 		pose.vel.y = Twb_pose[2];
@@ -60,12 +60,12 @@ namespace rigid2d{
 	}
 
 	WheelVelocities DiffDrive::wheelVelocities() const{
-		return this->wheel_vels;	
+		return wheel_vels;	
 	}
 
 	void DiffDrive::reset(Twist2D ps){
 		Transform2D Twbnew(ps.vel, ps.omega);
-		this->Twb = Twbnew;
+		Twb = Twbnew;
 		return;
 	}
 
