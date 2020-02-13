@@ -21,8 +21,9 @@ static double freq;
 static double rotation;
 static double rot_periodT;
 static double counts_per_rev;
-double count = 0;
+static volatile double count = 0;
 // static ros::Timer pause_timer;
+static geometry_msgs::Twist vel_cmd;
 
 bool start_srv_callback(nuturtle_robot::Start::Request& req, nuturtle_robot::Start::Response& resp)
 {
@@ -33,6 +34,7 @@ bool start_srv_callback(nuturtle_robot::Start::Request& req, nuturtle_robot::Sta
 	{
 		rot_speed = -rot_speed;
 	}
+	ROS_INFO("Commanding rotation at: %f", rot_speed);
 	if (set_pose_available){
 		turtlesim::TeleportAbsolute pose;
 		pose.request.theta = 0;
@@ -47,44 +49,44 @@ bool start_srv_callback(nuturtle_robot::Start::Request& req, nuturtle_robot::Sta
 
 void rot_timerCallback(const ros::TimerEvent& ev)
 {
+	// if (!start)
+	// {
+	// 	vel_cmd.angular.z = 0;
+	// 	vel_pub.publish(vel_cmd);
+	// 	turtlesim::TeleportAbsolute pose;
+	// 	pose.request.theta = 0;
+	// 	pose.request.x = 0;
+	// 	pose.request.y = 0;
+	// 	set_pose.call(pose);
+	// 	fake_set_pose.call(pose);
+	// }
+
 	if (start && (num_rots < 20))
 	{	
-		if(count < counts_per_rev){
-			ROS_INFO("ROTATION triggering");
-			geometry_msgs::Twist msg;
-			msg.angular.z = rot_speed;
-			vel_pub.publish(msg);
+		if(count <= counts_per_rev){
+			// ROS_INFO("ROTATION triggering");
+			vel_cmd.angular.z = rot_speed;
+			vel_pub.publish(vel_cmd);
 		} 
 		else if (count <= (1.05 * counts_per_rev)){
-			ROS_INFO("Pause triggering");
-			geometry_msgs::Twist msg;
-			vel_pub.publish(msg);
+			// ROS_INFO("Pause triggering");
+			vel_cmd.angular.z = 0;
+			vel_pub.publish(vel_cmd);
 		} 
 		else {
-			ROS_INFO("ONE ROT DONE triggering");
+			ROS_INFO("rotation: %d done", num_rots);
 			count = 0;
 			num_rots++;
 		} 
 		++count;
 	}
+
+	if (num_rots == 20)
+	{
+		start = 0;
+		count = 0;
+	}
 }
-
-// void pause_timerCallback(const ros::TimerEvent& ev)
-// {
-// 	if (state && start)
-// 	{
-// 		ROS_INFO("PAUSE triggering");
-// 		state = !state; //set state to false
-// 		geometry_msgs::Twist msg;
-// 		vel_pub.publish(msg);
-// 		num_rots++;
-// 	}
-
-// 	if (start > 21)
-// 	{
-// 		start = 0;
-// 	}
-// }
 
 void setup()
 {
@@ -93,12 +95,11 @@ void setup()
 	/*Read from parameter server*/
 	nh.getParam("/freq", freq);
 	nh_priv.getParam("frac_vel",frac_vel);
+	freq = 120.0;
 	rot_speed = frac_vel * max_rot_vel; //put frac_vel back in
 	rotation = 2 * rigid2d::PI;
 	rot_periodT = rotation/rot_speed;
-
 	// ROS_INFO("ROTATION: %f", rot_periodT);
-
 	rot_timer = nh.createTimer(ros::Duration(1.0/freq), rot_timerCallback);
 	// pause_timer = nh.createTimer(ros::Duration(rot_periodT/20.0), pause_timerCallback);
 	// nh.getParam("velocity/max_rot", max_rot_vel);
@@ -122,9 +123,6 @@ void setup()
 		pose.request.y = 0;
 		set_pose.call(pose);
 		fake_set_pose.call(pose);
-		ROS_INFO("set pose!");
-		ROS_INFO("frac_vel: %f, max_vel: %f", frac_vel, max_rot_vel);
-		ROS_INFO("freq: %f, max_rot: %f, rot_speed: %f, rot_P: %f", freq, max_rot_vel, rot_speed, rot_periodT);
 	} else {
 		ROS_INFO("SetPose service is not available");
 		set_pose_available = false;
