@@ -6,22 +6,23 @@
 #include "rigid2d/rigid2d.hpp"
 #include "diff_drive/diff_drive.hpp"
 
-ros::Subscriber sensor_sub;
-ros::Subscriber vel_sub;
-ros::Publisher wheel_pub;
-ros::Publisher js_pub;
+static ros::Subscriber sensor_sub;
+static ros::Subscriber vel_sub;
+static ros::Publisher wheel_pub;
+static ros::Publisher js_pub;
 
 /*Gloabl variables*/
-rigid2d::DiffDrive robot;
+static rigid2d::DiffDrive robot;
 
 //grab these from param server eventually
-double wheel_base = 0.16 ;
-double wheel_radius = 0.033;
-double max_rot_vel = 2.84; //rad/s
-double max_trans_vel = 0.22; //m/s
-double max_motor_speed = 6.35492; //rad/s
-std::string left_wheel = "left_wheel_axel";
-std::string right_wheel = "right_wheel_axel";
+static double wheel_base;
+static double wheel_radius;
+static double max_rot_vel;
+static double max_trans_vel;
+static double max_motor_speed; 
+static std::string left_wheel;
+static std::string right_wheel;
+static double wheel_command_max;
 
 void vel_sub_callback(geometry_msgs::Twist data)
 {
@@ -47,7 +48,6 @@ void vel_sub_callback(geometry_msgs::Twist data)
 
 	//convert commanded twist to wheel speeds
 	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(rigid2d::Twist2D(angular_speed, linear_speed, 0));
-	double wheel_command_max = 264; //TODO: grab from parameter server
 	//clamp wheel vels at no load motor speeds, map output between -265,265
 	//clamp
 	wheel_vels.left = wheel_vels.left / max_motor_speed * wheel_command_max;
@@ -93,8 +93,18 @@ void setup()
 {
 	ros::NodeHandle nh;
 	//TODO: get params from param server
+	nh.getParam("/wheel/radius", wheel_radius);
+	nh.getParam("/wheel/base", wheel_base);
+	nh.getParam("/velocity/max_rot", max_rot_vel);
+	nh.getParam("/velocity/max_trans", max_trans_vel);
+	nh.getParam("/motor/no_load_speed", max_motor_speed);
+	nh.getParam("/motor/max_power", wheel_command_max);
+	nh.getParam("/odom/frame_names/left_wheel_joint", left_wheel);
+	nh.getParam("/odom/frame_names/right_wheel_joint", right_wheel);
 
 	robot.set_wheel_props(wheel_radius, wheel_base);
+	robot.reset(rigid2d::Twist2D(0, 0, 0));
+	robot.set_encoders(0, 0);
 	wheel_pub = nh.advertise<nuturtlebot::WheelCommands>("wheel_cmd",1);
 	js_pub = nh.advertise<sensor_msgs::JointState>("/joint_states",1);
 	vel_sub = nh.subscribe("cmd_vel", 1,  &vel_sub_callback); //check what the actual topic name is
