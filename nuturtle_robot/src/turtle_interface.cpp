@@ -17,6 +17,7 @@ static rigid2d::DiffDrive robot;
 //grab these from param server eventually
 static double wheel_base;
 static double wheel_radius;
+static double encoder_ticks_per_rev;
 static double max_rot_vel;
 static double max_trans_vel;
 static double max_motor_speed; 
@@ -26,12 +27,13 @@ static double wheel_command_max;
 
 void vel_sub_callback(geometry_msgs::Twist data)
 {
+	ROS_INFO("%f", data.angular.z);
 	//clamp inputs
 	double angular_speed;
 	double linear_speed;
 	if (abs(data.angular.z) > max_rot_vel)
 	{
-		angular_speed = data.angular.z/abs(data.angular.z) * max_rot_vel;
+		angular_speed = data.angular.z/fabs(data.angular.z) * max_rot_vel;
 	} 
 	else 
 	{
@@ -39,7 +41,7 @@ void vel_sub_callback(geometry_msgs::Twist data)
 	}
 	if (abs(data.linear.x) > max_trans_vel)
 	{
-		linear_speed = data.linear.x/abs(data.linear.x) * max_trans_vel;
+		linear_speed = data.linear.x/fabs(data.linear.x) * max_trans_vel;
 	} 
 	else 
 	{
@@ -73,7 +75,7 @@ void vel_sub_callback(geometry_msgs::Twist data)
 void sens_sub_callback(nuturtlebot::SensorData data)
 {
 	sensor_msgs::JointState msg;
-	double update[2] = {(double(data.left_encoder)),(double(data.right_encoder)) };
+	double update[2] = {(double(data.left_encoder))/encoder_ticks_per_rev * 180,(double(data.right_encoder))/encoder_ticks_per_rev * 180};
 
 	msg.position = {update[0], update[1]};
 	double encoders[2];
@@ -92,9 +94,9 @@ void sens_sub_callback(nuturtlebot::SensorData data)
 void setup()
 {
 	ros::NodeHandle nh;
-	//TODO: get params from param server
 	nh.getParam("/wheel/radius", wheel_radius);
 	nh.getParam("/wheel/base", wheel_base);
+	nh.getParam("/wheel/encoder_ticks_per_rev", encoder_ticks_per_rev);
 	nh.getParam("/velocity/max_rot", max_rot_vel);
 	nh.getParam("/velocity/max_trans", max_trans_vel);
 	nh.getParam("/motor/no_load_speed", max_motor_speed);
