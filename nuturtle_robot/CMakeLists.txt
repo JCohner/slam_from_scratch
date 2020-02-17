@@ -148,6 +148,7 @@ ${catkin_INCLUDE_DIRS}
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(turtle_interface_node src/turtle_interface.cpp)
 add_executable(rotation_node src/rotation.cpp)
+add_executable(real_waypoint_node src/real_waypoint.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -155,11 +156,13 @@ add_executable(rotation_node src/rotation.cpp)
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 set_target_properties(turtle_interface_node PROPERTIES OUTPUT_NAME turtle_interface PREFIX "")
 set_target_properties(rotation_node PROPERTIES OUTPUT_NAME rotation PREFIX "")
+set_target_properties(real_waypoint_node PROPERTIES OUTPUT_NAME real_waypoint PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(turtle_interface_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(rotation_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(real_waypoint_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(turtle_interface_node
@@ -170,7 +173,10 @@ target_link_libraries(rotation_node
   ${rigid2d_LIBRARIES}
   ${catkin_LIBRARIES}
 )
-
+target_link_libraries(real_waypoint_node
+  ${rigid2d_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
 if(CATKIN_ENABLE_TESTING)
 	add_rostest_gtest(turtle_interface_test test/turtle_interface_test.test test/turtle_interface_test.cpp)
 	target_link_libraries(turtle_interface_test 
