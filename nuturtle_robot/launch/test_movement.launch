@@ -21,13 +21,7 @@
 	<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom">
 		<rosparam command="load" file="$(find nuturtle_robot)/config/frame_names.yaml"/>
 	</node>
-<!-- 	<group ns="fake">
-		<rosparam command="load" file="$(find nuturtle_robot)/config/fake_frame_names.yaml"/>
-		<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom"/>
-		<node machine="turtlebot" pkg="rigid2d" type="fake_diff_encoders" name="fake_diff_encoders"/>
-	</group> -->
 		
-
 	<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom" ns="fake">
 		<rosparam command="load" file="$(find nuturtle_robot)/config/fake_frame_names.yaml"/>
 	</node>
