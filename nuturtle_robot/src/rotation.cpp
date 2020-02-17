@@ -12,16 +12,27 @@ static ros::Publisher vel_pub;
 static bool set_pose_available;
 // static int state;
 static int start = 0; //0 -> rotation, 1 paused
-static int num_rots = 0; 
-static double max_rot_vel = 2.84;
+static int type = 0; //0 -> rotation, 1 translation
 static double frac_vel; //fraction of max velocity
-static double rot_speed;
 static ros::Timer rot_timer;
 static double freq;
+static volatile double count = 0;
+
+static int num_rots = 0; 
+static double max_rot_vel;
+static double rot_speed;
 static double rotation;
 static double rot_periodT;
+
+
+static double dist_travelled = 0; 
+static double max_trans_vel;
+static double trans_speed;
+static double total_translation; //total distanced desried
+static double translation; //increment between pausing
+static double trans_periodT;
+
 static double counts_per_rev;
-static volatile double count = 0;
 // static ros::Timer pause_timer;
 static geometry_msgs::Twist vel_cmd;
 
@@ -29,12 +40,30 @@ bool start_srv_callback(nuturtle_robot::Start::Request& req, nuturtle_robot::Sta
 {
 	//0 indicates CCW; 1 indicates CW traversal
 	start = 1;
-	num_rots = 0;
-	if (req.direction == 1)
+	if (!req.motion_type)
 	{
-		rot_speed = -rot_speed;
+		type = 0;
+		num_rots = 0;
+		counts_per_rev = rot_periodT * freq;
+		if (req.direction == 1)
+		{
+			rot_speed = -rot_speed;
+		}
+		ROS_INFO("Commanding rotation at: %f", rot_speed);
 	}
-	ROS_INFO("Commanding rotation at: %f", rot_speed);
+	else
+	{
+		type = 1;
+		dist_travelled = 0;
+		counts_per_rev = trans_periodT * freq;
+		if (req.direction == 1)
+		{
+			trans_speed = -trans_speed;
+		}
+		ROS_INFO("Commanding rotation at: %f", rot_speed);
+
+	}
+
 	if (set_pose_available){
 		turtlesim::TeleportAbsolute pose;
 		pose.request.theta = 0;
@@ -43,25 +72,16 @@ bool start_srv_callback(nuturtle_robot::Start::Request& req, nuturtle_robot::Sta
 		set_pose.call(pose);
 		fake_set_pose.call(pose);
 	}
-
 	return true;
 }
 
 void rot_timerCallback(const ros::TimerEvent& ev)
 {
-	// if (!start)
-	// {
-	// 	vel_cmd.angular.z = 0;
-	// 	vel_pub.publish(vel_cmd);
-	// 	turtlesim::TeleportAbsolute pose;
-	// 	pose.request.theta = 0;
-	// 	pose.request.x = 0;
-	// 	pose.request.y = 0;
-	// 	set_pose.call(pose);
-	// 	fake_set_pose.call(pose);
-	// }
-
-	if (start && (num_rots < 20))
+	if (!start){
+		return;
+	}
+	/*if we are in rotation mode*/
+	if (!type && (num_rots < 20))
 	{	
 		if(count <= counts_per_rev){
 			// ROS_INFO("ROTATION triggering");
@@ -81,6 +101,28 @@ void rot_timerCallback(const ros::TimerEvent& ev)
 		++count;
 	}
 
+	/*if we are in translaton mode*/
+	if (type && (dist_travelled < total_translation))
+	{	
+		if(count <= counts_per_rev){
+			// ROS_INFO("ROTATION triggering");
+			vel_cmd.linear.x = trans_speed;
+			vel_pub.publish(vel_cmd);
+		} 
+		else if (count <= (1.05 * counts_per_rev)){
+			// ROS_INFO("Pause triggering");
+			vel_cmd.linear.x = 0;
+			vel_pub.publish(vel_cmd);
+		} 
+		else {
+			count = 0;
+			dist_travelled += fabs(trans_speed) * trans_periodT; //  / (freq * counts_per_rev);
+			ROS_INFO("dist travlled: %f done", dist_travelled);
+		} 
+		++count;
+	}
+
+
 	if (num_rots == 20)
 	{
 		start = 0;
@@ -94,17 +136,23 @@ void setup()
 	ros::NodeHandle nh_priv("~");
 	/*Read from parameter server*/
 	nh.getParam("/freq", freq);
+	nh.getParam("/velocity/max_rot", max_rot_vel);
+	nh.getParam("/velocity/max_trans", max_trans_vel);
 	nh_priv.getParam("frac_vel",frac_vel);
+	/*Determine implied periods and speeds*/
 	freq = 120.0;
 	rot_speed = frac_vel * max_rot_vel; //put frac_vel back in
 	rotation = 2 * rigid2d::PI;
 	rot_periodT = rotation/rot_speed;
-	// ROS_INFO("ROTATION: %f", rot_periodT);
+
+	trans_speed = frac_vel * max_trans_vel;
+	total_translation = 2; //meters
+	translation = 0.2;
+	trans_periodT = translation/trans_speed;
+
 	rot_timer = nh.createTimer(ros::Duration(1.0/freq), rot_timerCallback);
-	// pause_timer = nh.createTimer(ros::Duration(rot_periodT/20.0), pause_timerCallback);
-	// nh.getParam("velocity/max_rot", max_rot_vel);
 	
-	counts_per_rev = rot_periodT * freq;
+	// counts_per_rev = rot_periodT * freq;
 	ROS_INFO("num counts per rev: %f", counts_per_rev);
 	/*Initialize services and publishers*/
 	start_srv = nh.advertiseService("start", &start_srv_callback);
