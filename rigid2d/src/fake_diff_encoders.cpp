@@ -15,6 +15,7 @@
 static double wheel_base;
 static double wheel_radius;
 static double freq;
+static double encoder_ticks_per_rev;
 static ros::Subscriber vel_sub;
 static ros::Publisher js_pub;
 static std::string left_wheel;
@@ -30,9 +31,9 @@ void vel_callback(geometry_msgs::Twist data){
 	//we are representing this as 1/frequency of the twist 
 	rigid2d::Twist2D Vb(data.angular.z, data.linear.x, 0);	
 	// ROS_INFO("commanded body twist: omega: %f, vx: %f, vy: %f", Vb.omega, Vb.vel.x, Vb.vel.y);
-	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(Vb); //commanded velocities
-	// ROS_INFO("commanded wheel vels: %f %f", wheel_vels.left, wheel_vels.right);
+	// rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(Vb); //commanded velocities
 	robot.feedforward(Vb);
+	rigid2d::WheelVelocities wheel_vels = robot.wheelVelocities();
 	double encoders[2];
 	robot.get_encoders(encoders);
 	robot.set_encoders(encoders[0] + wheel_vels.left, encoders[1] + wheel_vels.right); //simulate what the encoders read
@@ -50,14 +51,16 @@ void setup(){
 	//get public params
 	nh.getParam("/wheel/radius", wheel_radius);
 	nh.getParam("/wheel/base", wheel_base);
+	nh.getParam("/wheel/encoder_ticks_per_rev", encoder_ticks_per_rev);
 	nh.getParam("/freq", freq);
 	robot.set_wheel_props(wheel_radius, wheel_base);
 	robot.reset(rigid2d::Twist2D(0, 0, 0));
+	robot.set_encoders(0,0);
 	nh_priv.getParam("frame_names/left_wheel_joint", left_wheel);
 	nh_priv.getParam("frame_names/right_wheel_joint", right_wheel);
 	// vel_sub = nh.subscribe("/turtle1/cmd_vel", 1, &vel_callback);
 	vel_sub = nh.subscribe("/cmd_vel", 1, &vel_callback); //switching to this for F.007
-	js_pub = nh.advertise<sensor_msgs::JointState>("joint_states",5);
+	js_pub = nh.advertise<sensor_msgs::JointState>("joint_states",1);
 }
 
 void loop(){
