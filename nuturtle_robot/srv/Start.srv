@@ -1,2 +1,3 @@
 int16 direction #0 is CCW; 1 is CW
+int16 motion_type #0 is rotation; 1 is translation
 ---
