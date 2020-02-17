@@ -118,12 +118,14 @@ void publishOdom(){ //rigid2d::Twist2D Vb
 void js_callback(sensor_msgs::JointState data){
 	double encoders[2];
 	robot.get_encoders(encoders); //pervious val
-	ROS_INFO("delta encoders: %f, %f", data.position[0], data.position[1]);
-	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], 1);
-	// robot.updateOdometry(data.position[0], data.position[1], 1);
+
+	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], freq);
+	// robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], 1);
+
 	// rigid2d::Twist2D pose = robot.pose();
 	// ROS_INFO("im at x: %f, y: %f, th: %f", pose.vel.x, pose.vel.y, pose.omega);
-	robot.set_encoders(data.position[0], data.position[1] );
+	
+	robot.set_encoders(data.position[0], data.position[1]);
 	publishOdom();
 	
 	return;
@@ -136,7 +138,7 @@ bool set_pose_callback(turtlesim::TeleportAbsolute::Request& request, turtlesim:
 	x = turt_pose.vel.x;
 	y = turt_pose.vel.y;
 	th = rigid2d::deg2rad(turt_pose.omega);
-	ROS_INFO("Turtle placed at: %f, %f, %f", x, y, th);
+	// ROS_INFO("Turtle placed at: %f, %f, %f", x, y, th);
 	// publishOdom();
 	return true;
 }

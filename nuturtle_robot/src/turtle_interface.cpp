@@ -27,7 +27,7 @@ static double wheel_command_max;
 
 void vel_sub_callback(geometry_msgs::Twist data)
 {
-	ROS_INFO("%f", data.angular.z);
+	// ROS_INFO("%f", data.angular.z);
 	//clamp inputs
 	double angular_speed;
 	double linear_speed;
@@ -75,9 +75,11 @@ void vel_sub_callback(geometry_msgs::Twist data)
 void sens_sub_callback(nuturtlebot::SensorData data)
 {
 	sensor_msgs::JointState msg;
-	double update[2] = {(double(data.left_encoder))/encoder_ticks_per_rev * 180,(double(data.right_encoder))/encoder_ticks_per_rev * 180};
+	double update[2] = {(double(data.left_encoder))/encoder_ticks_per_rev * 2 * rigid2d::PI,(double(data.right_encoder))/encoder_ticks_per_rev * 2 * rigid2d::PI};
+	// double update[2] = {(double(data.left_encoder))/encoder_ticks_per_rev * 180,(double(data.right_encoder))/encoder_ticks_per_rev * 180};
 
 	msg.position = {update[0], update[1]};
+	// ROS_INFO("lw: %f, rw: %f", update[0], update[1]);
 	double encoders[2];
 	robot.get_encoders(encoders);
 	rigid2d::WheelVelocities vels(update[0] - encoders[0], update[1] - encoders[1]); //TODO: decide if we need to scale by freq

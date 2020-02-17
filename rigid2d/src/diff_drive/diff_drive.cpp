@@ -33,9 +33,9 @@ namespace rigid2d{
 		// Vb.omega = r/d * (-left_dist + right_dist) / freq;
 		// Vb.vel.x = r/2 * (left_dist + right_dist) / freq;
 		Vb.omega = r/d * (-left_rad + right_rad) / freq;
-		Vb.vel.x = r/2 * (left_rad + right_rad) / freq;
+		Vb.vel.x = r/2.0 * (left_rad + right_rad) / freq;
 		Twb = Twb.intergrateTwist(Vb);
-		this->twistToWheels(Vb);
+		twistToWheels(Vb);
 		// printf("wheel vels: %f %f\n", wheel_vels.left, wheel_vels.right);
 		return;  
 	}
@@ -43,8 +43,8 @@ namespace rigid2d{
 	void DiffDrive::feedforward(Twist2D twist){
 		//integrate twist over one unit time step and premultiply by Twb such that you update odom
 		//i.e. Twb' = Twb * Tbb' <-- this is what the intergrateTwist function does & what we need
-		this->Twb = Twb.intergrateTwist(twist);
-		// (*this).twistToWheels(twist);
+		Twb = Twb.intergrateTwist(twist);
+		// twistToWheels(twist);
 		return;
 	}
 

@@ -25,7 +25,7 @@ static std::string right_wheel;
 static rigid2d::DiffDrive robot;
 
 void vel_callback(geometry_msgs::Twist data){
-	ROS_INFO("%f", data.angular.z);
+	// ROS_INFO("%f", data.angular.z);
 	sensor_msgs::JointState msg;
 	//we are representing this as 1/frequency of the twist 
 	rigid2d::Twist2D Vb(data.angular.z, data.linear.x, 0);	
