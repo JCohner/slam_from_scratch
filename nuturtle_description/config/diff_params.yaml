@@ -14,4 +14,4 @@ motor:
   no_load_speed: 6.35492 #rad/s speed
   max_power: 265 #plus/minus this is the strongest effort you can request from ESC
 
-freq: 60 #added because odom an fake_encoders rely on this
+freq: 120 #added because odom an fake_encoders rely on this
