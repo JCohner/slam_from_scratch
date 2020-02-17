@@ -50,6 +50,7 @@ void vel_sub_callback(geometry_msgs::Twist data)
 
 	//convert commanded twist to wheel speeds
 	rigid2d::WheelVelocities wheel_vels = robot.twistToWheels(rigid2d::Twist2D(angular_speed, linear_speed, 0));
+	// ROS_INFO("commanded wheel vels: %f %f", wheel_vels.left, wheel_vels.right);
 	//clamp wheel vels at no load motor speeds, map output between -265,265
 	//clamp
 	wheel_vels.left = wheel_vels.left / max_motor_speed * wheel_command_max;
@@ -66,7 +67,7 @@ void vel_sub_callback(geometry_msgs::Twist data)
 	nuturtlebot::WheelCommands command;
 	command.left_velocity = wheel_vels.left;
 	command.right_velocity = wheel_vels.right;
-
+	// ROS_INFO("eff_l %f, eff_r: %f", wheel_vels.left, wheel_vels.right);
 	wheel_pub.publish(command);
 
 	return;
@@ -77,13 +78,13 @@ void sens_sub_callback(nuturtlebot::SensorData data)
 	sensor_msgs::JointState msg;
 	double update[2] = {(double(data.left_encoder))/encoder_ticks_per_rev * 2 * rigid2d::PI,(double(data.right_encoder))/encoder_ticks_per_rev * 2 * rigid2d::PI};
 	// double update[2] = {(double(data.left_encoder))/encoder_ticks_per_rev * 180,(double(data.right_encoder))/encoder_ticks_per_rev * 180};
-
-	msg.position = {update[0], update[1]};
-	// ROS_INFO("lw: %f, rw: %f", update[0], update[1]);
+	msg.position = {rigid2d::rad2deg(update[0]), rigid2d::rad2deg(update[1])};
 	double encoders[2];
 	robot.get_encoders(encoders);
-	rigid2d::WheelVelocities vels(update[0] - encoders[0], update[1] - encoders[1]); //TODO: decide if we need to scale by freq
-	robot.set_encoders(encoders[0] + update[0], encoders[1] + update[1]);
+	rigid2d::WheelVelocities vels(update[0] - encoders[0], update[1] - encoders[1]); 
+
+	// robot.set_encoders(encoders[0] + update[0], encoders[1] + update[1]);
+	robot.set_encoders(update[0], update[1]);
 
 	msg.velocity = {vels.left, vels.right};
 	msg.name = {left_wheel, right_wheel};
