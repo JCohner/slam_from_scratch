@@ -140,7 +140,7 @@ void setup()
 	nh.getParam("/velocity/max_trans", max_trans_vel);
 	nh_priv.getParam("frac_vel",frac_vel);
 	/*Determine implied periods and speeds*/
-	freq = 120.0;
+	// freq = 120.0;
 	rot_speed = frac_vel * max_rot_vel; //put frac_vel back in
 	rotation = 2 * rigid2d::PI;
 	rot_periodT = rotation/rot_speed;
