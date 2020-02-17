@@ -1,0 +1,31 @@
+<launch>
+	<arg name="robot" default="0" doc="specify which robot you're running on!"/>
+	<include file="$(find nuturtle_robot)/launch/basic_remote.launch">
+		<arg name="robot" value="$(arg robot)"/>
+	</include>
+	<!-- Load parameters into server -->
+	<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml"/>
+	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_description)/urdf/diff_drive.urdf.xacro'"/>
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+	<!-- Optionally launch rviz if robot is not 0 -->
+	<node machine="kdozer" pkg="rviz" type="rviz" name="rviz" args="-d $(find tsim)/rviz/view_robot.rviz" if="$(eval arg('robot') > 0)"/>
+	<node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0 0 0 1 odom fake_odom" />
+	
+	<node machine="turtlebot" pkg="nuturtle_robot" type="turtle_interface" name="turtle_interface"/>
+		<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom">
+		<rosparam command="load" file="$(find nuturtle_robot)/config/frame_names.yaml"/>
+	</node>
+		
+	<node machine="turtlebot" pkg="rigid2d" type="odometer" name="odom" ns="fake">
+		<rosparam command="load" file="$(find nuturtle_robot)/config/fake_frame_names.yaml"/>
+	</node>
+	<node machine="turtlebot" pkg="rigid2d" type="fake_diff_encoders" name="fake_diff_encoders" ns="fake">
+		<rosparam command="load" file="$(find nuturtle_robot)/config/fake_frame_names.yaml"/>
+	</node>
+
+	<!-- Waypoint node -->
+	<node machine="turtlebot" pkg="nuturtle_robot" type="real_waypoint" name="real_waypoint">
+		<param name="frac_vel" type="double" value="$(arg frac_vel)"/>
+	</node>
+	
+</launch>
