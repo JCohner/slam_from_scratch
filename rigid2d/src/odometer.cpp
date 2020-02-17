@@ -118,10 +118,8 @@ void publishOdom(){ //rigid2d::Twist2D Vb
 void js_callback(sensor_msgs::JointState data){
 	double encoders[2];
 	robot.get_encoders(encoders); //pervious val
-
-	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], freq);
-	// robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], 1);
-
+	// robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], freq);
+	robot.updateOdometry(data.position[0] - encoders[0], data.position[1] - encoders[1], 1);
 	// rigid2d::Twist2D pose = robot.pose();
 	// ROS_INFO("im at x: %f, y: %f, th: %f", pose.vel.x, pose.vel.y, pose.omega);
 	

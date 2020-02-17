@@ -44,7 +44,7 @@ namespace rigid2d{
 		//integrate twist over one unit time step and premultiply by Twb such that you update odom
 		//i.e. Twb' = Twb * Tbb' <-- this is what the intergrateTwist function does & what we need
 		Twb = Twb.intergrateTwist(twist);
-		// twistToWheels(twist);
+		twistToWheels(twist);
 		return;
 	}
 
