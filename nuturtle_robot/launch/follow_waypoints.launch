@@ -24,8 +24,10 @@
 	</node>
 
 	<!-- Waypoint node -->
-	<node machine="turtlebot" pkg="nuturtle_robot" type="real_waypoint" name="real_waypoint">
+	<rosparam command="load" file="$(find nuturtle_robot)/config/waypoints.yaml"/>
+	<arg name="frac_vel" default="1" doc="fraction of max velocity to use"/>
+	<node pkg="nuturtle_robot" type="real_waypoint" name="real_waypoint" output="screen">
 		<param name="frac_vel" type="double" value="$(arg frac_vel)"/>
 	</node>
-	
+
 </launch>
