@@ -50,7 +50,7 @@ namespace rigid2d
 	}
 
 	int Waypoints::state_check(double dist, double speed, double ellapsed){
-		double trav_time = dist / speed;
+		double trav_time = fabs(dist) / speed;
 		// std::cout << "expected trav time: " << trav_time << "\n";
 		if (ellapsed > trav_time){
 			return 1;
