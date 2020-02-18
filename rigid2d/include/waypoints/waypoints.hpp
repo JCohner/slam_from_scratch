@@ -52,6 +52,11 @@ namespace rigid2d
 		}
 		/// \brief prepares waypoint statemachine for begining 
 		void start();
+
+		std::vector<double> get_waypoint_at(int index)
+		{
+			return waypoints.at(index);
+		}
 	};
 }
 
