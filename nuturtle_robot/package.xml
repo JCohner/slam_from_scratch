@@ -13,7 +13,7 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <license>FREEBEE</license>
 
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
@@ -58,6 +58,10 @@
   <depend>rigid2d</depend>
   <test_depend>rostest</test_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_depend>turtlesim</build_depend>
+  <build_depend>visualization_msgs</build_depend>
   <exec_depend>message_runtime</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->

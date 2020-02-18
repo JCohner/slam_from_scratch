@@ -20,6 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
 	rigid2d
 	message_generation
 	turtlesim #this is just used for TeleportAbsolute srv, used in set_pose service, could be changed 
+	std_msgs
+	visualization_msgs
 )
 
 if (CATKIN_ENABLE_TESTING)
@@ -82,7 +84,8 @@ add_service_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
-  std_msgs  # Or other packages containing msgs
+  std_msgs  
+  visualization_msgs# Or other packages containing msgs
 )
 
 ################################################
@@ -117,7 +120,7 @@ generate_messages(
 catkin_package(
  # INCLUDE_DIRS include
  # LIBRARIES rostest
- CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d message_runtime
+ CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d message_runtime std_msgs
 #  DEPENDS system_lib
 )
 
@@ -210,6 +213,9 @@ install(TARGETS turtle_interface_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 install(TARGETS rotation_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+install(TARGETS real_waypoint_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 ## Mark libraries for installation
