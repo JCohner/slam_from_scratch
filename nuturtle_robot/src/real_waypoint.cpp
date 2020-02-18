@@ -39,13 +39,23 @@ static ros::ServiceClient set_pose;
 /*state maintenence variables*/
 static int start = 0; 
 static ros::Timer timer;
+geometry_msgs::Twist cmd_twist;
+
+geometry_msgs::Twist VbToRos(rigid2d::Twist2D Vb){
+	geometry_msgs::Twist twist;
+	twist.linear.x = Vb.vel.x;
+	twist.angular.z = Vb.omega;
+	return twist;
+}
 
 
 void timerCallback(const ros::TimerEvent& ev)
 {
 	if (start)
 	{
-
+		cmd_twist = VbToRos(waypoints.nextWaypoint());
+		vel_pub.publish(cmd_twist);
+		ros::spinOnce();
 	}
 }
 
