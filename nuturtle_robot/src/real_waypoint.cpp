@@ -3,6 +3,10 @@
 #include "rigid2d/rigid2d.hpp"
 #include "diff_drive/diff_drive.hpp"
 #include <visualization_msgs/Marker.h>
+#include <nuturtle_robot/Start.h>
+#include <std_srvs/Empty.h>
+#include <geometry_msgs/Twist.h>
+#include <turtlesim/TeleportAbsolute.h>
 
 //grab these from param server eventually
 /*robot & general properties*/
@@ -26,7 +30,42 @@ unsigned int i;
 
 /*marker pub*/
 ros::Publisher marker_pub;
+ros::Publisher vel_pub;
+static ros::ServiceServer start_srv;
+static ros::ServiceServer stop_srv;
+static ros::ServiceClient fake_set_pose;
+static ros::ServiceClient set_pose;
 
+/*state maintenence variables*/
+static int start = 0; 
+static ros::Timer timer;
+
+
+void timerCallback(const ros::TimerEvent& ev)
+{
+	if (start)
+	{
+
+	}
+}
+
+bool start_srv_callback(nuturtle_robot::Start::Request& req, nuturtle_robot::Start::Response& resp)
+{
+	start = 1;
+	turtlesim::TeleportAbsolute pose;
+	pose.request.theta = 0;
+	pose.request.x = 0;
+	pose.request.y = 0;
+	set_pose.call(pose);
+	fake_set_pose.call(pose);
+	return true;
+}
+
+bool stop_srv_callback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& resp)
+{
+	start = 0;
+	return true;
+}
 
 void pub_marker()
 {
@@ -53,6 +92,7 @@ void pub_marker()
 		mark.pose.orientation.w = 1.0;
 
 		// Set the scale of the marker -- 1x1x1 here means 1m on a side
+		//TODO: scale these properly
 		mark.scale.x = 1.0;
 		mark.scale.y = 1.0;
 		mark.scale.z = 1.0;
@@ -97,6 +137,14 @@ void setup()
 
 	/*Node stuff*/
 	marker_pub = nh.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+	vel_pub = nh.advertise<geometry_msgs::Twist>("cmd_vel",1);
+	start_srv = nh.advertiseService("start", &start_srv_callback);
+	stop_srv = nh.advertiseService("stop", &stop_srv_callback);
+	ros::service::waitForService("set_pose");
+	ros::service::waitForService("fake/set_pose");
+	set_pose = nh.serviceClient<turtlesim::TeleportAbsolute>("set_pose");
+	fake_set_pose = nh.serviceClient<turtlesim::TeleportAbsolute>("fake/set_pose");
+	timer = nh.createTimer(ros::Duration(1.0/freq), timerCallback);
 }
 
 int main(int argc, char * argv[])
