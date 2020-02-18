@@ -1,15 +1,37 @@
 # Physical Testing for Feedforward Inplace Rotation
 
+## Rotation Test
 * for frac_vel = 1 
 | |T|X|Y|	
 |--|--|--|--|
-|F|46.312|0|0| <-- doesnt catch missed rotation
-|O|077.942|0|0|
-|G|060.000|0|0|
+|F|25|0|0|
+|O|144|0|0|
+|G|130|0|0|
 
 * for frac_vel = 0.5 
 | |T|X|Y|	
 |--|--|--|--|
-|F|0.47|0|0| <-- doesnt catch missde rotation
-|O|166.594|0|0|
-|G|156|0|0|
+|F|25|0|0| 
+|O|21|0|0|
+|G|45|0|0|
+
+## Translation Test
+* for frac_vel = 1 
+| |T|X|Y|	
+|--|--|--|--|
+|F|0|2|0|
+|O|2.002|0|0|
+|G|1.95|0|0|
+
+* for frac_vel = 0.5 
+| |T|X|Y|	
+|--|--|--|--|
+|F|0|2|0| 
+|O|2.008|0|0|
+|G|1.98|0|0|
+
+screencap:
+https://youtu.be/nFaDnOXjuAc
+
+robot moving around the room:
+https://www.youtube.com/watch?v=R1alS0p9dfE
