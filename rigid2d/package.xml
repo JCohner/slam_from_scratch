@@ -54,6 +54,7 @@
   <exec_depend>roscpp</exec_depend>
   <test_depend>rosunit</test_depend>
   <build_depend>rostest</build_depend>
+  <build_depend>turtlesim11</build_depend>
   <depend>tf</depend>
   <depend>tf2</depend>
   <depend>nav_msgs</depend>

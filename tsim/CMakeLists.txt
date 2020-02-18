@@ -114,7 +114,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS ${rigid2d_INCLUDE_DIRS}
+ #INCLUDE_DIRS ${rigid2d_INCLUDE_DIRS}
 #  LIBRARIES tsim
   CATKIN_DEPENDS geometry_msgs roscpp std_srvs turtlesim message_runtime rigid2d
 #  DEPENDS system_lib
@@ -129,7 +129,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  ${rigid2d_INCLUDE_DIRS}
+  #${rigid2d_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -165,7 +165,7 @@ target_link_libraries(${PROJECT_NAME}_turtle_rect
   ${catkin_LIBRARIES}
 )
 target_link_libraries(${PROJECT_NAME}_turtle_way
-  ${rigid2d_LIBRARIES}
+  #${rigid2d_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 

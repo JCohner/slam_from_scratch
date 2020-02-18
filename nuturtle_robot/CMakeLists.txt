@@ -120,7 +120,7 @@ generate_messages(
 catkin_package(
  # INCLUDE_DIRS include
  # LIBRARIES rostest
- CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d message_runtime std_msgs
+ CATKIN_DEPENDS nuturtlebot sensor_msgs geometry_msgs rigid2d message_runtime std_msgs visualization_msgs
 #  DEPENDS system_lib
 )
 

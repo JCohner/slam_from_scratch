@@ -76,11 +76,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        caster2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         left_wheel:
           Alpha: 1
           Show Axes: false
@@ -106,8 +101,8 @@ Visualization Manager:
           Value: true
         caster1:
           Value: false
-        caster2:
-          Value: false
+        fake_odom:
+          Value: true
         left_wheel:
           Value: true
         odom:
@@ -124,13 +119,21 @@ Visualization Manager:
           base_link:
             caster1:
               {}
-            caster2:
-              {}
             left_wheel:
               {}
             right_wheel:
               {}
+          fake_odom:
+            {}
       Update Interval: 0
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: visualization_marker
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
       Value: true
   Enabled: true
   Global Options:
@@ -196,5 +199,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 960
-  X: 960
-  Y: 0
+  X: 0
+  Y: 41
