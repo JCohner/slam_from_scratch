@@ -1,3 +1,14 @@
+/// \file
+/// \brief This node gets the turtle to rotate or translate based on a start command
+///
+/// PUBLISHES:
+///     vel_pub: <geometry_msgs::Twist>: publishes desired velocity to complete desired traj based on user request and feedforward
+/// SERVICES:
+///	  SERVER
+/// 	start_srv: <nuturtle_robot::Start> contains the type of motion (rot or trans) and the fractional speed (of max) to complete that motion with 
+///	  CLIENT	
+/// 	fake_set_pose: <turtlesim::TeleportAbsolute> set the pose of the fake odom frame
+/// 	set_pose: <turtlesim::TeleportAbsolute> set the pose of the odom frame 
 #include <ros/ros.h>
 #include "nuturtle_robot/Start.h"
 #include "rigid2d/rigid2d.hpp"

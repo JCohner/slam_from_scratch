@@ -1,3 +1,16 @@
+/// \file
+/// \brief This node causes the physical turtlebot to follow the desired trajectory based on 5 waypoints!
+///
+/// PUBLISHES:
+///     marker_pub: <visualization_msgs::Marker>: publishes markers to denote waypoints [visualization_marker]
+///     vel_pub: <geometry_msgs::Twist>: publishes velocites to correctly move between waypoitns [cmd_vel]
+/// SERVICES:
+///	  SERVER
+/// 	start_srv: <nuturtle_robot::Start> start traversing one circuit of waypoints
+/// 	stop_srv: <std_srvs::Empty> stop traversal
+///	  CLIENT	
+/// 	fake_set_pose: <turtlesim::TeleportAbsolute> set the pose of the fake odom frame
+/// 	set_pose: <turtlesim::TeleportAbsolute> set the pose of the odom frame 
 #include <ros/ros.h>
 #include "waypoints/waypoints.hpp"
 #include "rigid2d/rigid2d.hpp"

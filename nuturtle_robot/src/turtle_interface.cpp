@@ -1,3 +1,13 @@
+/// \file
+/// \brief This implements the turtle interface node used for publishing wheel commands to and getting sensor data from the physical turtle, these are in response to commanded wheel velocities
+///
+/// PUBLISHES:
+///     wheel_pub: <nuturtlebot::WheelCommands>: publishes to turtles wheels (makes em spin at requested vel) 
+///		js_pub: <sensor_msgs::JointState> publishes joint states of wheels based on sensed encoder readings
+/// SUBSCRIBES:
+///     vel_sub: <geometry_msgs::Twist>: hears the commanded desired velocity
+///		sensor_sub: <nuturtlebot::SensorData> information form the sensor 
+
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <nuturtlebot/WheelCommands.h>
