@@ -35,3 +35,5 @@ https://youtu.be/nFaDnOXjuAc
 
 robot moving around the room:
 https://www.youtube.com/watch?v=R1alS0p9dfE
+
+Only ~5cm off! over ~~4.24m traversal with purely open loop control!
