@@ -62,15 +62,15 @@ TEST(cmd_vel, trans_and_rot)
 		r.sleep();
 		ros::spinOnce();
 	}
-	ASSERT_EQ(wheel_vels.left, 226);	
-	ASSERT_EQ(wheel_vels.right, 264);	
+	ASSERT_EQ(wheel_vels.left, 227);	
+	ASSERT_EQ(wheel_vels.right, 265);	
 }
 
 TEST(sens_sub, encoder_counts)
 {
 	nuturtlebot::SensorData msg;
-	msg.left_encoder = 50; 
-	msg.right_encoder = 60;
+	msg.left_encoder = 4096; 
+	msg.right_encoder = 4096;
 	sensor_pub.publish(msg);
 	y = true; 
 	ros::Rate r(60);
@@ -79,10 +79,10 @@ TEST(sens_sub, encoder_counts)
 		ros::spinOnce();
 		r.sleep();
 	}
-	ASSERT_EQ(js.position[0], 50);
-	ASSERT_EQ(js.position[1], 60);
-	ASSERT_EQ(js.velocity[0], 50);
-	ASSERT_EQ(js.velocity[1], 60);
+	ASSERT_EQ(js.position[0], 360);
+	ASSERT_EQ(js.position[1], 360);
+	ASSERT_EQ(js.velocity[0], rigid2d::PI * 2);
+	ASSERT_EQ(js.velocity[1], rigid2d::PI * 2);
 }
 
 void js_sub_callback(sensor_msgs::JointState data)

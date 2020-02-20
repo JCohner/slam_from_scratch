@@ -1,4 +1,8 @@
 <launch>
 	<test test-name="turtle_interface_test" pkg="nuturtle_robot" type="turtle_interface_test"/>
 	<node name="turtle_interface" pkg="nuturtle_robot" type="turtle_interface"/>
+	<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml"/>
+<!-- 	<node pkg="rigid2d" type="odometer" name="odom">
+		<rosparam command="load" file="$(find nuturtle_robot)/config/frame_names.yaml"/>
+	</node> -->
 </launch>
