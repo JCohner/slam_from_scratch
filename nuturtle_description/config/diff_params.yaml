@@ -6,7 +6,8 @@ wheel:
 chassis:
   length: .138 #length of mainlink
   thickness: .178 #thickness of mainlink 
-  height: .192 #heigh of chassis
+  height: .14 #heigh of chassis
+  wheel_axel_offset: 0.02 #wheel axel offset from bottom of chassis
 velocity:
   max_trans: 0.22
   max_rot: 2.84 #rad/s
