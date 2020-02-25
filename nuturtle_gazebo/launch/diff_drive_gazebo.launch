@@ -1,0 +1,18 @@
+<launch>
+	<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml"/>
+
+	<arg name="pause_state" default="true" doc="start the simulation in a paused state, default true"/>
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="worlds/empty.world"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+		<arg name="paused" value="$(arg pause_state)"/>
+		<arg name="use_sim_time" value="true"/>
+	    <arg name="gui" value="true"/>
+	    <arg name="recording" value="false"/>
+	    <arg name="debug" value="false"/>
+	</include>
+
+	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_gazebo)/urdf/diff_drive.gazebo.xacro'" />
+
+	<node pkg="gazebo_ros" name="spawn_urdf" type="spawn_model" args="-param robot_description -urdf -x 0.0 -y 0.0 -z .075 -model nuturtlebot"/>
+
+</launch>
