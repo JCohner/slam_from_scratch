@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ddiff_drive">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="nuturtlebot">
 	<!-- load parameters from yaml -->
 	<xacro:property name="width" value= "${load_yaml('$(find nuturtle_description)/config/diff_params.yaml')['wheel']['width']}"/>
 	<xacro:property name="radius" value= "${load_yaml('$(find nuturtle_description)/config/diff_params.yaml')['wheel']['radius']}"/>	
@@ -26,10 +26,11 @@
 					<box size="${length} ${width} ${height}"/>  
 				</geometry>
 			</collision>
-			<inertia>
+			<inertial>
+				<origin xyz="${length/2 - radius} 0 0" rpy="0 0 0"/>
 				<mass value="0.9"/>
 				<inertia ixx="${0.9 * 1.0/12.0 * (width * width + height * height)}" ixy="0.0" ixz="0.0" iyy="${0.9 * 1.0/12.0 * (length * length + height * height)}" iyz="0.0" izz="${0.9 * 1.0/12.0 * (length * length + width * width)}"/>
-			</inertia>
+			</inertial>
 		</link>
 	</xacro:macro>
 
@@ -67,10 +68,10 @@
 					<cylinder radius="${radius}" length="${width}"/>  
 				</geometry>
 			</collision>
-			<inertia>
+			<inertial>
 				<mass value="0.03"/>
-				<inertia ixx="${0.03 * 1.0/12.0 * (3.0 * radius * radius + width * width)}" ixy="0.0" ixz="0.0" iyy="${0.03 * 1.0/12.0 * (3.0 * radius * radius + width * width)}" iyz="0.0" izz="${1.0/2.0 * 0.03 * radius * radius}"/>
-			</inertia>
+				<inertia ixx="${0.03 * 1.0/12.0 * (3.0 * radius * radius + width * width)}" ixy="0.0" ixz="0.0" izz="${0.03 * 1.0/12.0 * (3.0 * radius * radius + width * width)}" iyz="0.0" iyy="${1.0/2.0 * 0.03 * radius * radius}"/>
+			</inertial>
 		</link>
 	</xacro:macro>
 
@@ -90,6 +91,9 @@
 					<sphere radius="${radius}"/>
 				</geometry>
 			</collision>
+<!-- 			<inertial>
+				
+			</inertial> -->
 		</link>
 	</xacro:macro>
 
@@ -127,12 +131,12 @@
 	<xacro:wheel_gen radius="${radius}" name="left_wheel" width="${width}"/>
 	<xacro:wheel_gen radius="${radius}" name="right_wheel" width="${width}"/>
 	<xacro:caster_gen radius="${radius/2}" name="caster1"/>
-	<xacro:scan_gen radius=".03" height=".01"/>
+	<!-- <xacro:scan_gen radius=".03" height=".01"/> -->
 
 	<xacro:joint_gen name="left_wheel_axel" parent="base_link" child="left_wheel" origin="${base/2}" rotate="0"/>
 	<xacro:joint_gen name="right_wheel_axel" parent="base_link" child="right_wheel" origin="${-base/2}" rotate="0"/>
 	<xacro:caster_joint name="cast_joint1" parent="base_link" child="caster1" origin_z="${radius/2}"/>
-	<xacro:scan_joint name="scan_joint" parent="base_link" child="base_scan"/>
+	<!-- <xacro:scan_joint name="scan_joint" parent="base_link" child="base_scan"/> -->
 	
 
 
