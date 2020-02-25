@@ -45,7 +45,7 @@
 	</gazebo>
 
 	<gazebo>
-	    <plugin name="turtle_drive_plugin" filename="nuturtle_gazebo_plugin.so">
+	    <plugin name="turtle_drive_plugin" filename="libturtle_drive_plugin.so">
 	      <!-- if joint names not specified, print fatal error and return from Load -->
 	      <left_wheel_joint></left_wheel_joint>
 	      <right_wheel_joint></right_wheel_joint>
