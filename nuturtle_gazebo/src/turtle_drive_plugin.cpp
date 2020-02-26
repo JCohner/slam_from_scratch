@@ -22,6 +22,9 @@ double max_motor_power;
 double left_wheel_vel = 0;
 double right_wheel_vel = 0;
 double freq;
+double curr_time;
+double prev_time;
+
 std::string left_wheel_joint;
 std::string right_wheel_joint;
 std::string wheel_cmd_tpc;
@@ -29,9 +32,9 @@ std::string sensor_data_tpc;
 
 void wheel_com_sub_callback(nuturtlebot::WheelCommands data)
 {
-  left_wheel_vel = data.left_velocity;
-  right_wheel_vel = data.right_velocity;
-  ROS_INFO("sup bithc");
+  left_wheel_vel = (double) data.left_velocity;
+  right_wheel_vel = (double) data.right_velocity;
+  ROS_INFO("%f %f", left_wheel_vel, right_wheel_vel);
   return;
 }
 
@@ -66,7 +69,10 @@ namespace gazebo
       sensor_pub = nh.advertise<nuturtlebot::SensorData>(sensor_data_tpc, 1);
       wheel_com_sub = nh.subscribe(wheel_cmd_tpc, 1, &wheel_com_sub_callback);
 
-      ROS_INFO("%f", freq);
+      curr_time = ros::Time::now().toSec();
+      prev_time = curr_time;
+
+      ROS_INFO("%f", curr_time);
       ROS_INFO_STREAM(left_wheel_joint);
 
       // Store the pointer to the model
@@ -87,6 +93,18 @@ namespace gazebo
       this->model->GetJoint(left_wheel_joint)->SetParam("vel", 0 , left_wheel_vel);
       this->model->GetJoint(right_wheel_joint)->SetParam("fmax", 0, 1000.0);
       this->model->GetJoint(right_wheel_joint)->SetParam("vel", 0 , right_wheel_vel);
+
+      curr_time = ros::Time::now().toSec();
+      if ((1.0/(curr_time - prev_time)) < freq)
+      {
+        prev_time = curr_time;
+        nuturtlebot::SensorData msg;
+        msg.left_encoder = (int)((left_wheel_vel * (1/freq))/(2 * rigid2d::PI) * encoder_ticks_per_rev);
+        msg.right_encoder = (int)((right_wheel_vel * (1/freq))/(2 * rigid2d::PI) * encoder_ticks_per_rev);
+        sensor_pub.publish(msg);
+        // ROS_INFO("%d %d",msg.left_encoder,  msg.right_encoder);
+      }
+
 
     }
 
