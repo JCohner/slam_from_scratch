@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   nuturtlebot
   gazebo_ros
+  rigid2d
 )
 
 find_package (gazebo REQUIRED)
@@ -111,7 +112,7 @@ find_package (gazebo REQUIRED)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES nuturtle_gazebo
-#  CATKIN_DEPENDS roscpp
+ #CATKIN_DEPENDS rigi2d
  # DEPENDS 
 )
 
