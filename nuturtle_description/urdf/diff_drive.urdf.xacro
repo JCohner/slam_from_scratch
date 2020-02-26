@@ -69,7 +69,7 @@
 				</geometry>
 			</collision>
 			<inertial>
-				<mass value="0.03"/>
+				<mass value="0.3"/>
 				<inertia ixx="${0.03 * 1.0/12.0 * (3.0 * radius * radius + width * width)}" ixy="0.0" ixz="0.0" izz="${0.03 * 1.0/12.0 * (3.0 * radius * radius + width * width)}" iyz="0.0" iyy="${1.0/2.0 * 0.03 * radius * radius}"/>
 			</inertial>
 		</link>
@@ -131,12 +131,12 @@
 	<xacro:wheel_gen radius="${radius}" name="left_wheel" width="${width}"/>
 	<xacro:wheel_gen radius="${radius}" name="right_wheel" width="${width}"/>
 	<xacro:caster_gen radius="${radius/2}" name="caster1"/>
-	<!-- <xacro:scan_gen radius=".03" height=".01"/> -->
+	<xacro:scan_gen radius=".03" height=".01"/>
 
 	<xacro:joint_gen name="left_wheel_axel" parent="base_link" child="left_wheel" origin="${base/2}" rotate="0"/>
 	<xacro:joint_gen name="right_wheel_axel" parent="base_link" child="right_wheel" origin="${-base/2}" rotate="0"/>
 	<xacro:caster_joint name="cast_joint1" parent="base_link" child="caster1" origin_z="${radius/2}"/>
-	<!-- <xacro:scan_joint name="scan_joint" parent="base_link" child="base_scan"/> -->
+	<xacro:scan_joint name="scan_joint" parent="base_link" child="base_scan"/>
 	
 
 
