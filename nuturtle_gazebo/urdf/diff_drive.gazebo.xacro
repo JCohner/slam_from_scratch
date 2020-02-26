@@ -44,14 +44,16 @@
 		<preserveFixedJoint>true</preserveFixedJoint>
 	</gazebo>
 
+	<xacro:property name="freq" value= "${load_yaml('$(find nuturtle_description)/config/diff_params.yaml')['freq']}"/>
+
 	<gazebo>
 	    <plugin name="turtle_drive_plugin" filename="libturtle_drive_plugin.so">
 	      <!-- if joint names not specified, print fatal error and return from Load -->
-	      <left_wheel_joint></left_wheel_joint>
-	      <right_wheel_joint></right_wheel_joint>
-	      <sensor_frequency>200</sensor_frequency> <!-- if not specified should default to 200Hz -->
-	      <wheel_cmd_topic>name_of_wheel_cmd_topic</wheel_cmd_topic>
-	      <sensor_data_topic>name_of_sensor_topic</sensor_data_topic>
+	      <left_wheel_joint>left_wheel_axel</left_wheel_joint>
+	      <right_wheel_joint>right_wheel_axel</right_wheel_joint>
+	      <sensor_frequency>200</sensor_frequency> <!-- if not specified should default to 200Hz "${freq}" -->
+	      <wheel_cmd_topic>wheel_cmd</wheel_cmd_topic>
+	      <sensor_data_topic>sensor_data</sensor_data_topic>
 	    </plugin>
   	</gazebo>
 
