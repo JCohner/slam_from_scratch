@@ -1,5 +1,10 @@
+/*my includes*/
 #include <nuturtlebot/WheelCommands.h>
 #include <nuturtlebot/SensorData.h>
+#include "rigid2d/rigid2d.hpp"
+#include "diff_drive/diff_drive.hpp"
+
+/*gazebo plugin includes*/
 #include <gazebo/common/Plugin.hh>
 #include <ros/ros.h>
 #include <functional>
@@ -14,10 +19,20 @@ ros::Subscriber wheel_com_sub;
 double encoder_ticks_per_rev;
 double max_motor_rot_vel;
 double max_motor_power;
+double left_wheel_vel = 0;
+double right_wheel_vel = 0;
+double freq;
+std::string left_wheel_joint;
+std::string right_wheel_joint;
+std::string wheel_cmd_tpc;
+std::string sensor_data_tpc;
 
 void wheel_com_sub_callback(nuturtlebot::WheelCommands data)
 {
-
+  left_wheel_vel = data.left_velocity;
+  right_wheel_vel = data.right_velocity;
+  ROS_INFO("sup bithc");
+  return;
 }
 
 
@@ -37,11 +52,22 @@ namespace gazebo
 
       ROS_INFO("Hello World!");
       ros::NodeHandle nh;
-      sensor_pub = nh.advertise<nuturtlebot::SensorData>("sensor_data", 1);
-      wheel_com_sub = nh.subscribe("wheel_cmd", 1, &wheel_com_sub_callback);
       nh.getParam("/wheel/encoder_ticks_per_rev", encoder_ticks_per_rev);
       nh.getParam("/motor/max_power", max_motor_power);
       nh.getParam("/motor/no_load_speed", max_motor_rot_vel);
+
+
+      freq = _sdf->GetElement("sensor_frequency")->Get<double>();
+      left_wheel_joint = _sdf->GetElement("left_wheel_joint")->Get<std::string>();
+      right_wheel_joint = _sdf->GetElement("right_wheel_joint")->Get<std::string>();
+      wheel_cmd_tpc = _sdf->GetElement("wheel_cmd_topic")->Get<std::string>(); 
+      sensor_data_tpc = _sdf->GetElement("sensor_data_topic")->Get<std::string>(); 
+
+      sensor_pub = nh.advertise<nuturtlebot::SensorData>(sensor_data_tpc, 1);
+      wheel_com_sub = nh.subscribe(wheel_cmd_tpc, 1, &wheel_com_sub_callback);
+
+      ROS_INFO("%f", freq);
+      ROS_INFO_STREAM(left_wheel_joint);
 
       // Store the pointer to the model
       this->model = _parent;
@@ -56,7 +82,12 @@ namespace gazebo
     public: void OnUpdate()
     {
       // Apply a small linear velocity to the model.
-      this->model->SetLinearVel(ignition::math::Vector3d(.3, 0, 0));
+      // this->model->SetLinearVel(ignition::math::Vector3d(.3, 0, 0));
+      this->model->GetJoint(left_wheel_joint)->SetParam("fmax", 0, 1000.0);
+      this->model->GetJoint(left_wheel_joint)->SetParam("vel", 0 , left_wheel_vel);
+      this->model->GetJoint(right_wheel_joint)->SetParam("fmax", 0, 1000.0);
+      this->model->GetJoint(right_wheel_joint)->SetParam("vel", 0 , right_wheel_vel);
+
     }
 
     // Pointer to the model
