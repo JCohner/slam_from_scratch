@@ -1,0 +1,10 @@
+<launch>
+	<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_gazebo)/urdf/diff_drive.gazebo.xacro'"/> <!-- matt says dont include any nuturtle_gazebo files but i dont see harm here -->
+
+	<include file="$(find nuturtle_robot)/launch/follow_waypoints.launch">
+		<arg name="robot" value="-1"/>
+	</include>
+
+	<include file="$(find nuturtle_gazebo)/launch/diff_drive_gazebo.launch">
+	</include>
+</launch>
