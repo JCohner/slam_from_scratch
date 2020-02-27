@@ -14,7 +14,7 @@
 		<maxVel>0.1</maxVel>
 		<kp>500000</kp>
 		<kd>10</kd>
-	    <dampingFactor>0.001</dampingFactor>
+	    <!-- <dampingFactor>0.001</dampingFactor> -->
 		<material>Gazebo/Blue</material>
 	</gazebo>
 
@@ -26,7 +26,7 @@
 		<maxVel>0.1</maxVel>
 		<kp>500000</kp>
 		<kd>10</kd>
-	    <dampingFactor>0.001</dampingFactor>
+	    <!-- <dampingFactor>0.001</dampingFactor> -->
 		<material>Gazebo/Blue</material>
 	</gazebo>
 

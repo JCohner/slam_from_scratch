@@ -82,6 +82,11 @@ void timerCallback(const ros::TimerEvent& ev)
 
 		vel_pub.publish(cmd_twist);
 	}
+	else 
+	{
+		geometry_msgs::Twist stop;
+		vel_pub.publish(stop);	
+	}
 	return;
 }
 
