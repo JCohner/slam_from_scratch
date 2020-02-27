@@ -51,7 +51,7 @@
 	      <!-- if joint names not specified, print fatal error and return from Load -->
 	      <left_wheel_joint>left_wheel_axel</left_wheel_joint>
 	      <right_wheel_joint>right_wheel_axel</right_wheel_joint>
-	      <sensor_frequency>200</sensor_frequency> <!-- if not specified should default to 200Hz "${freq}" -->
+	      <sensor_frequency>120</sensor_frequency> <!-- if not specified should default to 200Hz "${freq}" -->
 	      <wheel_cmd_topic>wheel_cmd</wheel_cmd_topic>
 	      <sensor_data_topic>sensor_data</sensor_data_topic>
 	    </plugin>
