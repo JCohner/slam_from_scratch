@@ -97,6 +97,12 @@
 		</link>
 	</xacro:macro>
 
+	<xacro:macro name="floor_link">
+		<link name="floor">
+			
+		</link>
+	</xacro:macro>
+
 
 	<!-- macro for making joints -->
 	<xacro:macro name="joint_gen" params="name parent child origin rotate">
@@ -119,20 +125,29 @@
 
 	<!-- macro for base_scan joint -->
 	<xacro:macro name="scan_joint" params="name parent child">
-		<joint name="${name}" type="continuous">
+		<joint name="${name}" type="fixed"> <!-- see if that fixes tf error -->
 			<parent link="${parent}"/>
 			<child link="${child}"/>
 			<origin xyz="${-radius + length/2} 0 ${height/2}" rpy="0 0 0"/>
 		</joint>
 	</xacro:macro>
 
+	<!-- base to floor -->
+	<xacro:macro name="base_to_floor">
+		<joint name="base_to_floor" type="fixed">
+			<parent link="floor"/>
+			<child link="base_link"/>
+		</joint>
+	</xacro:macro>
 
+	<xacro:floor_link/>
 	<xacro:base_link_gen width="${base - width}" length="${length}" height="${height}"/>
 	<xacro:wheel_gen radius="${radius}" name="left_wheel" width="${width}"/>
 	<xacro:wheel_gen radius="${radius}" name="right_wheel" width="${width}"/>
 	<xacro:caster_gen radius="${radius/2}" name="caster1"/>
 	<xacro:scan_gen radius=".03" height=".01"/>
 
+	<xacro:base_to_floor/>
 	<xacro:joint_gen name="left_wheel_axel" parent="base_link" child="left_wheel" origin="${base/2}" rotate="0"/>
 	<xacro:joint_gen name="right_wheel_axel" parent="base_link" child="right_wheel" origin="${-base/2}" rotate="0"/>
 	<xacro:caster_joint name="cast_joint1" parent="base_link" child="caster1" origin_z="${radius/2}"/>
