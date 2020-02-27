@@ -1,6 +1,7 @@
 <launch>
 	<arg name="robot" default="0" doc="robot #"/>
-	<machine name="kdozer" address="kdozer"/>
+	<machine name="kdozer" address="localhost" if="$(eval arg('robot')==-1)"/>
+	<machine name="kdozer" address="kdozer" unless="$(eval arg('robot')==-1)"/>
 	<!-- <arg name="machine_name"/> -->
 	<group if="$(eval arg('robot') == 0)">
 		<machine name="turtlebot" address="localhost" unless="$(arg robot)" />
@@ -10,8 +11,10 @@
 			<!-- <env name="" value=""/>  COUlD set ros master here-->
 		</machine> 
 	</group>
-
-	<node machine="turtlebot" pkg="rosserial_python" type="serial_node.py" name="serial_node">
+	<group if="$(eval arg('robot')==-1)">
+		<machine name="turtlebot" address="localhost"/>
+	</group>
+	<node machine="turtlebot" pkg="rosserial_python" type="serial_node.py" name="serial_node" unless="$(eval arg('robot')==-1)">
     	<param name="port" value="/dev/ttyACM0"/>
     	<param name="baud" value="115200"/>
   	</node>
