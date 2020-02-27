@@ -3,6 +3,6 @@ frame_names:
   #namespace and publishes fake odom frames based on the fake odometry it receives from 
   #fake diff encoders
   odom_frame_id: "fake_odom" 
-  body_frame_id: "fake_base_link"
+  body_frame_id: "fake_floor"
   left_wheel_joint: "fake_left_wheel_axel"
   right_wheel_joint: "fake_right_wheel_axel"

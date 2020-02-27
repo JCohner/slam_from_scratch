@@ -2,6 +2,6 @@ frame_names:
   #real frame names used to publish real frames and 
   #visualize what is happenening to robot in rviz
   odom_frame_id: "odom"
-  body_frame_id: "base_link"
+  body_frame_id: "floor"
   left_wheel_joint: "left_wheel_axel"
   right_wheel_joint: "right_wheel_axel"
