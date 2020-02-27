@@ -21,6 +21,8 @@ double max_motor_rot_vel;
 double max_motor_power;
 double left_wheel_vel = 0;
 double right_wheel_vel = 0;
+int left_encoder = 0;
+int right_encoder = 0;
 double freq;
 double curr_time;
 double prev_time;
@@ -32,9 +34,9 @@ std::string sensor_data_tpc;
 
 void wheel_com_sub_callback(nuturtlebot::WheelCommands data)
 {
-  left_wheel_vel = (double) data.left_velocity;
-  right_wheel_vel = (double) data.right_velocity;
-  ROS_INFO("%f %f", left_wheel_vel, right_wheel_vel);
+  left_wheel_vel = ((double)data.left_velocity)/((double) max_motor_power) * max_motor_rot_vel;
+  right_wheel_vel = ((double)data.right_velocity)/((double) max_motor_power) * max_motor_rot_vel;
+  // ROS_INFO("%f %f", left_wheel_vel, right_wheel_vel);
   return;
 }
 
@@ -99,10 +101,12 @@ namespace gazebo
       {
         prev_time = curr_time;
         nuturtlebot::SensorData msg;
-        msg.left_encoder = (int)((left_wheel_vel * (1/freq))/(2 * rigid2d::PI) * encoder_ticks_per_rev);
-        msg.right_encoder = (int)((right_wheel_vel * (1/freq))/(2 * rigid2d::PI) * encoder_ticks_per_rev);
+        left_encoder += (int)((left_wheel_vel * (1/freq))/(2 * rigid2d::PI) * encoder_ticks_per_rev);
+        right_encoder += (int)((right_wheel_vel * (1/freq))/(2 * rigid2d::PI) * encoder_ticks_per_rev);
+        msg.left_encoder = left_encoder;
+        msg.right_encoder = right_encoder;
         sensor_pub.publish(msg);
-        // ROS_INFO("%d %d",msg.left_encoder,  msg.right_encoder);
+        ROS_INFO("%d %d",msg.left_encoder,  msg.right_encoder);
       }
 
 
@@ -114,7 +118,7 @@ namespace gazebo
     // Pointer to the update event connection
     private: event::ConnectionPtr updateConnection;
   };
-
   // Register this plugin with the simulator
   GZ_REGISTER_MODEL_PLUGIN(ModelPush) //michael said move this somewhere
+
 }
