@@ -10,8 +10,8 @@ void loop()
 	ros::Rate r(60);
 	while(ros::ok())
 	{
-		r,sleep();
-		ros.spinOnce();
+		r.sleep();
+		ros::spinOnce();
 	}
 }
 
