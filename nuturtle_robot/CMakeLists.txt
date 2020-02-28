@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
 	turtlesim #this is just used for TeleportAbsolute srv, used in set_pose service, could be changed 
 	std_msgs
 	visualization_msgs
+	hls_lfcd_lds_driver
 )
 
 if (CATKIN_ENABLE_TESTING)
