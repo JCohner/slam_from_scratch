@@ -55,6 +55,7 @@
   <depend>sensor_msgs</depend>
   <depend>message_runtime</depend>
   <depend>message_generation</depend>
+  <depend>turtlebot3_teleop</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
