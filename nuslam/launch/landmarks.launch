@@ -4,7 +4,7 @@
 	<group if="$(eval arg('robot') == -1)">
 		<arg name="pause_state" default="true" doc="start the simulation in a paused state, default true"/>
 		<include file="$(find gazebo_ros)/launch/empty_world.launch">
-			<arg name="world_name" value="(arg world_name)"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+			<arg name="world_name" value="$(arg world_name)"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
 			<arg name="paused" value="$(arg pause_state)"/>
 			<arg name="use_sim_time" value="true"/>
 		    <arg name="gui" value="true"/>
@@ -12,6 +12,7 @@
 		    <arg name="debug" value="false"/>
 		</include>
 		<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_gazebo)/urdf/diff_drive.gazebo.xacro'"/> 
+		<node pkg="gazebo_ros" name="spawn_urdf" type="spawn_model" args="-param robot_description -urdf -x 0.0 -y 0.0 -z .075 -model nuturtlebot"/>
 	</group>
 
 	<include file="$(find nuturtle_robot)/launch/basic_remote.launch">
@@ -32,18 +33,19 @@
 		<rosparam command="load" file="$(find nuturtle_robot)/config/fake_frame_names.yaml"/>
 	</node>
 
+	<!-- Run with robot >= 0 -->
 	<group unless="$(eval arg('robot')==-1)">
 		<param name="robot_description" command="$(find xacro)/xacro '$(find nuturtle_description)/urdf/diff_drive.urdf.xacro'"/>
 	</group>
 
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 	<!-- Optionally launch rviz if robot is not 0 -->
-	<node machine="kdozer" pkg="rviz" type="rviz" name="rviz" args="-d $(find tsim)/rviz/view_robot.rviz" if="$(eval arg('robot') != 0)"/>
+	<node machine="kdozer" pkg="rviz" type="rviz" name="rviz" args="-d $(find tsim)/rviz/view_robot.rviz"/>
 
 	<!-- enable teleoperation of turtlebot if not launched with robot = 0 -->
-	<node machine="kdozer" pkg="turtlebot3_teleop" type="teleop_twist_keyboard" name="teleop" unless="$(arg robot)"/>
+	<node machine="kdozer" pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="teleop" unless="$(eval  arg('robot') == 0)"/>
 
 	<!-- nodes from this package -->
 	<node name="draw_map" type="draw_map" pkg="nuslam"/>
-	<node name="landmarks" type="landmarks" pkg="nuslam"/>
+	<node name="landmarks" type="landmarks" pkg="nuslam" output="screen"/>
 </launch>
