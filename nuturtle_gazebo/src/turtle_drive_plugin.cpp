@@ -74,8 +74,8 @@ namespace gazebo
       curr_time = ros::Time::now().toSec();
       prev_time = curr_time;
 
-      ROS_INFO("%f", curr_time);
-      ROS_INFO_STREAM(left_wheel_joint);
+      // ROS_INFO("%f", curr_time);
+      // ROS_INFO_STREAM(left_wheel_joint);
 
       // Store the pointer to the model
       this->model = _parent;
@@ -106,7 +106,7 @@ namespace gazebo
         msg.left_encoder = left_encoder;
         msg.right_encoder = right_encoder;
         sensor_pub.publish(msg);
-        ROS_INFO("%d %d",msg.left_encoder,  msg.right_encoder);
+        // ROS_INFO("%d %d",msg.left_encoder,  msg.right_encoder);
       }
 
 
