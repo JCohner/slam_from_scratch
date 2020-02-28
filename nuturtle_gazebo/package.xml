@@ -55,6 +55,7 @@
   <depend>nuturtlebot</depend>
   <depend>gazebo_ros</depend>
   <depend>rigid2d</depend>
+  <build_depend>gazebo</build_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
