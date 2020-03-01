@@ -43,9 +43,9 @@
 	<node machine="kdozer" pkg="rviz" type="rviz" name="rviz" args="-d $(find tsim)/rviz/view_robot.rviz"/>
 
 	<!-- enable teleoperation of turtlebot if not launched with robot = 0 -->
-	<node machine="kdozer" pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="teleop" unless="$(eval  arg('robot') == 0)"/>
+	<!-- <node machine="kdozer" pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="teleop" unless="$(eval  arg('robot') == 0)"/> -->
 
 	<!-- nodes from this package -->
-	<node name="draw_map" type="draw_map" pkg="nuslam"/>
+	<!-- <node name="draw_map" type="draw_map" pkg="nuslam"/> -->
 	<node name="landmarks" type="landmarks" pkg="nuslam" output="screen"/>
 </launch>
