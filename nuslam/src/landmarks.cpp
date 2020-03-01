@@ -1,14 +1,96 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <nuslam/TurtleMap.h>
+#include <cmath>
 
 ros::Publisher landmark_pub;
 ros::Subscriber laser_sub;
 bool init_sensor = 0;
 double scan_time, range_min, range_max, time_inc, angle_inc, angle_min, angle_max;
 int num_data; 
-std::vector<double> ranges, intensities;
+std::vector<double> ranges;
 
+
+double dist_thresh = .05;
+double clust_num_min= 3; 
+
+struct pt
+{
+	double x;
+	double y;
+	bool in_clust;
+	int cluster_idx;
+	pt() : x(0), y(0), in_clust(false) {}
+	pt(double x, double y) : x(x), y(y), in_clust(false) {}
+};
+
+struct Cluster{
+	int num_pts;
+	// std::vector<double> ranges, bearings;
+	std::vector<pt> points;
+	bool is_viable;
+	bool is_circle;
+	Cluster (): num_pts(0), is_viable(0), is_circle(0) {}
+
+	void add_to_clust(pt point)
+	{
+		points.push_back(point);
+	}
+};
+
+std::vector<Cluster> clusters;
+std::vector<Cluster> viable_clust;
+
+double pt_distance(pt p1, pt p2)
+{
+	return std::sqrt(std::pow((p1.x - p2.x),2) + std::pow((p1.y - p2.y),2));
+}
+
+///FIGURE OUT WHY ADJACENT POINTS ARENT BEING CONSIDERED IN SAME DIST THRESH
+void detect_clusters()
+{
+	clusters.clear();
+	viable_clust.clear();
+	pt prev_pt; 
+	for (int i = 0; i < ranges.size(); i++)
+	{
+		const double range = ranges.at(i);
+		const double x = range * cos(i * angle_inc);
+		const double y = range * sin(i * angle_inc);
+		pt curr_pt(x,y);
+		ROS_INFO("pt at: %f, %f", x, y);
+		const double dist = pt_distance(curr_pt,prev_pt);
+		// ROS_INFO("dist between points is %f", dist);
+		if (dist < dist_thresh)
+		{
+			Cluster clust;
+			//if previous pt was in cluster
+			if (prev_pt.in_clust)
+			{
+				clust = clusters.at(prev_pt.cluster_idx);
+				ROS_INFO("previous pt in clust: %d of siz: %d", prev_pt.cluster_idx, (int)clust.points.size());
+				clust.add_to_clust(curr_pt);
+				if (clust.points.size() > 3)
+				{
+					ROS_INFO("new viable clust maed!");
+					clust.is_viable = true;
+					viable_clust.push_back(clust);
+				}
+			}
+			//make a new cluster
+			else 
+			{
+				clust.add_to_clust(prev_pt);
+				clust.add_to_clust(curr_pt);
+				clusters.push_back(clust);
+				curr_pt.cluster_idx = clusters.size() - 1;
+				curr_pt.in_clust = true;
+			}
+		}
+
+		prev_pt = curr_pt;
+	}
+}
 
 void laser_sub_callback(sensor_msgs::LaserScan data)
 {
@@ -38,9 +120,20 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 	for(int i = 0; i < num_data; i++)
 	{
 		ranges.at(i) = data.ranges[i];
-		ROS_INFO("%f", ranges.at(i));
+		// ROS_INFO("%f", ranges.at(i));
 	}
 
+	detect_clusters();
+	int num_via_clusts = viable_clust.size();
+	int num_clust = clusters.size();
+	ROS_INFO("num clust: %d", num_clust);
+	ROS_INFO("num viable clusters: %d", num_via_clusts);
+
+	// int i = 0;
+	// for (Cluster clust : viable_clust)
+	// {
+	// 	ROS_INFO("viable cluster #%d!", i++);
+	// }
 }
 
 void setup()
