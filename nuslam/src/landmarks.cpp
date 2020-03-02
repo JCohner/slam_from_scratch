@@ -58,33 +58,38 @@ void detect_clusters()
 		const double x = range * cos(i * angle_inc);
 		const double y = range * sin(i * angle_inc);
 		pt curr_pt(x,y);
-		ROS_INFO("pt at: %f, %f", x, y);
+		// ROS_INFO("pt at: %f, %f", x, y);
+		// ROS_INFO("prev pt at: %f, %f", prev_pt.x, prev_pt.y);
 		const double dist = pt_distance(curr_pt,prev_pt);
 		// ROS_INFO("dist between points is %f", dist);
 		if (dist < dist_thresh)
-		{
+		{	
+			// ROS_INFO("pts within thresh, prev pt in clust is : %d ", prev_pt.in_clust);
 			Cluster clust;
+			curr_pt.in_clust = true;
 			//if previous pt was in cluster
 			if (prev_pt.in_clust)
 			{
-				clust = clusters.at(prev_pt.cluster_idx);
-				ROS_INFO("previous pt in clust: %d of siz: %d", prev_pt.cluster_idx, (int)clust.points.size());
-				clust.add_to_clust(curr_pt);
-				if (clust.points.size() > 3)
+				// clust = clusters.at(prev_pt.cluster_idx);
+				ROS_INFO("previous pt in clust: %d of siz: %d", prev_pt.cluster_idx, (int)clusters.at(prev_pt.cluster_idx).points.size());
+				
+				clusters.at(prev_pt.cluster_idx).add_to_clust(curr_pt);
+				if (clusters.at(prev_pt.cluster_idx).points.size() > 3 && !(clusters.at(prev_pt.cluster_idx).is_viable))
 				{
 					ROS_INFO("new viable clust maed!");
-					clust.is_viable = true;
-					viable_clust.push_back(clust);
+					clusters.at(prev_pt.cluster_idx).is_viable = true;
+					viable_clust.push_back(clusters.at(prev_pt.cluster_idx));
+					ROS_INFO("num via clusts: %d",(int) viable_clust.size());
 				}
 			}
 			//make a new cluster
 			else 
 			{
+				ROS_INFO("new clust");
 				clust.add_to_clust(prev_pt);
 				clust.add_to_clust(curr_pt);
 				clusters.push_back(clust);
 				curr_pt.cluster_idx = clusters.size() - 1;
-				curr_pt.in_clust = true;
 			}
 		}
 
