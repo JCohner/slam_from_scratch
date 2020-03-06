@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.0)
 project(nuslam)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   visualization_msgs
 )
+
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -153,6 +155,7 @@ add_dependencies(draw_map_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPO
 ## Specify libraries to link a library or executable target against
 target_link_libraries(landmarks_node
   ${catkin_LIBRARIES}
+  Eigen3::Eigen
 )
 target_link_libraries(draw_map_node
   ${catkin_LIBRARIES}
