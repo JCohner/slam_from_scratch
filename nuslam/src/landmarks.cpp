@@ -2,6 +2,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <nuslam/TurtleMap.h>
 #include <cmath>
+#include <Eigen/Dense>
 
 ros::Publisher landmark_pub;
 ros::Subscriber laser_sub;
@@ -46,7 +47,7 @@ double pt_distance(pt p1, pt p2)
 	return std::sqrt(std::pow((p1.x - p2.x),2) + std::pow((p1.y - p2.y),2));
 }
 
-///FIGURE OUT WHY ADJACENT POINTS ARENT BEING CONSIDERED IN SAME DIST THRESH
+//TODO: figure out how to wrap cluster detection
 void detect_clusters()
 {
 	clusters.clear();
@@ -70,22 +71,24 @@ void detect_clusters()
 			//if previous pt was in cluster
 			if (prev_pt.in_clust)
 			{
-				// clust = clusters.at(prev_pt.cluster_idx);
-				ROS_INFO("previous pt in clust: %d of siz: %d", prev_pt.cluster_idx, (int)clusters.at(prev_pt.cluster_idx).points.size());
+				clust = clusters.at(prev_pt.cluster_idx);
+				// ROS_INFO("previous pt in clust: %d of siz: %d", prev_pt.cluster_idx, (int)clust.points.size());
 				
-				clusters.at(prev_pt.cluster_idx).add_to_clust(curr_pt);
-				if (clusters.at(prev_pt.cluster_idx).points.size() > 3 && !(clusters.at(prev_pt.cluster_idx).is_viable))
+				clust.add_to_clust(curr_pt);
+				if ((clust.points.size() > 3) && !(clust.is_viable))
 				{
-					ROS_INFO("new viable clust maed!");
-					clusters.at(prev_pt.cluster_idx).is_viable = true;
-					viable_clust.push_back(clusters.at(prev_pt.cluster_idx));
-					ROS_INFO("num via clusts: %d",(int) viable_clust.size());
+					// ROS_INFO("new viable clust maed!");
+					clust.is_viable = true;
+					viable_clust.push_back(clust);
+					// ROS_INFO("num via clusts: %d",(int) viable_clust.size());
 				}
+
+				clusters.at(prev_pt.cluster_idx) = clust;
 			}
 			//make a new cluster
 			else 
 			{
-				ROS_INFO("new clust");
+				// ROS_INFO("new clust");
 				clust.add_to_clust(prev_pt);
 				clust.add_to_clust(curr_pt);
 				clusters.push_back(clust);
@@ -134,11 +137,20 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 	ROS_INFO("num clust: %d", num_clust);
 	ROS_INFO("num viable clusters: %d", num_via_clusts);
 
-	// int i = 0;
-	// for (Cluster clust : viable_clust)
-	// {
-	// 	ROS_INFO("viable cluster #%d!", i++);
-	// }
+	nuslam::TurtleMap msg;
+	int i = 0;
+
+	ros::Rate r(60);
+	for (Cluster clust : viable_clust){
+		msg.centerX = clust.points.at(0).x;
+		msg.centerY = clust.points.at(0).y;
+		ROS_INFO("adding point %f, %f", msg.centerX, msg.centerY);
+		landmark_pub.publish(msg);
+		i++;
+		r.sleep();
+	}
+
+
 }
 
 void setup()
