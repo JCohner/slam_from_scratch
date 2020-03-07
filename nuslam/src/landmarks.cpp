@@ -38,6 +38,13 @@ struct Cluster{
 	}
 };
 
+struct Circle{
+	pt center;
+	double radius;
+	Circle() : center(0,0), radius(0) {}
+	Circle(pt point, double radius): center(point), radius(radius) {};
+};
+
 std::vector<Cluster> clusters;
 std::vector<Cluster> viable_clust;
 
@@ -215,17 +222,34 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 
 		auto sig4 = singVals(4); //make sure grabbing properly
 		Eigen::Vector4f A;
-		auto S = singVals.asDiagonal();
+		Eigen::Matrix4f S = singVals.asDiagonal();
 		if (sig4 < 1e-12)
 		{
 			A = V.col(4);
 		} else {
-			auto Y = V * S * V.transpose() ;
+			Eigen::Matrix4f Y = V * S * V.transpose() ;
 			auto Q = Y * H_inv * Y.transpose();
 			Eigen::SelfAdjointEigenSolver<Eigen::Matrix4f> es(Q);
+			auto eig_vals = es.eigenvalues();
+			auto min_val_index = eig_vals.minCoeff();
+			Eigen::Vector4f A_star = es.eigenvectors().col(min_val_index);
+			A = Y.transpose() * A_star;
 		}
 
+		double a = -A(2)/(2 * A(1));
+		double b = -A(3)/(2 * A(1));
+		double R_squared = (std::pow(A(2),2) + std::pow(A(3),2) - 4 * A(1) * A(4))/(4 * std::pow(A(1),2));
+		double R = std::sqrt(R_squared);
+		pt center(x_cent + a, y_cent + b);
+		Circle circ(center, R);
 
+		//TODO: find root mean square error
+
+		nuslam::TurtleMap msg;
+		msg.centerX = circ.center.x;
+		msg.centerY = circ.center.y;
+		msg.radius = circ.radius;
+		landmark_pub.publish(msg);
 
 	}
 
