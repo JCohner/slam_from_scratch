@@ -107,10 +107,10 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES nuslam
+ INCLUDE_DIRS include
+ LIBRARIES circle_fit
 #  CATKIN_DEPENDS roscpp
-#  DEPENDS system_lib
+ DEPENDS Eigen3::Eigen
 )
 
 ###########
@@ -120,19 +120,19 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/nuslam.cpp
-# )
+add_library(circle_fit_lib
+  src/circle_fit/circle_fit.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(circle_fit_lib ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} Eigen3::Eigen)
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -153,9 +153,15 @@ add_dependencies(landmarks_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXP
 add_dependencies(draw_map_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+target_link_libraries(circle_fit_lib
+  ${catkin_LIBRARIES}
+  Eigen3::Eigen
+
+)
 target_link_libraries(landmarks_node
   ${catkin_LIBRARIES}
   Eigen3::Eigen
+  circle_fit_lib
 )
 target_link_libraries(draw_map_node
   ${catkin_LIBRARIES}
