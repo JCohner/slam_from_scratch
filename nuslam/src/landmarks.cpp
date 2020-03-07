@@ -188,7 +188,7 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 		//and form data matrix
 		double z(0), z_mean(0);
 		double x,y;
-		Eigen::Matrix<float, Eigen::Dynamic, 4> Z;  
+		Eigen::MatrixXf Z(num_pts, 4);  
 		for (int i = 0; i < num_pts; i++)
 		{
 			x = clust.points.at(i).x;
@@ -202,7 +202,7 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 			Z(i, 3) = 1;
 		}
 
-		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> M;
+		Eigen::MatrixXf M(4, 4);
 		M = 1/num_pts * Z.transpose() * Z; //chnage build type to debug to make sure we're doing this right
 
 		//make our H matrices
@@ -214,13 +214,14 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 		H(2,2) = 1;
 		H_inv = H.transpose();
 
+
 		//compute SVD of Z
 		Eigen::JacobiSVD<Eigen::Matrix4f> svd(Z,  0x04 | 0x10); //values of ComputeFullU | ComputeFullV
 		auto U = svd.matrixU();
 		auto V = svd.matrixV();
 		auto singVals = svd.singularValues();
 
-		auto sig4 = singVals(4); //make sure grabbing properly
+		auto sig4 = singVals(3); //make sure grabbing properly
 		Eigen::Vector4f A;
 		Eigen::Matrix4f S = singVals.asDiagonal();
 		if (sig4 < 1e-12)
@@ -231,20 +232,31 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 			auto Q = Y * H_inv * Y.transpose();
 			Eigen::SelfAdjointEigenSolver<Eigen::Matrix4f> es(Q);
 			auto eig_vals = es.eigenvalues();
-			auto min_val_index = eig_vals.minCoeff();
-			Eigen::Vector4f A_star = es.eigenvectors().col(min_val_index);
+			double min_val = eig_vals.minCoeff();
+			int min_idx;
+			for (int i = 0; i < 4; i++)
+			{
+				if (eig_vals(i) == min_val) 
+				{
+					min_idx = i;
+				}
+			}			
+
+			ROS_INFO("min john idx: %d", min_idx);
+			Eigen::Vector4f A_star = es.eigenvectors().col(min_idx);
 			A = Y.transpose() * A_star;
 		}
 
-		double a = -A(2)/(2 * A(1));
-		double b = -A(3)/(2 * A(1));
-		double R_squared = (std::pow(A(2),2) + std::pow(A(3),2) - 4 * A(1) * A(4))/(4 * std::pow(A(1),2));
+		
+		double a = -A(1)/(2 * A(0));
+		double b = -A(2)/(2 * A(0));
+		double R_squared = (std::pow(A(1),2) + std::pow(A(2),2) - 4 * A(0) * A(3))/(4 * std::pow(A(1),2));
 		double R = std::sqrt(R_squared);
 		pt center(x_cent + a, y_cent + b);
 		Circle circ(center, R);
 
 		//TODO: find root mean square error
-
+		ROS_INFO("fuck the police");
 		nuslam::TurtleMap msg;
 		msg.centerX = circ.center.x;
 		msg.centerY = circ.center.y;
