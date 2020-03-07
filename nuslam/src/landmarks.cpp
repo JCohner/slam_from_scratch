@@ -3,6 +3,7 @@
 #include <nuslam/TurtleMap.h>
 #include <cmath>
 #include <Eigen/Dense>
+#include <Eigen/Eigenvalues> 
 
 ros::Publisher landmark_pub;
 ros::Subscriber laser_sub;
@@ -26,12 +27,10 @@ struct pt
 };
 
 struct Cluster{
-	int num_pts;
-	// std::vector<double> ranges, bearings;
 	std::vector<pt> points;
 	bool is_viable;
 	bool is_circle;
-	Cluster (): num_pts(0), is_viable(0), is_circle(0) {}
+	Cluster (): is_viable(0), is_circle(0) {}
 
 	void add_to_clust(pt point)
 	{
@@ -125,9 +124,17 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 		}
 	}
 
+	float val;
 	for(int i = 0; i < num_data; i++)
 	{
-		ranges.at(i) = data.ranges[i];
+		val = data.ranges[i];
+		if (val < range_max && val > range_min){
+			ranges.at(i) = val;
+		} else if (val > range_max) {
+			ranges.at(i) = std::numeric_limits<double>::infinity();
+		} else {
+			ranges.at(i) = 0;
+		}
 		// ROS_INFO("%f", ranges.at(i));
 	}
 
@@ -137,19 +144,90 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 	ROS_INFO("num clust: %d", num_clust);
 	ROS_INFO("num viable clusters: %d", num_via_clusts);
 
-	nuslam::TurtleMap msg;
-	int i = 0;
+	// nuslam::TurtleMap msg;
+	// int i = 0;
 
-	ros::Rate r(60);
-	for (Cluster clust : viable_clust){
-		msg.centerX = clust.points.at(0).x;
-		msg.centerY = clust.points.at(0).y;
-		ROS_INFO("adding point %f, %f", msg.centerX, msg.centerY);
-		landmark_pub.publish(msg);
-		i++;
-		r.sleep();
+	// // ros::Rate r(60);
+	// for (Cluster clust : viable_clust){
+	// 	msg.centerX = clust.points.at(0).x;
+	// 	msg.centerY = clust.points.at(0).y;
+	// 	ROS_INFO("adding point %f, %f", msg.centerX, msg.centerY);
+	// 	landmark_pub.publish(msg);
+	// 	i++;
+	// 	// r.sleep();
+	// }
+
+	//circle detect
+	double x_cent(0), y_cent(0);
+	int num_pts;
+	for (Cluster clust : viable_clust)
+	{
+		//find centroid
+		num_pts = clust.points.size();
+		for (int i = 0; i < num_pts; i++)
+		{
+			x_cent += clust.points.at(i).x / (double) num_pts;
+			y_cent += clust.points.at(i).y / (double) num_pts;
+		}
+
+		//shift points so center is at origin
+		for (int i = 0; i < num_pts; i++)
+		{
+			clust.points.at(i).x -= x_cent; 
+			clust.points.at(i).y -= y_cent; 
+		}
+
+		//compute mean of distance of points from origin
+		//and form data matrix
+		double z(0), z_mean(0);
+		double x,y;
+		Eigen::Matrix<float, Eigen::Dynamic, 4> Z;  
+		for (int i = 0; i < num_pts; i++)
+		{
+			x = clust.points.at(i).x;
+			y = clust.points.at(i).y;
+			z = std::pow(x,2) + std::pow(y,2);
+			z_mean += z/num_pts;
+
+			Z(i, 0) = z;
+			Z(i, 1) = x;
+			Z(i, 2) = y;
+			Z(i, 3) = 1;
+		}
+
+		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> M;
+		M = 1/num_pts * Z.transpose() * Z; //chnage build type to debug to make sure we're doing this right
+
+		//make our H matrices
+		Eigen::Matrix4f H, H_inv;
+		H(0,0) = 8 * z_mean;
+		H(0,3) = 2;
+		H(3,0) = 2;
+		H(1,1) = 1;
+		H(2,2) = 1;
+		H_inv = H.transpose();
+
+		//compute SVD of Z
+		Eigen::JacobiSVD<Eigen::Matrix4f> svd(Z,  0x04 | 0x10); //values of ComputeFullU | ComputeFullV
+		auto U = svd.matrixU();
+		auto V = svd.matrixV();
+		auto singVals = svd.singularValues();
+
+		auto sig4 = singVals(4); //make sure grabbing properly
+		Eigen::Vector4f A;
+		auto S = singVals.asDiagonal();
+		if (sig4 < 1e-12)
+		{
+			A = V.col(4);
+		} else {
+			auto Y = V * S * V.transpose() ;
+			auto Q = Y * H_inv * Y.transpose();
+			Eigen::SelfAdjointEigenSolver<Eigen::Matrix4f> es(Q);
+		}
+
+
+
 	}
-
 
 }
 
