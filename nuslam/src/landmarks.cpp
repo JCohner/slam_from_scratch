@@ -14,6 +14,7 @@ std::vector<double> ranges;
 
 
 double dist_thresh = .05;
+double radius_thresh = .02;
 double clust_num_min= 3; 
 
 struct pt
@@ -64,6 +65,12 @@ void detect_clusters()
 		const double range = ranges.at(i);
 		const double x = range * cos(i * angle_inc);
 		const double y = range * sin(i * angle_inc);
+		if (i == 0)
+		{
+			double f_range = ranges.at(ranges.size() - 1);
+			prev_pt = pt(f_range * cos(-1 * angle_inc), f_range * sin(-1 * angle_inc));
+		}
+
 		pt curr_pt(x,y);
 		// ROS_INFO("pt at: %f, %f", x, y);
 		// ROS_INFO("prev pt at: %f, %f", prev_pt.x, prev_pt.y);
@@ -106,31 +113,32 @@ void detect_clusters()
 	}
 }
 
-void laser_sub_callback(sensor_msgs::LaserScan data)
+void sesnor_init(sensor_msgs::LaserScan data)
 {
-	if(!init_sensor)
+	scan_time = data.scan_time;
+	time_inc = data.time_increment;
+	angle_inc = data.angle_increment;
+	range_min = data.range_min;
+	range_max = data.range_max;
+	angle_min = data.angle_min;
+	angle_max = data.angle_max;
+
+	num_data = std::round((angle_max - angle_min) /angle_inc);
+
+	ranges.reserve(num_data);
+	// intensities.reserve(num_data);
+	ROS_INFO("ang min: %f, ang max %f, ang inc: %f, num data %d", angle_min, angle_max, angle_inc, num_data);
+	init_sensor = 1;
+
+	for (int i = 0; i < num_data; i++)
 	{
-		scan_time = data.scan_time;
-		time_inc = data.time_increment;
-		angle_inc = data.angle_increment;
-		range_min = data.range_min;
-		range_max = data.range_max;
-		angle_min = data.angle_min;
-		angle_max = data.angle_max;
-
-		num_data = std::round((angle_max - angle_min) /angle_inc);
-
-		ranges.reserve(num_data);
-		// intensities.reserve(num_data);
-		ROS_INFO("ang min: %f, ang max %f, ang inc: %f, num data %d", angle_min, angle_max, angle_inc, num_data);
-		init_sensor = 1;
-		
-		for (int i = 0; i < num_data; i++)
-		{
-			ranges.push_back(data.ranges[i]);
-		}
+		ranges.push_back(data.ranges[i]);
 	}
+}
 
+
+void get_sensor_reading(sensor_msgs::LaserScan data)
+{
 	float val;
 	for(int i = 0; i < num_data; i++)
 	{
@@ -145,24 +153,40 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 		// ROS_INFO("%f", ranges.at(i));
 	}
 
+}
+
+void laser_sub_callback(sensor_msgs::LaserScan data)
+{
+	//if sensor hasn't been initialized, initialize
+	if(!init_sensor)
+	{
+		sesnor_init(data);
+	}
+
+	//populate range vector with range values
+	get_sensor_reading(data);
+
+	//detect clusters amongst ranges
 	detect_clusters();
+
 	int num_via_clusts = viable_clust.size();
 	int num_clust = clusters.size();
 	ROS_INFO("num clust: %d", num_clust);
 	ROS_INFO("num viable clusters: %d", num_via_clusts);
 
-	// nuslam::TurtleMap msg;
-	// int i = 0;
+	nuslam::TurtleMap msg;
+	int i = 0;
 
-	// // ros::Rate r(60);
-	// for (Cluster clust : viable_clust){
-	// 	msg.centerX = clust.points.at(0).x;
-	// 	msg.centerY = clust.points.at(0).y;
-	// 	ROS_INFO("adding point %f, %f", msg.centerX, msg.centerY);
-	// 	landmark_pub.publish(msg);
-	// 	i++;
-	// 	// r.sleep();
-	// }
+	// ros::Rate r(60);
+	for (Cluster clust : viable_clust){
+		msg.centerX = clust.points.at(0).x;
+		msg.centerY = clust.points.at(0).y;
+		msg.clustOcirc = 1;
+		ROS_INFO("adding point %f, %f", msg.centerX, msg.centerY);
+		landmark_pub.publish(msg);
+		i++;
+		// r.sleep();
+	}
 
 	//circle detect
 	double x_cent(0), y_cent(0);
@@ -269,12 +293,18 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 		pt center(x_cent + a, y_cent + b);
 		Circle circ(center, R);
 
-		//TODO: find root mean square error
-		nuslam::TurtleMap msg;
-		msg.centerX = circ.center.x;
-		msg.centerY = circ.center.y;
-		msg.radius = circ.radius;
-		landmark_pub.publish(msg);
+		ROS_INFO("detecting radius of: %f", R);
+
+		// if (R > (0.04 - radius_thresh) && R < (0.04 + radius_thresh))
+		if(R > 0.1)
+		{
+			//TODO: find root mean square error
+			nuslam::TurtleMap msg;
+			msg.centerX = circ.center.x;
+			msg.centerY = circ.center.y;
+			msg.radius = circ.radius;
+			landmark_pub.publish(msg);
+		}
 
 	}
 

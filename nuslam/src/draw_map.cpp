@@ -7,7 +7,7 @@ ros::Publisher marker_pub;
 
 visualization_msgs::Marker mark;
 int i = 0;
-int num_expected = 8;
+int num_expected = 16;
 uint32_t shape = visualization_msgs::Marker::CYLINDER;
 
 void landmark_sub_callback(nuslam::TurtleMap data)
@@ -35,10 +35,18 @@ void landmark_sub_callback(nuslam::TurtleMap data)
 
 
 	// Set the color -- be sure to set alpha to something non-zero!
-	mark.color.r = 0.0f;
-	mark.color.g = 1.0f;
-	mark.color.b = 0.0f;
-	mark.color.a = 1.0;
+	if (!data.clustOcirc) {
+		mark.color.r = 0.0f;
+		mark.color.g = 1.0f;
+		mark.color.b = 0.0f;
+		mark.color.a = 1.0;
+	} else {
+		mark.color.r = 1.0f;
+		mark.color.g = 0.0f;
+		mark.color.b = 1.0f;
+		mark.color.a = 1.0;
+	}
+	
 	mark.lifetime = ros::Duration();
 
 	marker_pub.publish(mark);

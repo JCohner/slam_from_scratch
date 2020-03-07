@@ -1,6 +1,7 @@
 <launch>
 	<arg name="robot" doc="robot to run it on, -1 correlates to gazebo, 0 to run nodes on machine"/>
-	<arg name="world_name" default="$(find nuturtlebot)/worlds/block.world"/>
+	<arg name="world" default="block"/>
+	<arg name="world_name" default="$(find nuturtlebot)/worlds/$(arg world).world"/>
 	<group if="$(eval arg('robot') == -1)">
 		<arg name="pause_state" default="true" doc="start the simulation in a paused state, default true"/>
 		<include file="$(find gazebo_ros)/launch/empty_world.launch">
