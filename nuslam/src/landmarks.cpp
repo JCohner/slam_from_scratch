@@ -5,6 +5,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues> 
 
+#include "circle_fit/circle_fit.hpp"
+
 ros::Publisher landmark_pub;
 ros::Subscriber laser_sub;
 bool init_sensor = 0;
@@ -16,35 +18,6 @@ std::vector<double> ranges;
 double dist_thresh = .05;
 double radius_thresh = .02;
 double clust_num_min= 3; 
-
-struct pt
-{
-	double x;
-	double y;
-	bool in_clust;
-	int cluster_idx;
-	pt() : x(0), y(0), in_clust(false) {}
-	pt(double x, double y) : x(x), y(y), in_clust(false) {}
-};
-
-struct Cluster{
-	std::vector<pt> points;
-	bool is_viable;
-	bool is_circle;
-	Cluster (): is_viable(0), is_circle(0) {}
-
-	void add_to_clust(pt point)
-	{
-		points.push_back(point);
-	}
-};
-
-struct Circle{
-	pt center;
-	double radius;
-	Circle() : center(0,0), radius(0) {}
-	Circle(pt point, double radius): center(point), radius(radius) {};
-};
 
 std::vector<Cluster> clusters;
 std::vector<Cluster> viable_clust;
@@ -155,6 +128,37 @@ void get_sensor_reading(sensor_msgs::LaserScan data)
 
 }
 
+void circle_detect()
+{
+
+	//circle detect
+	double x_cent(0), y_cent(0);
+	int num_pts;
+	for (Cluster clust : viable_clust)
+	{
+		pt cent = find_centroid(clust);
+
+		clust = shift_center(clust, cent);
+
+		Circle circ = fit_circle(clust, cent);
+		
+
+		ROS_INFO("detecting radius of: %f", circ.radius);
+
+		// if (R > (0.04 - radius_thresh) && R < (0.04 + radius_thresh))
+		if(circ.radius < 0.1)
+		{
+			//TODO: find root mean square error
+			nuslam::TurtleMap msg;
+			msg.centerX = circ.center.x;
+			msg.centerY = circ.center.y;
+			msg.radius = circ.radius;
+			landmark_pub.publish(msg);
+		}
+
+	}
+}
+
 void laser_sub_callback(sensor_msgs::LaserScan data)
 {
 	//if sensor hasn't been initialized, initialize
@@ -188,125 +192,7 @@ void laser_sub_callback(sensor_msgs::LaserScan data)
 		// r.sleep();
 	}
 
-	//circle detect
-	double x_cent(0), y_cent(0);
-	int num_pts;
-	for (Cluster clust : viable_clust)
-	{
-		//find centroid
-		num_pts = clust.points.size();
-		for (int i = 0; i < num_pts; i++)
-		{
-			x_cent += clust.points.at(i).x / (double) num_pts;
-			y_cent += clust.points.at(i).y / (double) num_pts;
-		}
-
-		//shift points so center is at origin
-		for (int i = 0; i < num_pts; i++)
-		{
-			clust.points.at(i).x -= x_cent; 
-			clust.points.at(i).y -= y_cent; 
-		}
-
-		//compute mean of distance of points from origin
-		//and form data matrix
-		double z(0), z_mean(0);
-		double x,y;
-		Eigen::MatrixXf Z(num_pts, 4);  
-		for (int i = 0; i < num_pts; i++)
-		{
-			x = clust.points.at(i).x;
-			y = clust.points.at(i).y;
-			z = std::pow(x,2) + std::pow(y,2);
-			z_mean += z/num_pts;
-
-			Z(i, 0) = z;
-			Z(i, 1) = x;
-			Z(i, 2) = y;
-			Z(i, 3) = 1;
-		}
-
-		Eigen::MatrixXf M(4, 4);
-		M = 1/num_pts * Z.transpose() * Z; //chnage build type to debug to make sure we're doing this right
-
-		//make our H matrices
-		Eigen::Matrix4f H, H_inv;
-		H = H.Zero(4,4);
-		H_inv = H_inv.Zero(4,4);
-		H(0,0) = 8 * z_mean;
-		H(0,3) = 2;
-		H(3,0) = 2;
-		H(1,1) = 1;
-		H(2,2) = 1;
-
-		H_inv(0,3) = 0.5;
-		H_inv(3,0) = 0.5;
-		H_inv(1,1) = 1;
-		H_inv(2,2) = 1;
-		H_inv(3,3) = -2 * z_mean;
-
-		// ROS_INFO_STREAM(H);
-		// ROS_INFO_STREAM(H_inv);
-
-		//compute SVD of Z
-		Eigen::JacobiSVD<Eigen::Matrix4f> svd(Z,  0x04 | 0x10); //values of ComputeFullU | ComputeFullV
-		auto U = svd.matrixU();
-		auto V = svd.matrixV();
-		auto singVals = svd.singularValues();
-
-		double sig4 = singVals(3); //make sure grabbing properly
-		ROS_INFO("sing v 4 is: %f", sig4);
-		Eigen::Vector4f A;
-		Eigen::Matrix4f S = singVals.asDiagonal();
-		if (sig4 < 1e-12)
-		{
-			A = V.col(3);
-		} else {
-			Eigen::Matrix4f Y = V * S * V.transpose() ;
-			Eigen::Matrix4f Q = Y * H_inv * Y;
-			Eigen::SelfAdjointEigenSolver<Eigen::Matrix4f> es(Q);
-			Eigen::Vector4f eig_vals = es.eigenvalues();
-
-			double min_val(1e10), check_val;// = eig_vals.minCoeff(); //need to find min postiive
-			int min_idx = 0;
-			for (int i = 0; i < 4; i++)
-			{
-				check_val = eig_vals(i);
-				ROS_INFO("check val is: %f", check_val);
-				if (check_val < min_val && check_val > 0) 
-				{
-					min_idx = i;
-					min_val = check_val;
-				}
-			}			
-
-			ROS_INFO("min john idx: %d", min_idx);
-			Eigen::Vector4f A_star = es.eigenvectors().col(min_idx);
-			A = Y.transpose() * A_star;
-		}
-
-		
-		double a = -A(1)/(2 * A(0));
-		double b = -A(2)/(2 * A(0));
-		double R_squared = (std::pow(A(1),2) + std::pow(A(2),2) - 4 * A(0) * A(3))/(4 * std::pow(A(0),2));
-		double R = std::sqrt(R_squared);
-		pt center(x_cent + a, y_cent + b);
-		Circle circ(center, R);
-
-		ROS_INFO("detecting radius of: %f", R);
-
-		// if (R > (0.04 - radius_thresh) && R < (0.04 + radius_thresh))
-		if(R > 0.1)
-		{
-			//TODO: find root mean square error
-			nuslam::TurtleMap msg;
-			msg.centerX = circ.center.x;
-			msg.centerY = circ.center.y;
-			msg.radius = circ.radius;
-			landmark_pub.publish(msg);
-		}
-
-	}
+	circle_detect();
 
 }
 
