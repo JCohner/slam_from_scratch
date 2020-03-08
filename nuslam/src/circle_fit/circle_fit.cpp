@@ -78,8 +78,8 @@ Circle fit_circle(Cluster clust, pt center)
 		// ROS_INFO_STREAM(H_inv);
 
 	//compute SVD of Z
-	Eigen::JacobiSVD<Eigen::Matrix4f> svd(Z,  0x04 | 0x10); //values of ComputeFullU | ComputeFullV
-	auto U = svd.matrixU();
+	Eigen::JacobiSVD<Eigen::MatrixXf> svd(Z,  0x04 | 0x10); //values of ComputeFullU | ComputeFullV
+	// auto U = svd.matrixU();
 	auto V = svd.matrixV();
 	auto singVals = svd.singularValues();
 
@@ -115,10 +115,10 @@ Circle fit_circle(Cluster clust, pt center)
 	}
 
 		
-		double a = -A(1)/(2 * A(0));
-		double b = -A(2)/(2 * A(0));
-		double R_squared = (std::pow(A(1),2) + std::pow(A(2),2) - 4 * A(0) * A(3))/(4 * std::pow(A(0),2));
-		double R = std::sqrt(R_squared);
-		pt cent(center.x + a, center.y + b);
-		return Circle(cent, R);	
+	double a = -A(1)/(2 * A(0));
+	double b = -A(2)/(2 * A(0));
+	double R_squared = (std::pow(A(1),2) + std::pow(A(2),2) - 4 * A(0) * A(3))/(4 * std::pow(A(0),2));
+	double R = std::sqrt(R_squared);
+	pt cent(center.x + a, center.y + b);
+	return Circle(cent, R);	
 }
