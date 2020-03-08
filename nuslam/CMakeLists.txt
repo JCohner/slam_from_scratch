@@ -3,6 +3,11 @@ project(nuslam)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+## Compile with error output
+#add_compile_options(-Wall -Werror -Wno-psabi -pipe) 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_runtime
   message_generation
   visualization_msgs
+  rostest 
 )
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
@@ -222,3 +228,8 @@ target_link_libraries(draw_map_node
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+if (CATKIN_ENABLE_TESTING)
+  catkin_add_gtest(circle_fit_lib_test test/circle_fit/circle_fit_test.cpp)
+  target_link_libraries(circle_fit_lib_test ${catkin_Libraries} gtest_main circle_fit_lib)
+endif()
