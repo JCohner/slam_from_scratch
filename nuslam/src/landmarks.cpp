@@ -15,7 +15,7 @@ int num_data;
 std::vector<double> ranges;
 
 
-double dist_thresh = .05;
+double dist_thresh = .05 ;
 double radius_thresh = .02;
 double clust_num_min= 3; 
 
@@ -33,7 +33,7 @@ void detect_clusters()
 	clusters.clear();
 	viable_clust.clear();
 	pt prev_pt; 
-	for (int i = 0; i < ranges.size(); i++)
+	for (int i = 0; i < (int)ranges.size(); i++)
 	{
 		const double range = ranges.at(i);
 		const double x = range * cos(i * angle_inc);
@@ -132,8 +132,8 @@ void circle_detect()
 {
 
 	//circle detect
-	double x_cent(0), y_cent(0);
-	int num_pts;
+	// double x_cent(0), y_cent(0);
+	// int num_pts;
 	for (Cluster clust : viable_clust)
 	{
 		pt cent = find_centroid(clust);
